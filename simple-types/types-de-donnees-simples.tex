@@ -1,0 +1,427 @@
+% ===========================================================================
+% Types de données simples
+% Traduit et adapté de :
+%   https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/simple-data-types/
+% Licence : Creative Commons 4.0 Unported (Bootstrap Community)
+% ===========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[raster]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---------- Mise en page ----------
+\geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
+\fancyhf{}
+\fancyhead[L]{\textbf{Types de données simples}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Bootstrap Community — CC BY 4.0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+% ---------- Couleurs ----------
+\definecolor{bsblue}{RGB}{41,128,185}
+\definecolor{bsgreen}{RGB}{39,174,96}
+\definecolor{bsorange}{RGB}{230,126,34}
+\definecolor{bsgray}{RGB}{149,165,166}
+
+% ---------- Styles de sections ----------
+\titleformat{\section}[hang]{\Huge\bfseries\color{bsblue}}{}{0pt}{}[\vspace{-0.5em}\rule{\textwidth}{2pt}]
+\titleformat{\subsection}[hang]{\Large\bfseries\color{bsblue!80!black}}{}{0pt}{}
+\titleformat{\subsubsection}[hang]{\large\bfseries\color{bsgreen!60!black}}{}{0pt}{}
+
+% ---------- Environnements personnalisés ----------
+\newtcolorbox{overviewbox}{
+  colback=bsblue!5!white, colframe=bsblue!60!white,
+  fonttitle=\bfseries, title=Objectif de la section,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{activitybox}{
+  colback=bsgreen!5!white, colframe=bsgreen!60!white,
+  fonttitle=\bfseries, title=Activité,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{thinkbox}{
+  colback=bsorange!5!white, colframe=bsorange!60!white,
+  fonttitle=\bfseries, title=Réflexion,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{keypointbox}{
+  colback=bsgray!10!white, colframe=bsgray!50!white,
+  fonttitle=\bfseries, title=Point clé,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{instructornotes}{
+  colback=yellow!10!white, colframe=yellow!80!black,
+  fonttitle=\bfseries, title=Notes pour l'enseignant·e,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{codeexample}{
+  colback=black!2!white, colframe=black!30,
+  fonttitle=\bfseries, title=Code,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{errorbox}{
+  colback=red!3!white, colframe=red!50!black,
+  fonttitle=\bfseries, title=Erreur,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+
+% ---------- Commandes pratiques ----------
+\newcommand{\img}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{fig:#1}
+  \end{figure}
+}
+
+\newcommand{\pyret}[1]{\texttt{#1}}
+
+% ---------- Informations du document ----------
+\title{%
+  \vspace{-2cm}
+  {\Huge\bfseries Types de données simples}\\[0.5em]
+  {\large Nombres, chaînes de caractères, booléens — premiers pas en Pyret}\\[1em]
+  {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/simple-data-types/}{Bootstrap World} (Fall 2026)}\\[0.5em]
+  {\normalsize Licence Creative Commons 4.0 International}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ===========================================================================
+% SECTION 1 : CHAÎNES ET NOMBRES
+% ===========================================================================
+\section{Chaînes de caractères et nombres}
+
+\begin{overviewbox}
+  En travaillant ensemble selon le modèle Conducteur/Navigateur, les élèves expérimentent avec l'éditeur Pyret. Ils explorent les types de données Nombre et Chaîne de caractères, et leur comportement dans Pyret.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+Aujourd'hui, nous allons commencer à programmer en Pyret~!
+
+\img{images/driver-navigator.png}{width=0.35\textwidth}{Icône Conducteur/Navigateur}
+
+Quand vous programmez dans ce cours, vous travaillerez en binôme selon le modèle \textbf{Conducteur/Navigateur} (\emph{Driver/Navigator}).
+
+\begin{itemize}
+  \item Chaque groupe ne peut avoir qu'un seul \textbf{Conducteur} — ses mains sont sur le clavier, son travail consiste à gérer la frappe, les clics, les raccourcis, etc.
+  \item Si vous n'êtes pas Conducteur, vous êtes \textbf{Navigateur} — votre travail est de dire au Conducteur où aller, quoi taper, etc.
+  \item Un bon Conducteur ne tape \emph{que} ce que le Navigateur lui dit de taper, et un bon Navigateur donne des instructions claires et précises.
+\end{itemize}
+
+\begin{instructornotes}
+  Ce modèle de programmation en binôme est extrêmement utile pour séparer l'étape de «~réflexion~» de celle de «~frappe~». Les élèves — surtout ceux qui découvrent la programmation textuelle ou la frappe elle-même — peuvent avoir du mal à mettre leurs idées dans l'environnement de programmation.
+
+  Ce modèle leur permet de se concentrer sur la \emph{communication de leurs idées}, en laissant le Conducteur se concentrer sur le code. De même, le Conducteur a l'occasion de se concentrer sur la syntaxe et la programmation. Enfin, l'obligation de faire passer les idées par les mains d'une autre personne est un excellent échafaudage pour amener les élèves à parler de leur raisonnement et du code.
+\end{instructornotes}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Ouvrez \href{https://pyret.bootstrapworld.org}{pyret.BootstrapWorld.org} (BPO).
+    \item Qu'est-ce que vous remarquez~? Qu'est-ce qui vous intrigue~?
+  \end{itemize}
+\end{activitybox}
+
+\img{images/editeur-pyret.png}{width=0.7\textwidth}{L'environnement d'édition Pyret : les définitions à gauche, les interactions à droite}
+
+Cet écran s'appelle l'\textbf{éditeur}. Il y a quelques boutons en haut, mais la majeure partie de l'écran est occupée par deux grandes zones~: la \textbf{Zone de Définitions} à gauche et la \textbf{Zone d'Interactions} à droite.
+
+\begin{itemize}
+  \item La \textbf{Zone de Définitions} est l'endroit où les programmeurs définissent des valeurs et des fonctions qu'ils veulent conserver.
+  \item La \textbf{Zone d'Interactions} leur permet d'expérimenter avec ces valeurs et fonctions. C'est comme si on mettait un ensemble de définitions de fonctions au tableau et qu'on demandait aux élèves d'utiliser ces fonctions pour calculer des réponses sur du papier brouillon.
+\end{itemize}
+
+\begin{keypointbox}
+  Chaque fois qu'on ouvre un fichier ou qu'on fait une modification dans la Zone de Définitions, il faut cliquer sur \textbf{«~Run~»} pour charger le programme.
+
+  Cliquer sur «~Run~» efface également la Zone d'Interactions. Pour l'instant, nous écrirons uniquement des programmes dans la Zone d'Interactions à droite.
+\end{keypointbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration}
+
+Les mathématiques sont un langage, tout comme le français, l'anglais ou n'importe quelle autre langue.
+
+\begin{itemize}
+  \item Les langues ont des \textbf{noms} (ex.~: «~ballon~», «~tomate~», etc.) et des \textbf{verbes}, qui sont des actions qu'on peut effectuer sur ces noms (ex.~: je peux «~lancer un ballon~»).
+  \begin{itemize}
+    \item Les maths et la programmation ont des \textbf{valeurs}, comme les nombres 1, 2 et 3.
+    \item Au lieu de verbes, les maths et la programmation ont des \textbf{fonctions}, qui sont des actions qu'on peut effectuer sur des valeurs (ex.~: «~je peux élever un nombre au carré~»).
+  \end{itemize}
+
+  \item Les langues ont des règles de \textbf{syntaxe}.
+  \begin{itemize}
+    \item En français, par exemple, les mots n'ont pas de \texttt{!} et \texttt{?} au milieu.
+    \item En maths et en programmation, les nombres n'ont pas de \texttt{\&} dedans.
+  \end{itemize}
+
+  \item Les langues ont aussi des règles de \textbf{grammaire}.
+  \begin{itemize}
+    \item \emph{Le chat dort.} est une phrase.
+    \item \emph{Dort le chat.} est grammaticalement bizarre, même si tous les mots ont une syntaxe valide.
+    \item L'ordre des mots compte~!
+  \end{itemize}
+\end{itemize}
+
+\begin{keypointbox}
+  Garder à l'esprit l'importance de la \textbf{syntaxe} et de la \textbf{grammaire} est utile quand on apprend à programmer~!
+\end{keypointbox}
+
+\subsubsection{Nombres}
+
+Essayons quelques expressions simples dans la Zone d'Interactions~:
+
+\begin{codeexample}
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{1} \hspace{2em} $\rightarrow$ \texttt{1}
+    \item \pyret{-4.7} \hspace{2em} $\rightarrow$ \texttt{-4.7}
+    \item \pyret{1/3} \hspace{2em} $\rightarrow$ \texttt{1/3} \textit{(cliquez pour voir le nombre décimal \texttt{0.333333})}
+    \item \pyret{6 * 4} \hspace{2em} $\rightarrow$ \texttt{24}
+    \item \pyret{2 + 3 * 4} \hspace{2em} $\rightarrow$ \texttt{14} \textit{(la multiplication est prioritaire)}
+    \item \pyret{(2 + 3) * 4} \hspace{2em} $\rightarrow$ \texttt{20} \textit{(les parenthèses changent l'ordre)}
+    \item \pyret{10 - 3 + 1} \hspace{2em} $\rightarrow$ \texttt{8}
+  \end{itemize}
+\end{codeexample}
+
+\subsubsection{Chaînes de caractères}
+
+Une \textbf{chaîne de caractères} (\emph{String}) est tout ce qui est entre guillemets~:
+
+\begin{codeexample}
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{"Bonjour, monde !"} \hspace{2em} $\rightarrow$ \texttt{"Bonjour, monde !"}
+    \item \pyret{"42"} \hspace{2em} $\rightarrow$ \texttt{"42"} \textit{(c'est une chaîne, pas un nombre~!)}
+    \item \pyret{"hello" + "world"} \hspace{2em} $\rightarrow$ \texttt{"helloworld"}
+  \end{itemize}
+\end{codeexample}
+
+\subsubsection{Messages d'erreur}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Avez-vous obtenu des messages d'erreur~? Qu'en avez-vous appris~?
+  \end{itemize}
+\end{activitybox}
+
+\begin{instructornotes}
+  La plupart des messages d'erreur que nous avons vus attirent notre attention sur des erreurs de syntaxe~: virgules manquantes, guillemets non fermés, etc.
+
+  Les messages d'erreur sont un moyen pour Pyret d'expliquer ce qui n'a pas fonctionné, et sont vraiment utiles pour trouver les erreurs. Soulignez leur utilité et expliquez pourquoi les élèves devraient \emph{lire ces messages à voix haute} avant de demander de l'aide.
+\end{instructornotes}
+
+Faites découvrir aux élèves les erreurs suivantes~:
+
+\begin{errorbox}
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{6 / 0} \hspace{2em} Comme les humains, Pyret ne peut pas diviser par zéro et donne une erreur.
+    \item \pyret{(2 + 2} \hspace{2em} Une parenthèse non fermée pose problème, tout comme un guillemet non fermé.
+  \end{itemize}
+\end{errorbox}
+
+\subsubsection{Pièges fréquents}
+
+\begin{instructornotes}
+  En Pyret, écrire un nombre décimal comme \texttt{.5} (sans le zéro devant) produit une erreur de syntaxe. Assurez-vous que les élèves comprennent que Pyret exige que les nombres décimaux commencent par un zéro~: \texttt{0.5} et non \texttt{.5}~!
+\end{instructornotes}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Qu'avons-nous appris sur Pyret~?}
+    \begin{itemize}
+      \item Les Nombres et les Chaînes s'évaluent en eux-mêmes.
+      \item Notre éditeur est assez malin et peut basculer automatiquement entre l'affichage d'un nombre rationnel en fraction ou en décimal, simplement en cliquant dessus~!
+      \item Tout ce qui est entre guillemets est une Chaîne, même quelque chose comme \pyret{"42"}.
+      \item Les Chaînes \emph{doivent} avoir des guillemets des deux côtés.
+      \item Les opérateurs comme \pyret{+}, \pyret{-}, \pyret{*} et \pyret{/} ont besoin d'espaces autour d'eux.
+      \item Dans Pyret, les opérateurs fonctionnent exactement comme en mathématiques.
+      \item Dès qu'il y a plus d'un opérateur, Pyret exige l'utilisation de parenthèses pour définir l'ordre des opérations.
+      \item \textbf{Les types comptent~!} On peut additionner deux Nombres ou deux Chaînes entre eux, mais on ne peut pas additionner le Nombre \texttt{4} à la Chaîne \pyret{"bonjour"}.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{itemize}
+  \item Quelles autres questions avez-vous sur le fonctionnement des Chaînes et des Nombres dans Pyret~?
+\end{itemize}
+
+\newpage
+
+% ===========================================================================
+% SECTION 2 : BOOLÉENS
+% ===========================================================================
+\section{Booléens}
+
+\begin{overviewbox}
+  Cette leçon présente aux élèves les Booléens, un type de données unique avec seulement deux valeurs~: \texttt{true} et \texttt{false}, et explique pourquoi ils sont utiles à la fois dans le monde réel et dans l'environnement de programmation.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+\begin{thinkbox}
+  \centering
+  \textbf{Quelle est la réponse~: est-ce que 3 est plus grand que 10~?}
+\end{thinkbox}
+
+Les expressions qui produisent des Booléens sont des questions oui-ou-non et s'évaluent toujours soit à \texttt{true} («~oui~»), soit à \texttt{false} («~non~»).
+
+\begin{keypointbox}
+  La capacité de séparer des entrées en \textbf{deux catégories} est unique et très utile~!
+\end{keypointbox}
+
+\img{images/toise-manege.png}{width=0.4\textwidth}{Panneau de taille minimum pour un manège}
+
+Par exemple~: certains montagnes russes avec des loopings exigent une taille minimum pour s'assurer que les passagers sont bien maintenus par les harnais universels. Le contrôleur ne se soucie pas de votre taille exacte~; il vérifie juste si vous êtes aussi grand que la marque sur le poteau. Si vous êtes assez grand, vous pouvez monter~; sinon, on ne vous laisse pas entrer parce qu'on ne peut pas garantir votre sécurité.
+
+De même, quand vous vous connectez à votre messagerie, l'ordinateur demande votre mot de passe et vérifie s'il correspond à ce qui est enregistré. Si la correspondance est \texttt{true}, il vous amène à vos messages, mais si ce que vous entrez ne correspond pas, vous obtenez un message d'erreur.
+
+\begin{activitybox}
+  \textbf{Brainstorming} : trouvez d'autres situations où les Booléens sont utiles, dans la vie réelle et en programmation.
+\end{activitybox}
+
+% ---------- Investigate ----------
+\subsection{Exploration}
+
+Les élèves font des prédictions sur ce que diverses expressions booléennes vont renvoyer, puis les testent dans l'éditeur.
+
+\begin{codeexample}
+  Voici les opérateurs de comparaison en Pyret~:
+
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Opérateur} & \textbf{Signification} & \textbf{Exemple} \\
+    \midrule
+    \pyret{<}  & strictement inférieur  & \pyret{3 < 10} $\rightarrow$ \texttt{true} \\
+    \pyret{>}  & strictement supérieur  & \pyret{3 > 10} $\rightarrow$ \texttt{false} \\
+    \pyret{<=} & inférieur ou égal      & \pyret{5 <= 5} $\rightarrow$ \texttt{true} \\
+    \pyret{>=} & supérieur ou égal      & \pyret{7 >= 3} $\rightarrow$ \texttt{true} \\
+    \pyret{==} & égal                   & \pyret{4 == 4} $\rightarrow$ \texttt{true} \\
+    \pyret{<>} & différent              & \pyret{4 <> 5} $\rightarrow$ \texttt{true} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{codeexample}
+
+\subsubsection{Types et comparaisons}
+
+\begin{activitybox}
+  Essayez ces expressions dans Pyret et notez les résultats~:
+
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{10 > 5}
+    \item \pyret{10 < 5}
+    \item \pyret{10 == 10}
+    \item \pyret{10 <> 10}
+    \item \pyret{"chat" == "chat"}
+    \item \pyret{"chat" == "chien"}
+    \item \pyret{10 > "5"} \hspace{2em} \textit{(que se passe-t-il~?)}
+  \end{itemize}
+\end{activitybox}
+
+\begin{keypointbox}
+  On ne peut pas comparer un Nombre avec une Chaîne~! Pyret donne une erreur parce que les \textbf{types} ne sont pas compatibles.
+
+  Le type détermine ce qu'on peut faire avec une valeur~:
+  \begin{itemize}
+    \item On peut additionner deux Nombres~: \pyret{3 + 4} $\rightarrow$ \texttt{7}
+    \item On peut concaténer deux Chaînes~: \pyret{"bon" + "jour"} $\rightarrow$ \texttt{"bonjour"}
+    \item On peut comparer deux Nombres~: \pyret{5 > 3} $\rightarrow$ \texttt{true}
+    \item Mais on ne peut pas additionner un Nombre et une Chaîne~: \pyret{3 + "jour"} $\rightarrow$ \textbf{erreur~!}
+  \end{itemize}
+\end{keypointbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Qu'est-ce qui distingue les Booléens des autres types de données~?}
+    \begin{itemize}
+      \item Ils permettent de séparer les données en deux tas~: les valeurs qui renvoient \texttt{true} et celles qui renvoient \texttt{false}.
+    \end{itemize}
+    \item \textbf{Pourquoi est-ce utile~?}
+    \begin{itemize}
+      \item Cela permet de prendre des \textbf{décisions} dans un programme.
+      \item C'est la base des \textbf{conditions} (si/alors/sinon) qu'on verra plus tard.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% RÉSUMÉ DES TYPES DE DONNÉES SIMPLES
+% ===========================================================================
+\section*{Résumé~: les trois types de données simples}
+
+\begin{center}
+\begin{tabular}{llll}
+  \toprule
+  \textbf{Type} & \textbf{Exemples} & \textbf{Opérations} & \textbf{Valeurs possibles} \\
+  \midrule
+  Nombre   & \pyret{42}, \pyret{-3.14}, \pyret{1/3}  & \pyret{+}, \pyret{-}, \pyret{*}, \pyret{/} & Une infinité \\
+  Chaîne   & \pyret{"bonjour"}, \pyret{"42"}         & \pyret{+} (concaténation) & Une infinité \\
+  Booléen  & \pyret{true}, \pyret{false}             & \pyret{<}, \pyret{>}, \pyret{==}, \pyret{<>} & Seulement 2~: \texttt{true} ou \texttt{false} \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{2em}
+
+\begin{keypointbox}
+  \textbf{Les types sont votre ami~!}
+
+  Quand une erreur de type survient, Pyret vous le dit. C'est une bonne chose~: cela vous évite d'écrire du code qui n'a pas de sens. Apprendre à lire les messages d'erreur de type est une compétence fondamentale en programmation.
+\end{keypointbox}
+
+% ===========================================================================
+% À PROPOS
+% ===========================================================================
+\section*{À propos de ces supports}
+
+Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
+
+\begin{center}
+  \includegraphics[width=2cm]{images/CCbadge.png}
+
+  \textbf{Bootstrap} par la Communauté Bootstrap est sous licence Creative Commons 4.0 Unported.\\[0.5em]
+  \textit{Traduction française réalisée en juillet 2026.}\\
+  \textit{Source originale~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/simple-data-types/}}
+\end{center}
+
+\end{document}
