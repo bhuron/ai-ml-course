@@ -280,20 +280,22 @@ Le correcteur orthographique intégré à votre navigateur web est un exemple cl
 
 \paragraph{Dictionnaires disponibles}
 
-Le fichier contient quatre dictionnaires français de tailles différentes~:
+Le fichier de démarrage est \textbf{autonome}~: toutes les fonctions sont implémentées directement dans le code, sans dépendance externe. Il contient un dictionnaire embarqué~:
 
 \begin{center}
 \begin{tabular}{lll}
   \toprule
   \textbf{Nom} & \textbf{Taille} & \textbf{Description} \\
   \midrule
-  \texttt{WORDS-XS-FR} & 100 mots  & Dictionnaire minimal (mots de 5 lettres) \\
-  \texttt{WORDS-S-FR}  & 5~000 mots  & Mots français les plus courants \\
-  \texttt{WORDS-M-FR}  & 13~000 mots & Mots français courants \\
-  \texttt{WORDS-L-FR}  & 40~000 mots & Large dictionnaire français \\
+  \texttt{WORDS-XS-FR} & 100 mots  & Dictionnaire minimal (mots de 5 lettres), embarqué \\
+  \texttt{WORDS-S-FR}  & 5~000 mots  & À charger depuis \texttt{dictionaries/WORDS-S-FR.txt} \\
+  \texttt{WORDS-M-FR}  & 13~000 mots & À charger depuis \texttt{dictionaries/WORDS-M-FR.txt} \\
+  \texttt{WORDS-L-FR}  & 40~000 mots & À charger depuis \texttt{dictionaries/WORDS-L-FR.txt} \\
   \bottomrule
 \end{tabular}
 \end{center}
+
+L'alphabet utilisé (\texttt{ALPHABET-FR-SIMPLE}) inclut les 26 lettres de base + les 6 accents les plus courants (é, è, ê, à, ù, ç). Une version complète (\texttt{ALPHABET-FR}) est également disponible avec æ, œ, ë, ï, ô, ö, û, ü.
 
 \subsubsection{Particularités du français}
 
@@ -304,12 +306,12 @@ Le français pose un défi supplémentaire par rapport à l'anglais pour la corr
 
   \vspace{0.3em}
   \begin{tabularx}{\textwidth}{lX}
-    \texttt{subs(mot)}     & Remplace chaque lettre une par une par toutes les lettres de l'alphabet (26~×~$n$~variantes). Ex.~: \texttt{subs("chein")} génère «~chein, ahien, bhien, \ldots, chien, \ldots{}~» \\
-    \texttt{swaps(mot)}    & Échange chaque paire de lettres adjacentes ($n-1$~variantes). Ex.~: \texttt{swaps("chein")} génère «~hcein, cehin, chien, chein~» \\
-    \texttt{insertions(mot)} & Insère chaque lettre de l'alphabet à chaque position (26~×~$(n+1)$~variantes). Ex.~: \texttt{insertions("aboi")} génère «~aaboi, baboi, \ldots, aboie, aboia, \ldots{}~» \\
-    \texttt{deletions(mot)}  & Supprime chaque lettre une par une ($n$~variantes). Ex.~: \texttt{deletions("vossinage")} génère «~ossinage, vssinage, vosinage, \ldots{}~» \\
+    \texttt{subs(mot, alpha)}     & Remplace chaque lettre une par une par toutes les lettres de l'alphabet. Ex.~: \texttt{subs("chein", ALPHABET-FR-SIMPLE)} génère «~ahien, bhien, \ldots, chien, \ldots{}~» \\
+    \texttt{swaps(mot)}    & Échange chaque paire de lettres adjacentes. Ex.~: \texttt{swaps("chein")} génère «~hcein, cehin, chien, chein~» \\
+    \texttt{insertions(mot, alpha)} & Insère chaque lettre de l'alphabet à chaque position. Ex.~: \texttt{insertions("aboi", ALPHABET-FR-SIMPLE)} génère «~aaboi, baboi, \ldots, aboie, \ldots{}~» \\
+    \texttt{deletions(mot)}  & Supprime chaque lettre une par une. Ex.~: \texttt{deletions("vossinage")} génère «~ossinage, \ldots, voisinage, \ldots{}~» \\
     \texttt{only-real(liste, dico)} & Filtre une liste pour ne garder que les mots présents dans le dictionnaire. \\
-    \texttt{alt-words(mot, dico, n)} & Combine toutes les fonctions ci-dessus et trouve tous les mots du dictionnaire à distance d'édition $\leq$~\texttt{n}. \\
+    \texttt{alt-words(mot, dico, n, alpha)} & Combine toutes les fonctions et trouve les mots du dictionnaire à distance $\leq$~\texttt{n}. \\
   \end{tabularx}
 \end{codebox}
 
@@ -408,7 +410,7 @@ Le français pose un défi supplémentaire par rapport à l'anglais pour la corr
   Expérimentons avec une liste de suggestions plus grande\ldots{}
 
   \begin{itemize}
-    \item Dans la fenêtre d'interactions à droite, évaluez \texttt{alt-words("plation", WORDS-L-FR, 4)}.
+    \item Dans la fenêtre d'interactions à droite, évaluez \texttt{alt-words("plation", WORDS-L-FR, 4, ALPHABET-FR-SIMPLE)}.
     \begin{itemize}
       \item Combien de temps Pyret a-t-il mis pour générer toutes les substitutions, suppressions, insertions et échanges, puis filtrer pour ne garder que les vrais mots~?
       \item \emph{Un bon moment~!}
@@ -422,7 +424,7 @@ Le français pose un défi supplémentaire par rapport à l'anglais pour la corr
 Quand on demande à Pyret de faire quelque chose encore et encore, il n'a aucun moyen de savoir qu'il devrait sauvegarder son travail~! Résultat~: \emph{il refait le travail encore et encore~!} Heureusement, le monde des mathématiques a une solution~: \textbf{définir une variable}.
 
 \begin{codebox}
-  Évaluez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4)}.
+  Évaluez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4, ALPHABET-FR-SIMPLE)}.
 
   \begin{itemize}
     \item Est-ce que quelque chose est revenu~? Pourquoi~?
@@ -441,7 +443,7 @@ Quand on veut que Pyret \emph{se souvienne} d'une définition, on l'ajoute à la
 
 \begin{activitybox}
   \begin{itemize}
-    \item Ajoutez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4)} comme \textbf{dernière ligne de la zone de définitions}, et cliquez sur «~Run~». Évaluez \texttt{resultats} dans la zone d'interactions.
+    \item Ajoutez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4, ALPHABET-FR-SIMPLE)} comme \textbf{dernière ligne de la zone de définitions}, et cliquez sur «~Run~». Évaluez \texttt{resultats} dans la zone d'interactions.
     \item Que se passe-t-il si vous ajoutez une autre définition qui \emph{a aussi} le nom \texttt{resultats}~?
   \end{itemize}
 \end{activitybox}
@@ -516,7 +518,8 @@ Ces défis expliquent pourquoi les correcteurs orthographiques modernes combinen
   \toprule
   \textbf{Fichier} & \textbf{Description} \\
   \midrule
-  \texttt{Correcteur-Orthographique-Starter.arr} & Fichier Pyret adapté au français \\
+  \texttt{Correcteur-Orthographique-Starter.arr} & Fichier Pyret autonome (tout réimplémenté) \\
+  \texttt{algorithmes-pilotés-donnees.tex} & Document de cours (ce fichier) \\
   \texttt{dictionaries/WORDS-XS-FR.txt} & 100 mots français de 5 lettres \\
   \texttt{dictionaries/WORDS-S-FR.txt}  & 5~000 mots français courants \\
   \texttt{dictionaries/WORDS-M-FR.txt}  & 13~000 mots français \\
@@ -525,6 +528,9 @@ Ces défis expliquent pourquoi les correcteurs orthographiques modernes combinen
   \bottomrule
 \end{tabular}
 \end{center}
+
+\vspace{1em}
+\textbf{À noter~:} contrairement à la version anglaise originale qui charge une bibliothèque distante, le fichier \texttt{.arr} est entièrement autonome. Toutes les fonctions (\texttt{subs}, \texttt{swaps}, \texttt{insertions}, \texttt{deletions}, \texttt{only-real}, \texttt{alt-words}) sont réimplémentées en Pyret pur. L'alphabet inclut les caractères accentués français, et le dictionnaire \texttt{WORDS-XS-FR} (100 mots) est embarqué pour des démonstrations instantanées. Les grands dictionnaires sont à charger depuis les fichiers \texttt{.txt} du dossier \texttt{dictionaries/}.
 
 \section*{À propos de ces supports}
 
