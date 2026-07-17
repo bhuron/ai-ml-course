@@ -57,6 +57,7 @@ end
 # Exemple : subs("chian") génère "ahian", "bhian", ..., "chien", ..., "chiaœ"
 
 fun subs(word :: String, alphabet :: List<String>) -> List<String>:
+  doc: "Remplace chaque lettre du mot par toutes les lettres de l'alphabet"
   for fold(acc from empty, i from range(0, string-length(word))):
     orig-letter = string-substring(word, i, i + 1)
     before = string-substring(word, 0, i)
@@ -78,6 +79,7 @@ end
 # Exemple : swaps("chein") génère "hcein", "cehin", "chien", "cheïn"
 
 fun swaps(word :: String) -> List<String>:
+  doc: "Échange chaque paire de lettres adjacentes"
   for map(i from range(0, string-length(word) - 1)):
     c1 = string-substring(word, i, i + 1)
     c2 = string-substring(word, i + 1, i + 2)
@@ -93,6 +95,7 @@ end
 # Exemple : insertions("aboi") génère "aaboi", "baboi", ..., "aboie", ...
 
 fun insertions(word :: String, alphabet :: List<String>) -> List<String>:
+  doc: "Insère chaque lettre de l'alphabet à chaque position possible"
   for fold(acc from empty, i from range(0, string-length(word) + 1)):
     before = string-substring(word, 0, i)
     after = string-substring(word, i, string-length(word))
@@ -106,9 +109,10 @@ end
 # ─── SUPPRESSION ────────────────────────────────────────────────────────────
 # Supprime chaque lettre du mot, une par une.
 # Pour un mot de n lettres : n variantes.
-# Exemple : deletions("vossinage") génère "ossinage", "vssinage", "voisinage", ...
+# Exemple : deletions("for") génère "fo", "fr", "or", "fo"
 
 fun deletions(word :: String) -> List<String>:
+  doc: "Supprime chaque lettre du mot, une par une"
   for map(i from range(0, string-length(word))):
     before = string-substring(word, 0, i)
     after = string-substring(word, i + 1, string-length(word))
@@ -124,6 +128,7 @@ end
 # Supprime aussi les doublons et les chaînes vides.
 
 fun only-real(words :: List<String>, dict :: List<String>) -> List<String>:
+  doc: "Filtre pour ne garder que les mots présents dans le dictionnaire"
   clean = L.filter(lam(w): string-length(w) > 0 end, words)
   uniq = L.distinct(clean)
   L.filter(lam(w): L.member(dict, w) end, uniq)
@@ -151,6 +156,7 @@ fun alt-words(
     edits :: Number,
     alphabet :: List<String>
   ) -> List<String>:
+  doc: "Trouve tous les mots du dictionnaire à distance ≤ edits"
   if edits <= 0:
     if L.member(dict, word): [list: word] else: empty end
   else:
@@ -244,9 +250,9 @@ WORDS-XS-FR = [list:
 #   L.member(insertions("aboi", ALPHABET-FR-SIMPLE), "aboie") is true
 # end
 
-# Test : deletions sur "vossinage" → devrait contenir "voisinage"
-# check "deletions trouve voisinage":
-#   L.member(deletions("vossinage"), "voisinage") is true
+# Test : swaps sur "vossinage" → devrait contenir "voisinage"
+# check "swaps trouve voisinage":
+#   L.member(swaps("vossinage"), "voisinage") is true
 # end
 
 # ─── DÉMO : phrase de la leçon ──────────────────────────────────────────────
