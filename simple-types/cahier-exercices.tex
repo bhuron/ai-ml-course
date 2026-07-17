@@ -1,0 +1,263 @@
+% ===========================================================================
+% Cahier d'exercices — Types de données simples
+% Traduit et adapté de Bootstrap World (Fall 2026)
+% Licence : Creative Commons 4.0 Unported
+% ===========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[raster]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
+\fancyhf{}
+\fancyhead[L]{\textbf{Cahier d'exercices — Types de données simples}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Bootstrap Community — CC BY 4.0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+\definecolor{bsblue}{RGB}{41,128,185}
+\definecolor{bsgreen}{RGB}{39,174,96}
+\definecolor{bsgray}{RGB}{149,165,166}
+
+\titleformat{\section}[hang]{\Large\bfseries\color{bsblue}}{}{0pt}{}
+\titleformat{\subsection}[hang]{\large\bfseries\color{bsblue!80!black}}{}{0pt}{}
+
+\newtcolorbox{keypointbox}{
+  colback=bsgray!10!white, colframe=bsgray!50!white,
+  fonttitle=\bfseries, title=Rappel,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+
+\newcommand{\pyret}[1]{\texttt{#1}}
+\newcommand{\ligne}[1]{\vspace{0.3em}\par\noindent\dotfill\par\vspace{0.3em}}
+
+\title{%
+  {\Huge\bfseries Types de données simples}\\[0.5em]
+  {\Large Cahier d'exercices}\\[1em]
+  {\normalsize Nom~: \makebox[6cm]{\dotfill}}\\[0.5em]
+  {\normalsize Traduit de \href{https://www.bootstrapworld.org/}{Bootstrap World} (Fall 2026) — CC BY 4.0}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+
+% ===========================================================================
+% INTRODUCTION
+% ===========================================================================
+\section*{Introduction à la programmation en un clin d'œil}
+
+\subsection*{L'éditeur}
+
+L'\textbf{éditeur} est le logiciel qu'on utilise pour écrire du \textbf{code}. Notre éditeur nous permet d'expérimenter avec du code à droite, dans la \textbf{Zone d'Interactions}. Pour le code qu'on veut \emph{conserver}, on le place à gauche dans la \textbf{Zone de Définitions}. Cliquer sur le bouton «~Run~» demande à l'ordinateur de relire tout ce qui se trouve dans la Zone de Définitions et d'effacer tout ce qui a été tapé dans la Zone d'Interactions.
+
+\subsection*{Types de données}
+
+Les langages de programmation utilisent différents \textbf{types de données}, comme les Nombres, les Chaînes de caractères, les Booléens et même les Images.
+
+\begin{itemize}
+  \item Les \textbf{Nombres} sont des valeurs comme \pyret{1}, \pyret{7/8} et \pyret{-8261,003}. Les nombres sont généralement utilisés pour des données quantitatives.
+  \item Dans Pyret, les nombres décimaux \emph{doivent} commencer par un zéro. Par exemple, \pyret{0.22} est valide, mais \pyret{.22} ne l'est pas.
+  \item Les \textbf{Chaînes de caractères} sont des valeurs comme \pyret{"Emma"}, \pyret{"Rosanna"}, \pyret{"Jean et Ed"}, ou même \pyret{"08/28/1980"}. Toutes les chaînes doivent être entourées de guillemets.
+  \item Les \textbf{Booléens} sont soit \pyret{true} (vrai), soit \pyret{false} (faux).
+\end{itemize}
+
+\begin{keypointbox}
+  Toutes les valeurs s'évaluent en elles-mêmes. Le programme \pyret{42} s'évaluera en \pyret{42}, la Chaîne \pyret{"Bonjour"} s'évaluera en \pyret{"Bonjour"}, et le Booléen \pyret{false} s'évaluera en \pyret{false}.
+\end{keypointbox}
+
+\subsection*{Opérateurs}
+
+Les \textbf{opérateurs} (comme \pyret{+}, \pyret{-}, \pyret{*}, \pyret{<}, etc.) fonctionnent dans Pyret de la même façon qu'en mathématiques.
+
+\begin{itemize}
+  \item Les opérateurs s'écrivent \emph{entre} les valeurs, par exemple~: \pyret{4 + 2}.
+  \item Dans Pyret, les opérateurs doivent \emph{toujours} avoir des espaces autour d'eux. \pyret{4 + 2} est valide, mais \pyret{4+2} ne l'est pas.
+  \item Si une expression contient des opérateurs différents, il faut utiliser des parenthèses pour indiquer l'ordre des opérations. \pyret{4 + 2 + 6} et \pyret{4 + (2 * 6)} sont valides, mais \pyret{4 + 2 * 6} ne l'est pas.
+\end{itemize}
+
+\subsection*{Appliquer des fonctions}
+
+Les fonctions fonctionnent à peu près comme en mathématiques. Chaque fonction a un \textbf{nom}, prend des \textbf{entrées} et produit une \textbf{sortie}. Le nom de la fonction est écrit en premier, suivi d'une liste d'arguments entre parenthèses.
+
+\begin{itemize}
+  \item En maths, cela pourrait ressembler à $f(5)$ ou $g(10, 4)$.
+  \item Dans Pyret, ces exemples s'écriraient \pyret{f(5)} et \pyret{g(10, 4)}.
+  \item Appliquer une fonction pour créer des images ressemblerait à \pyret{star(50, "solid", "red")} (étoile, pleine, rouge).
+  \item Il existe beaucoup d'autres fonctions dans Pyret, par exemple \pyret{sqr}, \pyret{sqrt}, \pyret{triangle}, \pyret{square}, \pyret{string-repeat}, etc.
+\end{itemize}
+
+Les fonctions ont des \textbf{contrats}, qui aident à expliquer comment une fonction doit être utilisée. Chaque contrat a trois parties~:
+\begin{enumerate}[leftmargin=*]
+  \item Le \textbf{Nom} de la fonction — littéralement, comment elle s'appelle.
+  \item Le \textbf{Domaine} de la fonction — quel(s) type(s) de valeur(s) la fonction consomme, et dans quel ordre.
+  \item L'\textbf{Image} (\emph{Range}) de la fonction — quel type de valeur la fonction produit.
+\end{enumerate}
+
+\newpage
+
+% ===========================================================================
+% EXERCICES : CHAÎNES ET NOMBRES
+% ===========================================================================
+\section{Chaînes de caractères et nombres}
+
+\begin{keypointbox}
+  Assurez-vous d'avoir chargé \href{https://pyret.bootstrapworld.org}{pyret.BootstrapWorld.org} (BPO), cliqué sur «~Run~» et de travailler dans la Zone d'Interactions à droite. Appuyez sur Entrée pour évaluer les expressions que vous testez.
+\end{keypointbox}
+
+\subsection*{Chaînes de caractères}
+
+\emph{Les valeurs de type Chaîne sont toujours entre guillemets.}
+
+Essayez de taper votre prénom (entre guillemets~!).
+
+Essayez de taper une phrase comme \pyret{"Je suis content·e d'apprendre à coder~!"} (entre guillemets~!).
+
+Essayez de taper votre prénom avec le guillemet ouvrant, mais sans le guillemet fermant. \textbf{Lisez le message d'erreur~!}
+
+Essayez maintenant de taper votre prénom sans aucun guillemet. \textbf{Lisez le message d'erreur~!}
+
+\begin{enumerate}[leftmargin=*]
+  \item Explique ce que tu as compris sur le fonctionnement des chaînes de caractères dans ce langage de programmation.
+
+  \ligne{5}
+\end{enumerate}
+
+\subsection*{Nombres}
+
+\begin{enumerate}[leftmargin=*,resume]
+  \item Tape \pyret{42} dans la Zone d'Interactions et appuie sur «~Entrée~». Est-ce que \pyret{42} est la même chose que \pyret{"42"}~? Pourquoi ou pourquoi pas~?
+
+  \ligne{4}
+
+  \item Quel est le plus grand nombre que l'éditeur peut gérer~?
+
+  \ligne{2}
+
+  \item Tape \pyret{.5}. Puis tape \pyret{0.5}. Puis clique sur la réponse. Expérimente avec d'autres nombres décimaux. Explique ce que tu as compris sur le fonctionnement des décimaux dans ce langage de programmation.
+
+  \ligne{5}
+
+  \item Que se passe-t-il si tu essaies une fraction comme \pyret{1/3}~?
+
+  \ligne{3}
+
+  \item Essaie d'écrire des entiers négatifs, des fractions et des décimaux. Qu'apprends-tu~?
+
+  \ligne{3}
+\end{enumerate}
+
+\subsection*{Opérateurs}
+
+\begin{enumerate}[leftmargin=*,resume]
+  \item Comme en maths, Pyret a des opérateurs comme \pyret{+}, \pyret{-}, \pyret{*} et \pyret{/}. Tape \pyret{4 + 2} puis \pyret{4+2} (sans les espaces). Que peux-tu en conclure~?
+
+  \ligne{3}
+
+  \item Tape les expressions suivantes, une par une~:
+
+  \begin{center}
+  \pyret{4 + 2 * 6} \hspace{3em} \pyret{4 + (2 * 6)} \hspace{3em} \pyret{(4 + 2) * 6}
+  \end{center}
+
+  Que remarques-tu~?
+
+  \ligne{4}
+
+  \item Essaie de taper \pyret{4 + "chat"}, puis \pyret{"chien" + "chat"}. Que peux-tu en conclure~?
+
+  \ligne{4}
+\end{enumerate}
+
+\newpage
+
+% ===========================================================================
+% EXERCICES : BOOLÉENS
+% ===========================================================================
+\section{Booléens}
+
+\begin{keypointbox}
+  Les expressions qui produisent des Booléens sont des questions oui-ou-non, et s'évaluent toujours soit à \pyret{true} («~oui~»), soit à \pyret{false} («~non~»).
+\end{keypointbox}
+
+Que vont donner les expressions ci-dessous~? Écris d'abord ta \textbf{prédiction}, puis tape le code dans la Zone d'Interactions pour voir le \textbf{résultat}.
+
+\subsection*{Partie A — Comparaisons numériques}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{cXcX}
+  \toprule
+  \textbf{N\textdegree} & \textbf{Expression} & \textbf{Prédiction} & \textbf{Résultat} \\
+  \midrule
+  1  & \pyret{3 <= 4}  & \hspace{3cm} & \hspace{3cm} \\[0.4cm]
+  3  & \pyret{3 == 2}  & & \\[0.4cm]
+  5  & \pyret{2 < 4}   & & \\[0.4cm]
+  7  & \pyret{5 >= 5}  & & \\[0.4cm]
+  9  & \pyret{4 >= 6}  & & \\[0.4cm]
+  11 & \pyret{3 <> 3}  & & \\[0.4cm]
+  13 & \pyret{4 <> 3}  & & \\[0.4cm]
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection*{Partie B — Comparaisons de chaînes}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{cXcX}
+  \toprule
+  \textbf{N\textdegree} & \textbf{Expression} & \textbf{Prédiction} & \textbf{Résultat} \\
+  \midrule
+  2  & \pyret{"a" > "b"}  & \hspace{3cm} & \hspace{3cm} \\[0.4cm]
+  4  & \pyret{"a" < "b"}  & & \\[0.4cm]
+  6  & \pyret{"a" == "b"} & & \\[0.4cm]
+  8  & \pyret{"a" <> "a"} & & \\[0.4cm]
+  10 & \pyret{"a" >= "a"} & & \\[0.4cm]
+  12 & \pyret{"a" <> "b"} & & \\[0.4cm]
+  14 & \pyret{"a" >= "b"} & & \\[0.4cm]
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection*{Partie C — Compréhension}
+
+\begin{enumerate}[leftmargin=*,resume]
+  \item Avec tes propres mots, décris ce que fait \pyret{<}.
+
+  \ligne{2}
+
+  \item Avec tes propres mots, décris ce que fait \pyret{>=}.
+
+  \ligne{2}
+
+  \item Avec tes propres mots, décris ce que fait \pyret{<>}.
+
+  \ligne{2}
+\end{enumerate}
+
+\vspace{2em}
+
+\begin{center}
+  \textit{Adapté de \href{https://www.bootstrapworld.org/}{Bootstrap World} (Fall 2026), licence Creative Commons 4.0 International.}
+\end{center}
+
+\end{document}
