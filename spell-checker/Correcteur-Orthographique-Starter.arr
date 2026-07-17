@@ -66,7 +66,7 @@ fun subs(word :: String, alphabet :: List<String>) -> List<String>:
       if letter == orig-letter: # ne pas générer le mot original
         ""
       else:
-        string-append(before, letter, after)
+        string-append(before, string-append(letter, after))
       end
     end
   end
@@ -84,7 +84,7 @@ fun swaps(word :: String) -> List<String>:
     c2 = string-substring(word, i + 1, i + 2)
     before = string-substring(word, 0, i)
     after = string-substring(word, i + 2, string-length(word))
-    string-append(before, c2, c1, after)
+    string-append(string-append(before, c2), string-append(c1, after))
   end
 end
 
@@ -99,7 +99,7 @@ fun insertions(word :: String, alphabet :: List<String>) -> List<String>:
     before = string-substring(word, 0, i)
     after = string-substring(word, i, string-length(word))
     for map(letter from alphabet):
-      string-append(before, letter, after)
+      string-append(before, string-append(letter, after))
     end
   end
 end
