@@ -1,20 +1,43 @@
 ### A Pluto.jl notebook ###
-# v1.0.1
+# v0.19.49
 
-using Markdown
-using InteractiveUtils
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+## 1. Français vs Anglais : l'alphabet compte !
+md"""
 
-# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
-macro bind(def, element)
-    #! format: off
-    return quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
-        local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
-        el
-    end
-    #! format: on
-end
+# 🔤 Algorithmes pilotés par les données
+
+## Correction orthographique en français
+
+Ce notebook explore comment fonctionne un correcteur orthographique.
+Il est adapté au **français**, avec ses particularités :
+- **Accents** : é, è, ê, ë, à, â, ç, ù, û, ü, ô, î, ï, æ, œ
+- **Lettres muettes** : parlent, chanter, prix...
+- **Homophones** : a/à, ou/où, et/est, son/sont...
+
+> 📘 *Adapté de la leçon « Data-Driven Algorithms » de [Bootstrap World](https://www.bootstrapworld.org/), Fall 2026.*
+
+"""
+
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+md"""
+
+## 0. L'alphabet français
+
+L'anglais a 26 lettres. Le français en a beaucoup plus à cause des **accents**.
+Pour notre correcteur, on définit deux alphabets :
+
+- **Simple** : 26 lettres + les 6 accents les plus courants (é, è, ê, à, ù, ç) → 32 caractères
+- **Complet** : toutes les lettres accentuées du français → 44 caractères
+
+En français, une erreur très fréquente est l'oubli d'accent :
+- `ecole` au lieu de `école`
+- `eleve` au lieu de `élève`
+
+Notre correcteur doit pouvoir transformer `e` en `é` (1 édition : substitution),
+exactement comme il transforme `k` en `l`.
+
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000003
 # Alphabet simple : lettres de base + accents les plus courants
@@ -517,6 +540,8 @@ md"""
 """
 
 # ╔═╡ Cell order:
+# ╠═00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002
 # ╠═00000000-0000-0000-0000-000000000003
 # ╟─00000000-0000-0000-0000-000000000004
 # ╟─00000000-0000-0000-0000-000000000005
