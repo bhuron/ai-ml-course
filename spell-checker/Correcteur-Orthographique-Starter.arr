@@ -11,6 +11,8 @@
 #
 # ══════════════════════════════════════════════════════════════════════════════
 
+import lists as L
+
 # ─── ALPHABET FRANÇAIS ───────────────────────────────────────────────────────
 # Inclut les lettres de base + caractères accentués.
 # Lors d'une substitution ou insertion, on essaie toutes ces lettres.
