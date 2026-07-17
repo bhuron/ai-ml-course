@@ -163,7 +163,7 @@ fun alt-words(
     sw = swaps(word)
     ins = insertions(word, alphabet)
     dels = deletions(word)
-    all-variants = L.flatten([list: s, sw, ins, dels])
+    all-variants = L.append(L.append(s, sw), L.append(ins, dels))
 
     # Filtre par le dictionnaire (mots réels à distance 1)
     distance-1 = only-real(all-variants, dict)
