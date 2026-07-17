@@ -58,17 +58,18 @@ end
 
 fun subs(word :: String, alphabet :: List<String>) -> List<String>:
   doc: "Remplace chaque lettre par toutes les lettres de l'alphabet"
-  for map(i from range(0, string-length(word))):
+  for fold(acc from empty, i from range(0, string-length(word))):
     orig-letter = string-substring(word, i, i + 1)
     before = string-substring(word, 0, i)
     after = string-substring(word, i + 1, string-length(word))
-    for map(letter from alphabet):
+    inner = for map(letter from alphabet):
       if letter == orig-letter: # ne pas générer le mot original
         ""
       else:
         string-append(before, string-append(letter, after))
       end
     end
+    L.append(acc, inner)
   end
 end
 
@@ -95,12 +96,13 @@ end
 
 fun insertions(word :: String, alphabet :: List<String>) -> List<String>:
   doc: "Insère chaque lettre de l'alphabet à chaque position"
-  for map(i from range(0, string-length(word) + 1)):
+  for fold(acc from empty, i from range(0, string-length(word) + 1)):
     before = string-substring(word, 0, i)
     after = string-substring(word, i, string-length(word))
-    for map(letter from alphabet):
+    inner = for map(letter from alphabet):
       string-append(before, string-append(letter, after))
     end
+    L.append(acc, inner)
   end
 end
 
