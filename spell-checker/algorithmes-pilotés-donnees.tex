@@ -1,0 +1,542 @@
+% ===========================================================================
+% Algorithmes pilotés par les données
+% Traduit et adapté de :
+%   https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/data-driven-algorithms/
+% Adapté au contexte français (accents, dictionnaire français, exemples français)
+% Licence : Creative Commons 4.0 Unported (Bootstrap Community)
+% ===========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[raster]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+
+% ---------- Mise en page ----------
+\geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
+\fancyhf{}
+\fancyhead[L]{\textbf{Algorithmes pilotés par les données}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Bootstrap Community — CC BY 4.0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+% ---------- Couleurs ----------
+\definecolor{bsblue}{RGB}{41,128,185}
+\definecolor{bsgreen}{RGB}{39,174,96}
+\definecolor{bsorange}{RGB}{230,126,34}
+\definecolor{bsgray}{RGB}{149,165,166}
+\definecolor{codebg}{RGB}{245,247,250}
+
+% ---------- Styles de sections ----------
+\titleformat{\section}[hang]{\Huge\bfseries\color{bsblue}}{}{0pt}{}[\vspace{-0.5em}\rule{\textwidth}{2pt}]
+\titleformat{\subsection}[hang]{\Large\bfseries\color{bsblue!80!black}}{}{0pt}{}
+\titleformat{\subsubsection}[hang]{\large\bfseries\color{bsgreen!60!black}}{}{0pt}{}
+
+% ---------- Environnements personnalisés ----------
+\newtcolorbox{overviewbox}{
+  colback=bsblue!5!white, colframe=bsblue!60!white,
+  fonttitle=\bfseries, title=Objectif de la section,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{activitybox}{
+  colback=bsgreen!5!white, colframe=bsgreen!60!white,
+  fonttitle=\bfseries, title=Activité,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{thinkbox}{
+  colback=bsorange!5!white, colframe=bsorange!60!white,
+  fonttitle=\bfseries, title=Réflexion,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{keypointbox}{
+  colback=bsgray!10!white, colframe=bsgray!50!white,
+  fonttitle=\bfseries, title=Point clé,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{instructornotes}{
+  colback=yellow!10!white, colframe=yellow!80!black,
+  fonttitle=\bfseries, title=Notes pour l'enseignant·e,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{codebox}{
+  colback=codebg, colframe=bsgray!40,
+  fonttitle=\bfseries, title=Code Pyret,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+
+% ---------- Style listings pour Pyret ----------
+\lstdefinelanguage{Pyret}{
+  keywords={use,context,url-file,and,or,not,if,else,for,fun,data,sharing,include,import,as,where,let,rec,is,=,true,false},
+  sensitive=true,
+  comment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+}
+\lstset{
+  language=Pyret,
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{bsgreen!70!black}\itshape,
+  keywordstyle=\color{bsblue}\bfseries,
+  stringstyle=\color{bsorange},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framesep=5pt,
+  rulecolor=\color{bsgray!40},
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  aboveskip=0.8em,
+  belowskip=0.8em,
+}
+
+% ---------- Commandes pratiques ----------
+\newcommand{\img}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{fig:#1}
+  \end{figure}
+}
+
+% ---------- Informations du document ----------
+\title{%
+  \vspace{-2cm}
+  {\Huge\bfseries Algorithmes pilotés}\\[0.3em]
+  {\Huge\bfseries par les données}\\[0.5em]
+  {\large Correction orthographique, dictionnaires et apprentissage automatique}\\[1em]
+  {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/data-driven-algorithms/}{Bootstrap World} (Fall 2026)}\\
+  {\normalsize Adapté au contexte francophone — accents, dictionnaires français, exemples en français}\\[0.5em]
+  {\normalsize Licence Creative Commons 4.0 International}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{2cm}
+\begin{center}
+  \textit{Ces supports ont été développés en partie grâce au soutien de la National Science Foundation\\
+  (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).}
+\end{center}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ===========================================================================
+% SECTION 1 : CORRECTION ORTHOGRAPHIQUE — L'ALGORITHME
+% ===========================================================================
+\section{Correction orthographique~: l'algorithme}
+
+\begin{overviewbox}
+  Les élèves examinent un exemple concret d'algorithme piloté par les données~: évaluer en quoi les comportements programmés d'un correcteur orthographique ressemblent à ceux des humains, et en quoi ils en diffèrent.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+\begin{activitybox}
+  Considérez cette phrase avec votre partenaire~:
+
+  \begin{center}
+    \textbf{\large «~Le chein aboit si for que tout le vossinage écoute.~»}
+  \end{center}
+
+  \begin{itemize}
+    \item Que pensez-vous que l'auteur·e voulait écrire~?
+    \item Préparez-vous à décrire \emph{comment} vous avez corrigé l'orthographe~:
+    \begin{itemize}
+      \item Comment repérez-vous les mots mal orthographiés~?
+      \item Comment corrigez-vous les mots mal orthographiés~?
+      \item Comment décririez-vous chaque type d'erreur commise par l'auteur·e~?
+    \end{itemize}
+  \end{itemize}
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Comment avez-vous trouvé les mots mal orthographiés~?}
+    \begin{itemize}
+      \item Les réponses varieront, mais la plupart des gens diront «~je l'ai su dès que je l'ai vu~». C'est important à souligner~!
+    \end{itemize}
+    \item \textbf{Quand vous trouviez un mot mal orthographié, comment avez-vous trouvé la correction~?}
+    \begin{itemize}
+      \item Réponses possibles~: «~Il n'y avait qu'un seul mot possible~!~» / «~Je pouvais le deviner d'après le reste de la phrase.~» / «~J'ai fait cette même erreur de frappe un million de fois.~»
+    \end{itemize}
+    \item \textbf{L'auteur·e a fait quatre types d'erreurs différents dans cette phrase. Lesquels~?}
+    \begin{itemize}
+      \item \textbf{chein} \quad Échange des lettres \texttt{e} et \texttt{i} (swap)
+      \item \textbf{aboit} \quad Frappe \texttt{t} au lieu de \texttt{e} (substitution)
+      \item \textbf{for} \quad Oubli de la lettre \texttt{t} à la fin (suppression)
+      \item \textbf{vossinage} \quad Ajout d'un \texttt{s} en trop (insertion)
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  Quand les humains corrigent l'orthographe, ils s'appuient sur \textbf{le contexte, l'expérience et leurs connaissances}. Le processus de correction orthographique varie non seulement d'une personne à l'autre, mais aussi selon la situation. Face à un mot technique complexe mal orthographié, par exemple, vous utiliseriez probablement une stratégie de correction différente.
+\end{keypointbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration}
+
+Le correcteur orthographique intégré à votre navigateur web est un exemple classique d'algorithme piloté par les données. Pour mieux comprendre en quoi les machines fonctionnent différemment de nous, nous allons suivre l'algorithme du programme SPELL original.
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Pour compléter \textbf{Le Premier Correcteur Orthographique}, \emph{vous} serez l'ordinateur, en suivant l'algorithme d'un des premiers correcteurs orthographiques.
+    \item Réfléchissez à l'activité et comparez-la à vos propres stratégies.
+  \end{itemize}
+\end{activitybox}
+
+\begin{instructornotes}
+  Après que les élèves ont terminé l'activité, invitez-les à partager leurs réponses aux trois questions de réflexion ci-dessous en petits groupes.
+\end{instructornotes}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Quelles sont, selon vous, les limites de l'algorithme du premier correcteur orthographique~?}
+    \begin{itemize}
+      \item Le nombre de façons de mal orthographier un mot que l'algorithme peut détecter est extrêmement limité. Par exemple, si deux lettres distinctes dans un mot sont incorrectes, le correcteur n'a \emph{aucune chance} de proposer le bon mot~!
+    \end{itemize}
+    \item \textbf{En quoi l'algorithme du premier correcteur est-il similaire à la stratégie que VOUS utilisez pour vérifier l'orthographe~?}
+    \begin{itemize}
+      \item Voyez ce que vos élèves proposent et discutez-en.
+    \end{itemize}
+    \item \textbf{En quoi l'algorithme du premier correcteur est-il différent de la stratégie que VOUS utilisez~?}
+    \begin{itemize}
+      \item Quand vous vérifiez l'orthographe, vous vous appuyez beaucoup sur le contexte, l'instinct et les connaissances acquises.
+      \item Le premier correcteur orthographique ne possédait — et n'utilisait — aucune de ces capacités.
+      \item En revanche, un humain n'aurait ni le temps, ni la capacité, ni la concentration pour énumérer systématiquement des milliers de mots potentiels, alors que l'ordinateur le fait sans difficulté.
+      \item Ainsi, les stratégies utilisées par l'humain et la machine peuvent être \emph{extrêmement différentes} pour une tâche similaire.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{itemize}
+  \item \textbf{En quoi les correcteurs orthographiques réussissent-ils à imiter les humains~?}
+  \begin{itemize}
+    \item Ils ne le font pas~! Mais les résultats peuvent être similaires, selon une grande variété de facteurs.
+  \end{itemize}
+  \item \textbf{Serait-il une bonne idée pour un humain d'essayer d'imiter l'algorithme d'un correcteur orthographique~? Pourquoi~?}
+  \begin{itemize}
+    \item Non, ce serait long, laborieux et extrêmement sujet aux erreurs pour un humain.
+  \end{itemize}
+\end{itemize}
+
+\begin{keypointbox}
+  Le programme que nous venons de discuter repose sur la \textbf{force brute informatique}~: les correcteurs primitifs modifient et transforment de façon répétée un mot mal orthographié, générant des dizaines de mots différents à vérifier dans le dictionnaire.
+
+  L'algorithme est \textbf{piloté par les données} (\emph{data-driven})~: sa qualité dépend \emph{directement} de la représentativité du dictionnaire utilisé.
+\end{keypointbox}
+
+\newpage
+
+% ===========================================================================
+% SECTION 2 : CORRECTION ORTHOGRAPHIQUE EN PYRET
+% ===========================================================================
+\section{Correction orthographique en Pyret}
+
+\begin{overviewbox}
+  Les élèves explorent à la fois l'algorithme et les jeux de données qui alimentent un correcteur orthographique écrit en Pyret, en découvrant que les algorithmes pilotés par les données sont au cœur de l'IA.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Examinons un programme de correction orthographique écrit en Pyret.
+    \item Ouvrez le \textbf{fichier de démarrage du correcteur orthographique} (\texttt{Correcteur-Orthographique-Starter.arr}), enregistrez une copie et cliquez sur «~Run~».
+    \item Dans Pyret, un \emph{commentaire} est toute ligne de code qui commence par \texttt{\#}. Pyret ignore complètement les commentaires, les programmeurs les utilisent donc pour écrire des notes~! \textbf{Lisez les commentaires dans la zone de définitions}. Que vous apprennent ces notes~?
+    \item Complétez la première section de \textbf{Un correcteur orthographique en Pyret}.
+  \end{itemize}
+\end{activitybox}
+
+\paragraph{Dictionnaires disponibles}
+
+Le fichier contient quatre dictionnaires français de tailles différentes~:
+
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  \textbf{Nom} & \textbf{Taille} & \textbf{Description} \\
+  \midrule
+  \texttt{WORDS-XS-FR} & 100 mots  & Dictionnaire minimal (mots de 5 lettres) \\
+  \texttt{WORDS-S-FR}  & 5~000 mots  & Mots français les plus courants \\
+  \texttt{WORDS-M-FR}  & 13~000 mots & Mots français courants \\
+  \texttt{WORDS-L-FR}  & 40~000 mots & Large dictionnaire français \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Particularités du français}
+
+\begin{instructornotes}
+  Le français pose un défi supplémentaire par rapport à l'anglais pour la correction orthographique~: les \textbf{accents} (é, è, ê, ë, à, â, ç, ù, û, ü, ô, î, ï, etc.). Une erreur fréquente en français est l'oubli ou la confusion d'accent («~ecoute~» au lieu de «~écoute~», «~eleve~» au lieu de «~élève~»). L'algorithme de distance d'édition traite chaque caractère accentué comme un caractère distinct~: remplacer \texttt{e} par \texttt{é} compte pour une édition (substitution), au même titre que remplacer \texttt{k} par \texttt{l}.
+\end{instructornotes}
+
+\begin{codebox}
+  \textbf{Fonctions disponibles dans le fichier de démarrage~:}
+
+  \vspace{0.3em}
+  \begin{tabularx}{\textwidth}{lX}
+    \texttt{subs(mot)}     & Remplace chaque lettre une par une par toutes les lettres de l'alphabet (26~×~$n$~variantes). Ex.~: \texttt{subs("chein")} génère «~chein, ahien, bhien, \ldots, chien, \ldots{}~» \\
+    \texttt{swaps(mot)}    & Échange chaque paire de lettres adjacentes ($n-1$~variantes). Ex.~: \texttt{swaps("chein")} génère «~hcein, cehin, chien, chein~» \\
+    \texttt{insertions(mot)} & Insère chaque lettre de l'alphabet à chaque position (26~×~$(n+1)$~variantes). Ex.~: \texttt{insertions("aboi")} génère «~aaboi, baboi, \ldots, aboie, aboia, \ldots{}~» \\
+    \texttt{deletions(mot)}  & Supprime chaque lettre une par une ($n$~variantes). Ex.~: \texttt{deletions("vossinage")} génère «~ossinage, vssinage, vosinage, \ldots{}~» \\
+    \texttt{only-real(liste, dico)} & Filtre une liste pour ne garder que les mots présents dans le dictionnaire. \\
+    \texttt{alt-words(mot, dico, n)} & Combine toutes les fonctions ci-dessus et trouve tous les mots du dictionnaire à distance d'édition $\leq$~\texttt{n}. \\
+  \end{tabularx}
+\end{codebox}
+
+% ---------- Investigate ----------
+\subsection{Exploration}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item \textbf{Comment le travail du correcteur s'est-il comparé à vos efforts pour être un ordinateur dans «~Le Premier Correcteur Orthographique~»~?}
+    \begin{itemize}
+      \item Il a trouvé tout ce que nous avions trouvé, et \emph{plus d'une centaine d'autres} insertions et substitutions en quelques secondes~!
+    \end{itemize}
+    \item \textbf{Toutes les suggestions de Pyret étaient-elles utiles~?}
+    \begin{itemize}
+      \item Non~! La plupart des mots proposés étaient du charabia.
+    \end{itemize}
+  \end{itemize}
+\end{activitybox}
+
+\begin{keypointbox}
+  \textbf{Distance d'édition}
+
+  Tous les «~mots~» que notre correcteur a générés dans la première section impliquaient un \emph{seul} changement. Le terme technique pour cela est la \textbf{distance d'édition} (\emph{edit distance})~: la distance d'édition pour tous ces mots était de 1, ce qui signifie qu'ils étaient à une seule permutation, substitution, insertion ou suppression du mot original.
+
+  La distance d'édition est une façon de \textbf{mesurer la similarité de deux chaînes de caractères}~!
+\end{keypointbox}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Voyons comment Pyret génère des listes de mots avec une distance d'édition plus grande et affine ses suggestions pour supprimer les mots absurdes.
+    \item Complétez le reste de \textbf{Un correcteur orthographique en Pyret}.
+  \end{itemize}
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Qu'avez-vous découvert sur les dictionnaires dans le fichier de démarrage~?}
+    \item \textbf{Pourquoi \texttt{alt-words} a-t-il renvoyé un nombre différent de résultats selon le dictionnaire utilisé~?}
+    \begin{itemize}
+      \item Parce que les petits dictionnaires ne connaissaient pas autant de mots, donc \texttt{only-real} supprimait des mots qui existent pourtant dans les plus grands dictionnaires.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  \textbf{Quand on fournit des données \emph{plus représentatives} à notre correcteur orthographique, on obtient de meilleurs résultats \emph{sans changer le code} du correcteur.}
+
+  \vspace{0.5em}
+  L'efficacité des algorithmes pilotés par les données est \textbf{directement liée} à la \textbf{représentativité} des données.
+
+  \vspace{0.5em}
+  Le même algorithme qui semble presque «~intelligent~» avec 10~000 des mots les plus utilisés en français peut sembler \emph{inutile} avec un jeu de données de seulement 100 mots, ou avec les noms de 10~000 composés chimiques.
+\end{keypointbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\img{images/screenshot-texto-correction.png}{width=0.3\textwidth}{Capture d'écran d'une application de messagerie proposant des alternatives pour un mot possiblement mal orthographié (l'original propose «~Cose~» $\to$ «~Code~», «~Close~»).}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Quel type d'\emph{algorithme} pensez-vous que l'application a utilisé pour trouver des alternatives possibles~?}
+    \begin{itemize}
+      \item Les réponses varieront.
+      \item Les élèves peuvent faire référence aux algorithmes discutés dans la première moitié de la leçon.
+      \item Ils peuvent aussi imaginer des algorithmes plus complexes — par exemple, des algorithmes qui prennent en compte la proximité des lettres sur le clavier~!
+    \end{itemize}
+    \item \textbf{Quel type de \emph{données} pensez-vous que l'application de correction a utilisées~?}
+    \begin{itemize}
+      \item Quels mots l'utilisateur est le plus susceptible de taper.
+      \item Le sujet de la conversation et le mot suivant le plus probable.
+      \item Le dictionnaire de mots dans lequel l'application pioche.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{instructornotes}
+  Les élèves discuteront d'une capture d'écran similaire d'une application de messagerie dans la leçon sur les Modèles Génératifs. Dans cette leçon-là, cependant, ils exploreront comment l'IA générative utilise des algorithmes pilotés par les données pour déterminer le prochain mot à produire.
+\end{instructornotes}
+
+\newpage
+
+% ===========================================================================
+% SECTION 3 : DÉFINIR DES VALEURS
+% ===========================================================================
+\section{Définir des valeurs}
+
+\begin{overviewbox}
+  Les élèves découvrent la définition de variables en Pyret, motivés par le besoin de sauvegarder des opérations coûteuses en calcul pour pouvoir réutiliser leurs résultats.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+\begin{activitybox}
+  Expérimentons avec une liste de suggestions plus grande\ldots{}
+
+  \begin{itemize}
+    \item Dans la fenêtre d'interactions à droite, évaluez \texttt{alt-words("plation", WORDS-L-FR, 4)}.
+    \begin{itemize}
+      \item Combien de temps Pyret a-t-il mis pour générer toutes les substitutions, suppressions, insertions et échanges, puis filtrer pour ne garder que les vrais mots~?
+      \item \emph{Un bon moment~!}
+      \item Est-ce que lui demander de refaire \emph{la même chose} irait plus vite~? Pourquoi~?
+      \item Essayez~! Que s'est-il passé~? Pouvez-vous expliquer pourquoi~?
+      \item \emph{Cela a encore pris une éternité, parce qu'on lui demande de refaire le même travail.}
+    \end{itemize}
+  \end{itemize}
+\end{activitybox}
+
+Quand on demande à Pyret de faire quelque chose encore et encore, il n'a aucun moyen de savoir qu'il devrait sauvegarder son travail~! Résultat~: \emph{il refait le travail encore et encore~!} Heureusement, le monde des mathématiques a une solution~: \textbf{définir une variable}.
+
+\begin{codebox}
+  Évaluez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4)}.
+
+  \begin{itemize}
+    \item Est-ce que quelque chose est revenu~? Pourquoi~?
+    \item \textbf{Non~!} Définir une variable ne produit rien, \textbf{exactement comme en maths~!}
+    \item $x = 4$ n'a pas de «~réponse~» parce que les définitions ne sont pas des expressions.
+    \item Maintenant, évaluez \texttt{resultats} trois fois. Que se passe-t-il~?
+    \item \emph{C'était ultra-rapide~!}
+    \item Cliquez sur «~Run~» et évaluez \texttt{resultats}. Que se passe-t-il~?
+    \item \emph{On obtient un message d'erreur~! Pyret a «~oublié~» notre variable.}
+    \item Évaluez \texttt{sentiment = "Joie"} et appuyez sur Entrée. Que va-t-il se passer si on évalue \texttt{sentiment}~?
+    \item \emph{On obtiendra \texttt{"Joie"}.}
+  \end{itemize}
+\end{codebox}
+
+Quand on veut que Pyret \emph{se souvienne} d'une définition, on l'ajoute à la \textbf{zone de définitions}. Chaque fois qu'on clique sur «~Run~», Pyret ré-exécute tout le code, y compris la définition~!
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Ajoutez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4)} comme \textbf{dernière ligne de la zone de définitions}, et cliquez sur «~Run~». Évaluez \texttt{resultats} dans la zone d'interactions.
+    \item Que se passe-t-il si vous ajoutez une autre définition qui \emph{a aussi} le nom \texttt{resultats}~?
+  \end{itemize}
+\end{activitybox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Pourquoi les définitions de variables sont-elles précieuses~?}
+    \begin{itemize}
+      \item On peut sauvegarder un travail coûteux en calcul.
+    \end{itemize}
+    \item \textbf{Quels types de valeurs peut-on définir, au-delà des tables de corrections orthographiques~?}
+    \begin{itemize}
+      \item N'importe quoi~!
+    \end{itemize}
+    \item \textbf{Pourquoi ne peut-on pas définir deux variables avec le même nom~?}
+    \begin{itemize}
+      \item Pyret n'autorise un nom de variable qu'à avoir une seule valeur.
+    \end{itemize}
+    \item \textbf{Maintenant que nous pouvons générer et sauvegarder des suggestions orthographiques, que pourrions-nous vouloir \emph{en faire}~?}
+    \begin{itemize}
+      \item Trier les résultats, en mettant les suggestions avec la plus courte distance d'édition en premier.
+      \item Afficher seulement le «~top 5~» plutôt qu'une table avec des centaines d'entrées.
+      \item Peut-être faire un graphique~?
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% ANNEXES
+% ===========================================================================
+\section*{Annexe A~: Dictionnaires français}
+
+Les dictionnaires français suivants sont fournis dans le dossier \texttt{dictionaries/}~:
+
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  \textbf{Fichier} & \textbf{Mots} & \textbf{Usage} \\
+  \midrule
+  \texttt{WORDS-XS-FR.txt} & 169 mots de 5 lettres & Exercices de découverte \\
+  \texttt{WORDS-S-FR.txt}  & 5~000 mots courants  & Travail en classe \\
+  \texttt{WORDS-M-FR.txt}  & 13~000 mots courants & Exploration \\
+  \texttt{WORDS-L-FR.txt}  & 40~000 mots          & Projets \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Ces dictionnaires ont été extraits du dictionnaire Hunspell français (\texttt{fr\_FR}) et filtrés pour ne contenir que des mots en minuscules avec accents. Le dictionnaire \texttt{WORDS-XS-FR} a été sélectionné manuellement pour garantir des mots courants et reconnaissables par les élèves.
+
+\section*{Annexe B~: Le français et la distance d'édition}
+
+Le français pose des défis spécifiques pour la correction orthographique~:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Accents~:} 14 caractères accentués (à, â, é, è, ê, ë, î, ï, ô, ö, ù, û, ü, ç, æ, œ). Chaque accent manquant ou erroné compte comme une édition.
+  \item \textbf{Lettres muettes~:} De nombreux mots français ont des lettres finales non prononcées (\emph{parlent}, \emph{chanter}, \emph{prix}), sources d'erreurs fréquentes.
+  \item \textbf{Homophones~:} a/à, ou/où, et/est, son/sont, on/ont, etc. La distance d'édition ne capture pas les erreurs grammaticales~; une correction contextuelle est nécessaire.
+  \item \textbf{Liaisons et élisions~:} l'avion, d'abord, qu'il, etc. rendent la tokenisation plus complexe.
+\end{enumerate}
+
+Ces défis expliquent pourquoi les correcteurs orthographiques modernes combinent distance d'édition \emph{et} modèles de langue entraînés sur de vastes corpus.
+
+\section*{Annexe C~: Fichiers du projet}
+
+\begin{center}
+\begin{tabular}{ll}
+  \toprule
+  \textbf{Fichier} & \textbf{Description} \\
+  \midrule
+  \texttt{Correcteur-Orthographique-Starter.arr} & Fichier Pyret adapté au français \\
+  \texttt{dictionaries/WORDS-XS-FR.txt} & 100 mots français de 5 lettres \\
+  \texttt{dictionaries/WORDS-S-FR.txt}  & 5~000 mots français courants \\
+  \texttt{dictionaries/WORDS-M-FR.txt}  & 13~000 mots français \\
+  \texttt{dictionaries/WORDS-L-FR.txt}  & 40~000 mots français \\
+  \texttt{images/} & Illustrations de la leçon \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\section*{À propos de ces supports}
+
+Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
+
+\begin{center}
+  \textbf{Bootstrap} par la Communauté Bootstrap est sous licence Creative Commons 4.0 Unported.\\
+  Cette licence n'accorde pas la permission d'organiser des formations ou du développement professionnel.\\[1em]
+  \textit{Traduction et adaptation française réalisées en juillet 2026.}\\
+  \textit{Source originale~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/data-driven-algorithms/}}
+\end{center}
+
+\end{document}
