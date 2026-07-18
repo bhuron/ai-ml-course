@@ -65,8 +65,8 @@ fun subs(word-or-words) -> Table:
           end
         end
       end
-      for fold(all from [list:], pos from L.range(0, word-len)):
-        all + substitute-at(pos)
+      for fold(acc from [list:], pos from L.range(0, word-len)):
+        acc + substitute-at(pos)
       end
     end
     apply-transformation(transform-word, words)
@@ -120,8 +120,8 @@ fun deletions(word-or-words) -> Table:
         end
         L.reverse(deleted).join-str("")
       end
-      for fold(all from [list:], pos from L.range(0, word-len)):
-        link(delete-at(pos), all)
+      for fold(acc from [list:], pos from L.range(0, word-len)):
+        link(delete-at(pos), acc)
       end
     end
     apply-transformation(transform-word, words)
@@ -151,8 +151,8 @@ fun insertions(word-or-words) -> Table:
           link(L.reverse(inserted).join-str(""), acc)
         end
       end
-      for fold(all from [list:], pos from L.range(0, word-len + 1)):
-        all + insert-at(pos)
+      for fold(acc from [list:], pos from L.range(0, word-len + 1)):
+        acc + insert-at(pos)
       end
     end
     apply-transformation(transform-word, words)
