@@ -53,7 +53,11 @@ include string-dict
 # que tous les `import`/`use`/`include` précèdent les autres définitions.
 # La construction du BK-tree (WORDS-L-FR = build-bk-tree(DL.WORDS-L)) se
 # fait plus bas, après la définition de `build-bk-tree`.
-import url-file("https://raw.githubusercontent.com/bhuron/ai-ml-course/master/spell-checker/dictionaries/WORDS-L-FR.arr") as DL
+#
+# NOTE : url-file prend DEUX arguments — (1) l'URL de base du « projet »
+# (sans le nom de fichier), (2) le chemin relatif du fichier .arr à
+# charger. Voir `use context url-file(...)` ligne 1 pour la même convention.
+import url-file("https://raw.githubusercontent.com/bhuron/ai-ml-course/master/spell-checker/dictionaries", "WORDS-L-FR.arr") as DL
 provide from Core:
   *,
   type Posn,
