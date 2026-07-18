@@ -185,12 +185,12 @@
     \begin{itemize}
       \item Réponses possibles~: «~Il n'y avait qu'un seul mot possible~!~» / «~Je pouvais le deviner d'après le reste de la phrase.~» / «~J'ai fait cette même erreur de frappe un million de fois.~»
     \end{itemize}
-    \item \textbf{L'auteur·e a fait quatre types d'erreurs différents dans cette phrase. Lesquels~?}
+    \item \textbf{L'auteur·e a fait quatre erreurs dans cette phrase. Décrivez chacune (type d'opération et lettres concernées).}
     \begin{itemize}
       \item \textbf{chein} \quad Échange des lettres \texttt{e} et \texttt{i} (swap)
       \item \textbf{aboit} \quad Frappe \texttt{t} au lieu de \texttt{e} (substitution)
       \item \textbf{for} \quad Oubli de la lettre \texttt{t} à la fin (suppression)
-      \item \textbf{vossinage} \quad Ajout d'un \texttt{s} en trop (insertion)
+      \item \textbf{vossinage} \quad \texttt{s} frappé à la place de \texttt{i} (substitution)
     \end{itemize}
   \end{itemize}
 \end{thinkbox}
@@ -280,38 +280,41 @@ Le correcteur orthographique intégré à votre navigateur web est un exemple cl
 
 \paragraph{Dictionnaires disponibles}
 
-Le fichier de démarrage est \textbf{autonome}~: toutes les fonctions sont implémentées directement dans le code, sans dépendance externe. Il contient un dictionnaire embarqué~:
+Le fichier de démarrage reprend \emph{intégralement} la bibliothèque \texttt{spell-checker-library.arr} de Bootstrap World (Fall 2026)~: les fonctions renvoient toutes des \textbf{Tables} et les dictionnaires sont des \textbf{BK-trees} (type \texttt{BKNode}) pour des recherches rapides par distance d'édition. Les seules adaptations françaises sont~:
+\begin{itemize}
+  \item Les deux alphabets anglais \texttt{"abc\ldots xyz"} implicitement utilisés par \texttt{subs} et \texttt{insertions} sont remplacés par \texttt{ALPHABET-FR-SIMPLE} (32~caractères~: 26 + é, è, ê, à, ù, ç). Une variante étendue \texttt{ALPHABET-FR} (44~caractères, avec æ, œ, ë, ï, ô, ö, û, ü) est également fournie.
+  \item Le dictionnaire minimal anglais \texttt{WORDS-XS} est remplacé par \texttt{WORDS-XS-FR}~: 169~mots français de 5~lettres, embarqués dans le fichier et construits en BK-tree au chargement.
+  \item Le grand dictionnaire \texttt{WORDS-L-FR} (40~000~mots) est \emph{importé} automatiquement depuis \texttt{dictionaries/WORDS-L-FR.arr} via \texttt{import url-file(...)} en haut du fichier~; son BK-tree est construit au chargement. Les dictionnaires intermédiaires \texttt{WORDS-S-FR} (5~000) et \texttt{WORDS-M-FR} (13~000) sont disponibles dans le même dossier~: décommentez l'\texttt{import} correspondant en haut du fichier pour les utiliser.
+\end{itemize}
 
 \begin{center}
 \begin{tabular}{lll}
   \toprule
-  \textbf{Nom} & \textbf{Taille} & \textbf{Description} \\
+  \textbf{Nom} & \textbf{Taille} & \textbf{Chargement} \\
   \midrule
-  \texttt{WORDS-XS-FR} & 100 mots  & Dictionnaire minimal (mots de 5 lettres), embarqué \\
-  \texttt{WORDS-S-FR}  & 5~000 mots  & À charger depuis \texttt{dictionaries/WORDS-S-FR.txt} \\
-  \texttt{WORDS-M-FR}  & 13~000 mots & À charger depuis \texttt{dictionaries/WORDS-M-FR.txt} \\
-  \texttt{WORDS-L-FR}  & 40~000 mots & À charger depuis \texttt{dictionaries/WORDS-L-FR.txt} \\
+  \texttt{WORDS-XS-FR} & 169 mots  & Embarqué, BK-tree construit au \emph{Run} \\
+  \texttt{WORDS-S-FR}  & 5~000 mots  & \texttt{import url-file(...)} à décommenter \\
+  \texttt{WORDS-M-FR}  & 13~000 mots & \texttt{import url-file(...)} à décommenter \\
+  \texttt{WORDS-L-FR}  & 40~000 mots & \texttt{import url-file(...)} actif par défaut \\
   \bottomrule
 \end{tabular}
 \end{center}
-
-L'alphabet utilisé (\texttt{ALPHABET-FR-SIMPLE}) inclut les 26 lettres de base + les 6 accents les plus courants (é, è, ê, à, ù, ç). Une version complète (\texttt{ALPHABET-FR}) est également disponible avec æ, œ, ë, ï, ô, ö, û, ü.
 
 \subsubsection{Particularités du français}
 
 Le français pose un défi supplémentaire par rapport à l'anglais pour la correction orthographique~: les \textbf{accents} (é, è, ê, ë, à, â, ç, ù, û, ü, ô, î, ï, etc.). Une erreur fréquente en français est l'oubli ou la confusion d'accent («~ecoute~» au lieu de «~écoute~», «~eleve~» au lieu de «~élève~»). L'algorithme de distance d'édition traite chaque caractère accentué comme un caractère distinct~: remplacer \texttt{e} par \texttt{é} compte pour une édition (substitution), au même titre que remplacer \texttt{k} par \texttt{l}.
 
 \begin{codebox}
-  \textbf{Fonctions disponibles dans le fichier de démarrage~:}
+  \textbf{Fonctions disponibles dans le fichier de démarrage.} Toutes renvoient une \textbf{Table} (colonne \texttt{"alternate spellings"} ou \texttt{"word"}), à l'exception de \texttt{alt-words} qui renvoie une table \texttt{word}, \texttt{edit-distance}.
 
   \vspace{0.3em}
   \begin{tabularx}{\textwidth}{lX}
-    \texttt{subs(mot, alpha)}     & Remplace chaque lettre une par une par toutes les lettres de l'alphabet. Ex.~: \texttt{subs("chein", ALPHABET-FR-SIMPLE)} génère «~ahien, bhien, \ldots, chien, \ldots{}~» \\
-    \texttt{swaps(mot)}    & Échange chaque paire de lettres adjacentes. Ex.~: \texttt{swaps("chein")} génère «~hcein, cehin, chien, chein~» \\
-    \texttt{insertions(mot, alpha)} & Insère chaque lettre de l'alphabet à chaque position. Ex.~: \texttt{insertions("aboi", ALPHABET-FR-SIMPLE)} génère «~aaboi, baboi, \ldots, aboie, \ldots{}~» \\
-    \texttt{deletions(mot)}  & Supprime chaque lettre une par une. Ex.~: \texttt{deletions("vossinage")} génère «~ossinage, \ldots, voisinage, \ldots{}~» \\
-    \texttt{only-real(liste, dico)} & Filtre une liste pour ne garder que les mots présents dans le dictionnaire. \\
-    \texttt{alt-words(mot, dico, n, alpha)} & Combine toutes les fonctions et trouve les mots du dictionnaire à distance $\leq$~\texttt{n}. \\
+    \texttt{subs(mot)}     & Renvoie une Table~: chaque lettre du mot remplacée une par une par chaque lettre de \texttt{ALPHABET-FR-SIMPLE}. Ex.~: \texttt{subs("ecole")} contient «~école~» (substitution \texttt{e}~$\to$~\texttt{é}). \\
+    \texttt{swaps(mot)}    & Renvoie une Table~: chaque paire de lettres adjacentes est inversée. Ex.~: \texttt{swaps("chein")} contient «~hcein, cehin, chien~». \\
+    \texttt{insertions(mot)} & Renvoie une Table~: chaque lettre de \texttt{ALPHABET-FR-SIMPLE} est insérée à chaque position. Ex.~: \texttt{insertions("aboi")} contient «~aboie~» (insertion du \texttt{e} final). \\
+    \texttt{deletions(mot)}  & Renvoie une Table~: chaque lettre est supprimée une par une. Ex.~: \texttt{deletions("voisinage")} génère «~oisinage, visinage, vosinage, voinage, \ldots~». \\
+    \texttt{only-real(table, dico)} & Renvoie une Table~: ne garde que les mots de \texttt{table} présents dans le dictionnaire \texttt{dico} (un \texttt{BKNode}, e.g. \texttt{WORDS-XS-FR}). \\
+    \texttt{alt-words(mot, dico, n)} & Renvoie une Table \texttt{word, edit-distance}~: tous les mots de \texttt{dico} (un \texttt{BKNode}) à distance de Levenshtein $\leq$~\texttt{n} de \texttt{mot}. \textbf{Pas de paramètre alphabet}~: la recherche se fait sur les BK-trees, qui n'utilisent \texttt{ALPHABET-FR-SIMPLE} que via \texttt{subs}/\texttt{insertions} en amont. \\
   \end{tabularx}
 \end{codebox}
 
@@ -410,7 +413,7 @@ Le français pose un défi supplémentaire par rapport à l'anglais pour la corr
   Expérimentons avec une liste de suggestions plus grande\ldots{}
 
   \begin{itemize}
-    \item Dans la fenêtre d'interactions à droite, évaluez \texttt{alt-words("plation", WORDS-L-FR, 4, ALPHABET-FR-SIMPLE)}.
+    \item Dans la fenêtre d'interactions à droite, évaluez \texttt{alt-words("plation", WORDS-L-FR, 4)}.
     \begin{itemize}
       \item Combien de temps Pyret a-t-il mis pour générer toutes les substitutions, suppressions, insertions et échanges, puis filtrer pour ne garder que les vrais mots~?
       \item \emph{Un bon moment~!}
@@ -424,7 +427,7 @@ Le français pose un défi supplémentaire par rapport à l'anglais pour la corr
 Quand on demande à Pyret de faire quelque chose encore et encore, il n'a aucun moyen de savoir qu'il devrait sauvegarder son travail~! Résultat~: \emph{il refait le travail encore et encore~!} Heureusement, le monde des mathématiques a une solution~: \textbf{définir une variable}.
 
 \begin{codebox}
-  Évaluez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4, ALPHABET-FR-SIMPLE)}.
+  Évaluez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4)}.
 
   \begin{itemize}
     \item Est-ce que quelque chose est revenu~? Pourquoi~?
@@ -443,7 +446,7 @@ Quand on veut que Pyret \emph{se souvienne} d'une définition, on l'ajoute à la
 
 \begin{activitybox}
   \begin{itemize}
-    \item Ajoutez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4, ALPHABET-FR-SIMPLE)} comme \textbf{dernière ligne de la zone de définitions}, et cliquez sur «~Run~». Évaluez \texttt{resultats} dans la zone d'interactions.
+    \item Ajoutez \texttt{resultats = alt-words("plation", WORDS-L-FR, 4)} comme \textbf{dernière ligne de la zone de définitions}, et cliquez sur «~Run~». Évaluez \texttt{resultats} dans la zone d'interactions.
     \item Que se passe-t-il si vous ajoutez une autre définition qui \emph{a aussi} le nom \texttt{resultats}~?
   \end{itemize}
 \end{activitybox}
@@ -481,22 +484,25 @@ Quand on veut que Pyret \emph{se souvienne} d'une définition, on l'ajoute à la
 % ===========================================================================
 \section*{Annexe A~: Dictionnaires français}
 
-Les dictionnaires français suivants sont fournis dans le dossier \texttt{dictionaries/}~:
+Les dictionnaires français sont fournis dans le dossier \texttt{dictionaries/}, en deux formats jumeaux~: \texttt{.txt} (un mot par ligne, lisible) et \texttt{.arr} (\texttt{[list: ...]} littérale Pyret, chargeable via \texttt{import url-file(...)}).
 
 \begin{center}
 \begin{tabular}{lll}
   \toprule
   \textbf{Fichier} & \textbf{Mots} & \textbf{Usage} \\
   \midrule
-  \texttt{WORDS-XS-FR.txt} & 169 mots de 5 lettres & Exercices de découverte \\
-  \texttt{WORDS-S-FR.txt}  & 5~000 mots courants  & Travail en classe \\
-  \texttt{WORDS-M-FR.txt}  & 13~000 mots courants & Exploration \\
-  \texttt{WORDS-L-FR.txt}  & 40~000 mots          & Projets \\
+  \texttt{WORDS-XS-FR.(\texttt{txt}/\texttt{arr})} & 169 mots de 5 lettres & Embarqué dans le starter, démos rapides \\
+  \texttt{WORDS-S-FR.(\texttt{txt}/\texttt{arr})}  & 5~000 mots courants  & Travail en classe \\
+  \texttt{WORDS-M-FR.(\texttt{txt}/\texttt{arr})}  & 13~000 mots courants & Exploration \\
+  \texttt{WORDS-L-FR.(\texttt{txt}/\texttt{arr})}  & 40~000 mots          & Projets, exemple phare de la leçon \\
   \bottomrule
 \end{tabular}
 \end{center}
 
-Ces dictionnaires ont été extraits du dictionnaire Hunspell français (\texttt{fr\_FR}) et filtrés pour ne contenir que des mots en minuscules avec accents. Le dictionnaire \texttt{WORDS-XS-FR} a été sélectionné manuellement pour garantir des mots courants et reconnaissables par les élèves.
+Ces dictionnaires ont été extraits du dictionnaire Hunspell français (\texttt{fr\_FR}) et filtrés pour ne contenir que des mots en minuscules avec accents. Le dictionnaire \texttt{WORDS-XS-FR} a été sélectionné manuellement pour garantir des mots courants et reconnaissables par les élèves. Les fichiers \texttt{.arr} commencent par une directive \texttt{provide *} suivi d'une définition \texttt{WORDS-<SIZE> = [list: ...]}, ce qui permet de les charger depuis le fichier de démarrage via~:
+\begin{center}
+  \texttt{import url-file("https://raw.githubusercontent.com/.../dictionaries", "WORDS-L-FR.arr") as DL}
+\end{center}
 
 \section*{Annexe B~: Le français et la distance d'édition}
 
@@ -518,19 +524,19 @@ Ces défis expliquent pourquoi les correcteurs orthographiques modernes combinen
   \toprule
   \textbf{Fichier} & \textbf{Description} \\
   \midrule
-  \texttt{Correcteur-Orthographique-Starter.arr} & Fichier Pyret autonome (tout réimplémenté) \\
+  \texttt{Correcteur-Orthographique-Starter.arr} & Fichier Pyret (\textasciitilde20~Ko)~: bibliothèque Bootstrap + adaptations FR \\
   \texttt{algorithmes-pilotés-donnees.tex} & Document de cours (ce fichier) \\
-  \texttt{dictionaries/WORDS-XS-FR.txt} & 100 mots français de 5 lettres \\
-  \texttt{dictionaries/WORDS-S-FR.txt}  & 5~000 mots français courants \\
-  \texttt{dictionaries/WORDS-M-FR.txt}  & 13~000 mots français \\
-  \texttt{dictionaries/WORDS-L-FR.txt}  & 40~000 mots français \\
+  \texttt{dictionaries/WORDS-XS-FR.\{txt,arr\}} & 169 mots français de 5 lettres (embarqué aussi dans le starter) \\
+  \texttt{dictionaries/WORDS-S-FR.\{txt,arr\}}  & 5~000 mots français courants \\
+  \texttt{dictionaries/WORDS-M-FR.\{txt,arr\}}  & 13~000 mots français \\
+  \texttt{dictionaries/WORDS-L-FR.\{txt,arr\}}  & 40~000 mots français (auto-importé dans le starter) \\
   \texttt{images/} & Illustrations de la leçon \\
   \bottomrule
 \end{tabular}
 \end{center}
 
 \vspace{1em}
-\textbf{À noter~:} contrairement à la version anglaise originale qui charge une bibliothèque distante, le fichier \texttt{.arr} est entièrement autonome. Toutes les fonctions (\texttt{subs}, \texttt{swaps}, \texttt{insertions}, \texttt{deletions}, \texttt{only-real}, \texttt{alt-words}) sont réimplémentées en Pyret pur. L'alphabet inclut les caractères accentués français, et le dictionnaire \texttt{WORDS-XS-FR} (100 mots) est embarqué pour des démonstrations instantanées. Les grands dictionnaires sont à charger depuis les fichiers \texttt{.txt} du dossier \texttt{dictionaries/}.
+\textbf{À noter~:} le fichier de démarrage \emph{n'est pas} une réimplémentation de zéro — il reprend \textbf{verbatim} la bibliothèque \texttt{spell-checker-library.arr} de Bootstrap World (Fall 2026), chargeable depuis \texttt{core.arr} via \texttt{use context url-file(...)}. Les adaptations françaises se limitent à~: (1)~l'injection de \texttt{ALPHABET-FR-SIMPLE} / \texttt{ALPHABET-FR} utilisés par \texttt{subs} et \texttt{insertions} à la place de l'alphabet anglais hardcodé, (2)~le remplacement des quatre BK-trees anglais pré-sérialisés par \texttt{WORDS-XS-FR} (inlined, 169~mots) et \texttt{WORDS-L-FR} (importé via \texttt{url-file}, 40~000~mots). L'API publique — Tables, \texttt{BKNode}, \texttt{only-real(table, dict)}, \texttt{alt-words(s, dict, n)} — est strictement identique à l'original anglais.
 
 \section*{À propos de ces supports}
 
