@@ -159,24 +159,54 @@ end
 # DICTIONNAIRES FRANÇAIS
 # ══════════════════════════════════════════════════════════════════════════════
 #
-# Quatre dictionnaires sont disponibles, du plus petit au plus grand.
-# Le dictionnaire WORDS-XS (169 mots) est chargé par défaut ci-dessous.
+# Dictionnaire minimal — 169 mots de 5 lettres (embarqué, toujours dispo)
+WORDS-XS = [list:
+  "abîme", "abord", "abris", "absent", "acheté", "actif", "adore", "aider",
+  "aigle", "aimer", "aller", "amour", "appel", "arbre", "asile", "assez",
+  "atome", "auber", "aussi", "autre", "avant", "avoir", "bague", "belle",
+  "bêtes", "blanc", "bleue", "boire", "bonne", "bruit", "calme", "carte",
+  "cause", "champ", "chant", "chaud", "chien", "choix", "coule", "court",
+  "danse", "dette", "douce", "durer", "écart", "école", "écrit", "égale",
+  "envie", "essai", "étude", "faire", "faute", "femme", "fleur", "force",
+  "forme", "frais", "fruit", "garde", "geste", "glace", "grand", "haute",
+  "homme", "idées", "jardin", "jeune", "jouer", "juger", "juste", "large",
+  "libre", "linge", "livre", "longs", "louer", "lutte", "mains", "maman",
+  "mange", "mardi", "masse", "mener", "mieux", "monde", "morte", "moule",
+  "murer", "nager", "noble", "noire", "noter", "noyer", "objet", "ombre",
+  "orage", "ordre", "oubli", "parle", "parti", "passe", "patte", "peine",
+  "pense", "perte", "peuple", "pidre", "piste", "place", "plage", "plein",
+  "pluie", "porte", "poser", "poule", "prend", "prête", "preux", "prive",
+  "proie", "prose", "proue", "quête", "rêver", "rivée", "ronde", "rouge",
+  "sable", "saint", "salle", "scène", "séché", "selon", "serré", "seule",
+  "siège", "signe", "singe", "sorte", "souci", "sourd", "style", "suite",
+  "table", "tâche", "terre", "tirer", "titre", "tombe", "trace", "train",
+  "trame", "triste", "trois", "tuer", "usage", "vague", "valse", "venir",
+  "vente", "verse", "vêtir", "vider", "ville", "vivre", "voile", "voler",
+  "yeuse"
+]
+
+# ══════════════════════════════════════════════════════════════════════════════
+# DICTIONNAIRES PLUS GRANDS
+# ══════════════════════════════════════════════════════════════════════════════
 #
-# Pour utiliser un dictionnaire plus grand, décommentez la ligne
-# correspondante et commentez les autres. Le temps d'exécution augmente
-# avec la taille du dictionnaire.
+# Pour utiliser un dictionnaire plus grand, hébergez les fichiers .arr
+# du dossier dictionaries/ sur un serveur web public (par exemple GitHub)
+# et décommentez la ligne correspondante ci-dessous.
+#
+# Format des URLs (si hébergé sur GitHub) :
+#   https://raw.githubusercontent.com/<user>/<repo>/main/spell-checker/dictionaries/<fichier>
+#
+# Pour charger, remplacez WORDS-XS par le nom du dictionnaire voulu
+# dans vos appels à alt-words().
 
-# Dictionnaire minimal — 169 mots de 5 lettres (démo rapide)
-include dictionaries/WORDS-XS-FR.arr
+# Dictionnaire small — 5 000 mots (chargement : ~1 seconde)
+# include url-file("https://votre-serveur.com/dictionaries/WORDS-S-FR.arr")
 
-# Dictionnaire small — 5 000 mots français les plus courants
-# include dictionaries/WORDS-S-FR.arr
+# Dictionnaire medium — 13 000 mots (chargement : ~3 secondes)
+# include url-file("https://votre-serveur.com/dictionaries/WORDS-M-FR.arr")
 
-# Dictionnaire medium — 13 000 mots français courants
-# include dictionaries/WORDS-M-FR.arr
-
-# Dictionnaire large — 40 000 mots français (ATTENTION : lent !)
-# include dictionaries/WORDS-L-FR.arr
+# Dictionnaire large — 40 000 mots (chargement : ~10 secondes)
+# include url-file("https://votre-serveur.com/dictionaries/WORDS-L-FR.arr")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # POUR COMMENCER
