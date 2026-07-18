@@ -518,12 +518,10 @@ WORDS-XS-FR = build-bk-tree(
 
 # WORDS-L-FR — chargé à la demande depuis dictionaries/WORDS-L-FR.arr
 # (fichier d'accompagnement, non embarqué pour garder ce starter léger).
-# Pour l'utiliser, décommentez l'import ci-dessous APRES avoir hébergé
-# le fichier .arr à une URL publique :
-#
-#   import url-file("https://raw.githubusercontent.com/USER/ai-ml-course/main/spell-checker/dictionaries/WORDS-L-FR.arr") as DL
-#   WORDS-L-FR = build-bk-tree(DL.WORDS-L)
-#
-# Le format attendu : le fichier .arr définit WORDS-L comme une
-# List<String> littérale, p. ex. :  WORDS-L = [list: " ... ", ... ]
+# Décommenté par défaut : le dictionnaire de 40 000 mots est requis par
+# l'exemple phare de la leçon (alt-words("plation", WORDS-L-FR, 4)).
+# Contenu de WORDS-L-FR.arr : WORDS-L = [list: ... 40 000 mots ... ]
+
+import url-file("https://raw.githubusercontent.com/bhuron/ai-ml-course/master/spell-checker/dictionaries/WORDS-L-FR.arr") as DL
+WORDS-L-FR = build-bk-tree(DL.WORDS-L)
 
