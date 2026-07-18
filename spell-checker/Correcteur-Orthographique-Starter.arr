@@ -2,10 +2,8 @@
 # CORRECTEUR ORTHOGRAPHIQUE — FICHIER DE DÉMARRAGE (FRANÇAIS)
 # ══════════════════════════════════════════════════════════════════════════════
 #
-# Adapté de Bootstrap World (Fall 2026) — Leçon « Data-Driven Algorithms »
-#
-# Ce fichier contient tout le nécessaire pour explorer la correction
-# orthographique en français comme un algorithme piloté par les données.
+# Adapté de Bootstrap World (Fall 2026)
+# Leçon « Data-Driven Algorithms » / Algorithmes pilotés par les données
 #
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -13,153 +11,233 @@ import lists as L
 
 # ─── ALPHABET FRANÇAIS ───────────────────────────────────────────────────────
 
-# Version complète : toutes les lettres accentuées du français
-ALPHABET-FR = [list:
-  "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-  "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-  "à", "â", "é", "è", "ê", "ë", "î", "ï", "ô", "ö", "ù", "û", "ü",
-  "ç", "æ", "œ"
-]
+ALPHABET-FR-SIMPLE = "abcdefghijklmnopqrstuvwxyzéèêàùç"
+ALPHABET-FR = "abcdefghijklmnopqrstuvwxyzàâéèêëîïôöùûüçæœ"
 
-# Version réduite pour les démos rapides
-ALPHABET-FR-SIMPLE = [list:
-  "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-  "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-  "é", "è", "ê", "à", "ù", "ç"
-]
+# ─── APPLY-TRANSFORMATION ───────────────────────────────────────────────────
+# Enveloppe les résultats dans une table, comme dans la bibliothèque originale.
+
+fun apply-transformation(transform-word :: (String -> List<String>), word-or-words) -> Table:
+  words = if is-string(word-or-words): [list: word-or-words]
+  else: word-or-words.column("alternate spellings")
+  end
+  acc-dict = [SD.mutable-string-dict:]
+  for each(word from words):
+    for each(result from transform-word(word)):
+      acc-dict.set-now(result, true)
+    end
+  end
+  res = acc-dict.keys-now().to-list()
+  [T.table-from-columns: {"alternate spellings"; res}]
+    .order-by("alternate spellings", true)
+end
 
 # ══════════════════════════════════════════════════════════════════════════════
 # FONCTIONS DE DISTANCE D'ÉDITION
 # ══════════════════════════════════════════════════════════════════════════════
 
 # ─── SUBSTITUTION ───────────────────────────────────────────────────────────
-# Remplace chaque lettre du mot par toutes les lettres de l'alphabet.
-# Pour un mot de n lettres et un alphabet de a lettres : n × a variantes.
-# Exemple : subs("chian", ALPHABET-FR-SIMPLE) génère ..., "chien", ...
+# Prend un mot (ou une table) et retourne une table de toutes les variantes
+# obtenues en remplaçant une lettre par une autre.
+#
+# Exemple : subs("chian") → table contenant ..., "chien", ...
 
-fun subs(word :: String, alphabet :: List<String>) -> List<String>:
-  doc: "Remplace chaque lettre du mot par toutes les lettres de l'alphabet"
-  for fold(acc from empty, i from range(0, string-length(word))):
-    orig-letter = string-substring(word, i, i + 1)
-    before = string-substring(word, 0, i)
-    after = string-substring(word, i + 1, string-length(word))
-    inner = for map(letter from alphabet):
-      if letter == orig-letter:
-        ""
-      else:
-        string-append(before, string-append(letter, after))
+fun subs(word-or-words) -> Table:
+  words = if is-string(word-or-words): [list: word-or-words]
+  else: word-or-words.column("alternate spellings")
+  end
+  letters = string-explode(ALPHABET-FR-SIMPLE)
+
+  fun transform-word(word :: String) -> List<String>:
+    word-chars = string-explode(word)
+    word-len = word-chars.length()
+    fun substitute-at(pos :: Number) -> List<String>:
+      current = word-chars.get(pos)
+      for fold(acc from [list:], letter from letters):
+        if letter == current:
+          acc
+        else:
+          new-chars = for fold(chars from [list:], i from L.range(0, word-len)):
+            if i == pos: link(letter, chars)
+            else: link(word-chars.get(i), chars)
+            end
+          end
+          link(L.reverse(new-chars).join-str(""), acc)
+        end
       end
     end
-    L.append(acc, inner)
+    for fold(all from [list:], pos from L.range(0, word-len)):
+      all + substitute-at(pos)
+    end
   end
+  apply-transformation(transform-word, words)
 end
 
 # ─── ÉCHANGE (SWAP) ─────────────────────────────────────────────────────────
-# Échange chaque paire de lettres adjacentes.
-# Pour un mot de n lettres : n-1 variantes.
-# Exemple : swaps("chein") génère ..., "chien", ...
+# Prend un mot (ou une table) et retourne une table de toutes les variantes
+# obtenues en inversant deux lettres adjacentes.
+#
+# Exemple : swaps("chein") → table contenant ..., "chien", ...
 
-fun swaps(word :: String) -> List<String>:
-  doc: "Échange chaque paire de lettres adjacentes"
-  for map(i from range(0, string-length(word) - 1)):
-    c1 = string-substring(word, i, i + 1)
-    c2 = string-substring(word, i + 1, i + 2)
-    before = string-substring(word, 0, i)
-    after = string-substring(word, i + 2, string-length(word))
-    string-append(string-append(before, c2), string-append(c1, after))
+fun swaps(word-or-words) -> Table:
+  words = if is-string(word-or-words): [list: word-or-words]
+  else: word-or-words.column("alternate spellings")
   end
-end
 
-# ─── INSERTION ──────────────────────────────────────────────────────────────
-# Insère chaque lettre de l'alphabet à chaque position possible.
-# Pour un mot de n lettres et a lettres : (n+1) × a variantes.
-# Exemple : insertions("aboi", ALPHABET-FR-SIMPLE) génère ..., "aboie", ...
-
-fun insertions(word :: String, alphabet :: List<String>) -> List<String>:
-  doc: "Insère chaque lettre de l'alphabet à chaque position"
-  for fold(acc from empty, i from range(0, string-length(word) + 1)):
-    before = string-substring(word, 0, i)
-    after = string-substring(word, i, string-length(word))
-    inner = for map(letter from alphabet):
-      string-append(before, string-append(letter, after))
+  fun transform-word(word :: String) -> List<String>:
+    word-chars = string-explode(word)
+    word-len = word-chars.length()
+    fun swap-at(pos :: Number) -> String:
+      swapped = for fold(chars from [list:], i from L.range(0, word-len)):
+        if i == pos: link(word-chars.get(pos + 1), chars)
+        else if i == (pos + 1): link(word-chars.get(pos), chars)
+        else: link(word-chars.get(i), chars)
+        end
+      end
+      L.reverse(swapped).join-str("")
     end
-    L.append(acc, inner)
+    for fold(sw from [list:], pos from L.range(0, word-len - 1)):
+      link(swap-at(pos), sw)
+    end
   end
+  apply-transformation(transform-word, words)
 end
 
 # ─── SUPPRESSION ────────────────────────────────────────────────────────────
-# Supprime chaque lettre du mot, une par une.
-# Pour un mot de n lettres : n variantes.
-# Exemple : deletions("for") génère "fo", "fr", "or", ...
+# Prend un mot (ou une table) et retourne une table de toutes les variantes
+# obtenues en supprimant une lettre.
+#
+# Exemple : deletions("for") → table contenant "fo", "fr", "or"
 
-fun deletions(word :: String) -> List<String>:
-  doc: "Supprime chaque lettre du mot, une par une"
-  for map(i from range(0, string-length(word))):
-    before = string-substring(word, 0, i)
-    after = string-substring(word, i + 1, string-length(word))
-    string-append(before, after)
+fun deletions(word-or-words) -> Table:
+  words = if is-string(word-or-words): [list: word-or-words]
+  else: word-or-words.column("alternate spellings")
   end
-end
 
-# ─── ONLY-REAL ──────────────────────────────────────────────────────────────
-# Ne garde que les mots qui existent dans le dictionnaire.
-# Supprime aussi les chaînes vides et les doublons.
-
-fun only-real(words :: List<String>, dict :: List<String>) -> List<String>:
-  doc: "Filtre pour ne garder que les mots présents dans le dictionnaire"
-  clean = L.filter(lam(w): string-length(w) > 0 end, words)
-  uniq = L.distinct(clean)
-  L.filter(lam(w): L.member(dict, w) end, uniq)
-end
-
-# ─── ALT-WORDS ──────────────────────────────────────────────────────────────
-# Trouve tous les mots du dictionnaire à distance d'édition ≤ edits.
-#
-# Paramètres :
-#   word     — le mot à corriger (ex: "chein")
-#   dict     — la liste de mots du dictionnaire (ex: WORDS-XS)
-#   edits    — distance d'édition maximale (1, 2, 3 ou 4)
-#   alphabet — l'alphabet à utiliser
-#
-# Exemples :
-#   alt-words("chein", WORDS-XS, 1, ALPHABET-FR-SIMPLE)
-#   alt-words("aboit", WORDS-XS, 2, ALPHABET-FR-SIMPLE)
-
-fun alt-words(
-    word :: String,
-    dict :: List<String>,
-    edits :: Number,
-    alphabet :: List<String>
-  ) -> List<String>:
-  doc: "Trouve tous les mots du dictionnaire à distance ≤ edits"
-  if edits <= 0:
-    if L.member(dict, word): [list: word] else: empty end
-  else:
-    s = subs(word, alphabet)
-    sw = swaps(word)
-    ins = insertions(word, alphabet)
-    dels = deletions(word)
-    all-variants = L.append(L.append(s, sw), L.append(ins, dels))
-
-    distance-1 = only-real(all-variants, dict)
-
-    if edits == 1:
-      distance-1
-    else:
-      distance-1-words = for fold(acc from empty, w from distance-1):
-        deeper = alt-words(w, dict, edits - 1, alphabet)
-        L.append(acc, deeper)
+  fun transform-word(word :: String) -> List<String>:
+    word-chars = string-explode(word)
+    word-len = word-chars.length()
+    fun delete-at(pos :: Number) -> String:
+      deleted = for fold(chars from [list:], i from L.range(0, word-len)):
+        if i == pos: chars
+        else: link(word-chars.get(i), chars)
+        end
       end
-      L.distinct(L.append(distance-1, distance-1-words))
+      L.reverse(deleted).join-str("")
+    end
+    for fold(all from [list:], pos from L.range(0, word-len)):
+      link(delete-at(pos), all)
     end
   end
+  apply-transformation(transform-word, words)
+end
+
+# ─── INSERTION ──────────────────────────────────────────────────────────────
+# Prend un mot (ou une table) et retourne une table de toutes les variantes
+# obtenues en insérant une lettre.
+#
+# Exemple : insertions("aboi") → table contenant ..., "aboie", ...
+
+fun insertions(word-or-words) -> Table:
+  words = if is-string(word-or-words): [list: word-or-words]
+  else: word-or-words.column("alternate spellings")
+  end
+  letters = string-explode(ALPHABET-FR-SIMPLE)
+
+  fun transform-word(word :: String) -> List<String>:
+    word-chars = string-explode(word)
+    word-len = word-chars.length()
+    fun insert-at(pos :: Number) -> List<String>:
+      for fold(acc from [list:], letter from letters):
+        inserted = for fold(chars from [list:], i from L.range(0, word-len + 1)):
+          if i < pos: link(word-chars.get(i), chars)
+          else if i == pos: link(letter, chars)
+          else: link(word-chars.get(i - 1), chars)
+          end
+        end
+        link(L.reverse(inserted).join-str(""), acc)
+      end
+    end
+    for fold(all from [list:], pos from L.range(0, word-len + 1)):
+      all + insert-at(pos)
+    end
+  end
+  apply-transformation(transform-word, words)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ONLY-REAL : filtre par dictionnaire
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Prend une table (colonne "alternate spellings") et un dictionnaire,
+# retourne une table ne contenant que les mots présents dans le dictionnaire.
+
+fun only-real(word-table :: Table, dict :: List<String>) -> Table:
+  words = word-table.column("alternate spellings")
+  filtered = for fold(acc from [list:], w from words):
+    if L.member(dict, w): link(w, acc) else: acc end
+  end
+  [T.table-from-columns: {"alternate spellings"; L.reverse(filtered)}]
+    .order-by("alternate spellings", true)
+end
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ALT-WORDS : correction orthographique complète
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Combine toutes les fonctions ci-dessus et trouve tous les mots du
+# dictionnaire à distance d'édition ≤ n.
+#
+# Retourne une table à deux colonnes :
+#   "word"           — le mot corrigé
+#   "edit-distance"  — la distance d'édition (1, 2, 3, ...)
+#
+# Exemple : alt-words("chein", WORDS-XS, 2)
+
+fun alt-words(word :: String, dict :: List<String>, edits :: Number) -> Table:
+  doc: "Trouve tous les mots du dictionnaire à distance ≤ edits"
+
+  fun find-edits(w :: String, remaining :: Number, dist :: Number) -> List:
+    if remaining <= 0: empty
+    else:
+      s   = subs(w).column("alternate spellings")
+      sw  = swaps(w).column("alternate spellings")
+      ins = insertions(w).column("alternate spellings")
+      del = deletions(w).column("alternate spellings")
+      all-variants = L.append(L.append(s, sw), L.append(ins, del))
+      real-words = for fold(acc from [list:], v from all-variants):
+        if L.member(dict, v): link(v, acc) else: acc end
+      end
+      real = L.distinct(real-words)
+      # Résultats à cette distance
+      current = for map(w2 from real):
+        {word: w2, edit-distance: dist}
+      end
+      if remaining == 1:
+        current
+      else:
+        # Récursion pour la profondeur suivante
+        deeper = for fold(acc from [list:], w2 from real):
+          L.append(acc, find-edits(w2, remaining - 1, dist + 1))
+        end
+        L.append(current, deeper)
+      end
+    end
+  end
+
+  results = find-edits(word, edits, 1)
+  uniq-results = L.distinct(results)
+  [T.table-from-columns: {
+    "word": for map(r from uniq-results): r.word end;
+    "edit-distance": for map(r from uniq-results): r.edit-distance end
+  }].order-by("edit-distance", true).order-by("word", true)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
 # DICTIONNAIRES FRANÇAIS
 # ══════════════════════════════════════════════════════════════════════════════
-#
-# Dictionnaire minimal — 169 mots de 5 lettres (embarqué, toujours dispo)
+
+# Dictionnaire minimal — 169 mots de 5 lettres (embarqué)
 WORDS-XS = [list:
   "abîme", "abord", "abris", "absent", "acheté", "actif", "adore", "aider",
   "aigle", "aimer", "aller", "amour", "appel", "arbre", "asile", "assez",
@@ -189,42 +267,12 @@ WORDS-XS = [list:
 # DICTIONNAIRES PLUS GRANDS
 # ══════════════════════════════════════════════════════════════════════════════
 #
-# Pour utiliser un dictionnaire plus grand, hébergez les fichiers .arr
-# du dossier dictionaries/ sur un serveur web public (par exemple GitHub)
-# et décommentez la ligne correspondante ci-dessous.
+# Pour charger un dictionnaire plus grand (5 000, 13 000 ou 40 000 mots),
+# hébergez les fichiers .arr du dossier dictionaries/ sur un serveur public
+# (ex. GitHub) et utilisez url-file :
 #
-# Format des URLs (si hébergé sur GitHub) :
-#   https://raw.githubusercontent.com/<user>/<repo>/main/spell-checker/dictionaries/<fichier>
+#   include url-file("https://raw.githubusercontent.com/<user>/<repo>/main/spell-checker/dictionaries/WORDS-S-FR.arr")
 #
-# Pour charger, remplacez WORDS-XS par le nom du dictionnaire voulu
-# dans vos appels à alt-words().
-
-# Dictionnaire small — 5 000 mots (chargement : ~1 seconde)
-# include url-file("https://votre-serveur.com/dictionaries/WORDS-S-FR.arr")
-
-# Dictionnaire medium — 13 000 mots (chargement : ~3 secondes)
-# include url-file("https://votre-serveur.com/dictionaries/WORDS-M-FR.arr")
-
-# Dictionnaire large — 40 000 mots (chargement : ~10 secondes)
-# include url-file("https://votre-serveur.com/dictionaries/WORDS-L-FR.arr")
-
+# Les fichiers WORDS-S-FR.arr, WORDS-M-FR.arr, WORDS-L-FR.arr définissent
+# respectivement WORDS-S, WORDS-M et WORDS-L.
 # ══════════════════════════════════════════════════════════════════════════════
-# POUR COMMENCER
-# ══════════════════════════════════════════════════════════════════════════════
-#
-# 1. Cliquez sur "Run" pour charger le programme.
-#
-# 2. Dans la Zone d'Interactions (à droite), essayez :
-#
-#    subs("chian", ALPHABET-FR-SIMPLE)
-#    swaps("chein")
-#    insertions("aboi", ALPHABET-FR-SIMPLE)
-#    deletions("vossinage")
-#
-# 3. Puis testez le correcteur complet :
-#
-#    alt-words("chein", WORDS-XS, 1, ALPHABET-FR-SIMPLE)
-#    alt-words("aboit", WORDS-XS, 1, ALPHABET-FR-SIMPLE)
-#    alt-words("for",   WORDS-XS, 1, ALPHABET-FR-SIMPLE)
-#
-# 4. Essayez vos propres mots mal orthographiés !
