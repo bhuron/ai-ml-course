@@ -1,14 +1,4 @@
-use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/fall2026/libraries", "core.arr")
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CORRECTEUR ORTHOGRAPHIQUE — FICHIER DE DÉMARRAGE (FRANÇAIS)
-# ══════════════════════════════════════════════════════════════════════════════
-#
-# Adapté de Bootstrap World (Fall 2026)
-# Leçon « Data-Driven Algorithms » / Algorithmes pilotés par les données
-#
-# ══════════════════════════════════════════════════════════════════════════════
-
+import url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/fall2026/libraries", "core.arr") as Core
 import lists as L
 
 # ─── ALPHABET FRANÇAIS ───────────────────────────────────────────────────────
@@ -23,14 +13,14 @@ fun apply-transformation(transform-word :: (String -> List<String>), word-or-wor
     words = if is-string(word-or-words): [list: word-or-words]
     else: word-or-words.column("alternate spellings")
     end
-    acc-dict = [SD.mutable-string-dict:]
+    acc-dict = [Core.SD.mutable-string-dict:]
     for each(word from words):
       for each(result from transform-word(word)):
         acc-dict.set-now(result, true)
       end
     end
     res = acc-dict.keys-now().to-list()
-    [T.table-from-columns: {"alternate spellings"; res}]
+    [Core.T.table-from-columns: {"alternate spellings"; res}]
       .order-by("alternate spellings", true)
   end
 end
@@ -170,7 +160,7 @@ fun only-real(word-table :: Table, dict :: List<String>) -> Table:
     filtered = for fold(acc from [list:], w from words):
       if L.member(dict, w): link(w, acc) else: acc end
     end
-    [T.table-from-columns: {"alternate spellings"; L.reverse(filtered)}]
+    [Core.T.table-from-columns: {"alternate spellings"; L.reverse(filtered)}]
       .order-by("alternate spellings", true)
   end
 end
@@ -209,7 +199,7 @@ fun alt-words(word :: String, dict :: List<String>, edits :: Number) -> Table:
 
     results = find-edits(word, edits, 1)
     uniq-results = L.distinct(results)
-    [T.table-from-columns:
+    [Core.T.table-from-columns:
       {"word"; for map(r from uniq-results): r.word end},
       {"edit-distance"; for map(r from uniq-results): r.edit-distance end}
     ].order-by("edit-distance", true).order-by("word", true)
