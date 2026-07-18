@@ -227,10 +227,10 @@ fun alt-words(word :: String, dict :: List<String>, edits :: Number) -> Table:
 
   results = find-edits(word, edits, 1)
   uniq-results = L.distinct(results)
-  [T.table-from-columns: {
-    "word": for map(r from uniq-results): r.word end;
-    "edit-distance": for map(r from uniq-results): r.edit-distance end
-  }].order-by("edit-distance", true).order-by("word", true)
+  [T.table-from-columns:
+    {"word"; for map(r from uniq-results): r.word end},
+    {"edit-distance"; for map(r from uniq-results): r.edit-distance end}
+  ].order-by("edit-distance", true).order-by("word", true)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
