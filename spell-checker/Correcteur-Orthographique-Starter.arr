@@ -217,12 +217,13 @@ end
 fun build-bk-tree(words :: List<String>) -> BKNode block:
   cases (List) words:
     | empty => raise("Cannot build BK-tree from empty list")
-    | link(first, rest) =>
+    | link(first, rest) => block:
       root = bk-node(first, [SD.mutable-string-dict: ])
       for each(w from rest):
         bk-insert(root, w)
       end
       root
+    end
   end
 end
 
