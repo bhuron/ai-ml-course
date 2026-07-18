@@ -47,6 +47,13 @@ provide *
 import url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/fall2026/core", "../libraries/core.arr") as Core
 import csv as csv
 include string-dict
+
+# Dictionnaire français de 40 000 mots (WORDS-L-FR.arr définit WORDS-L comme
+# une List<String> littérale). Importé ici en haut de fichier — Pyret exige
+# que tous les `import`/`use`/`include` précèdent les autres définitions.
+# La construction du BK-tree (WORDS-L-FR = build-bk-tree(DL.WORDS-L)) se
+# fait plus bas, après la définition de `build-bk-tree`.
+import url-file("https://raw.githubusercontent.com/bhuron/ai-ml-course/master/spell-checker/dictionaries/WORDS-L-FR.arr") as DL
 provide from Core:
   *,
   type Posn,
@@ -516,12 +523,8 @@ WORDS-XS-FR = build-bk-tree(
 # Le format attendu : le fichier .arr définit WORDS-M comme une
 # List<String> littérale, p. ex. :  WORDS-M = [list: " ... ", ... ]
 
-# WORDS-L-FR — chargé à la demande depuis dictionaries/WORDS-L-FR.arr
-# (fichier d'accompagnement, non embarqué pour garder ce starter léger).
-# Décommenté par défaut : le dictionnaire de 40 000 mots est requis par
-# l'exemple phare de la leçon (alt-words("plation", WORDS-L-FR, 4)).
-# Contenu de WORDS-L-FR.arr : WORDS-L = [list: ... 40 000 mots ... ]
-
-import url-file("https://raw.githubusercontent.com/bhuron/ai-ml-course/master/spell-checker/dictionaries/WORDS-L-FR.arr") as DL
+# WORDS-L-FR — construit à partir de l'import DL (voir en haut de fichier).
+# Le fichier .arr définit WORDS-L comme une List<String> littérale ;
+# build-bk-tree la transforme en BKNode à chargement.
 WORDS-L-FR = build-bk-tree(DL.WORDS-L)
 
