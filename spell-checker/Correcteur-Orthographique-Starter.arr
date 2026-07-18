@@ -9,6 +9,7 @@
 
 import lists as L
 include string-dict
+use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/fall2026/libraries", "core.arr")
 
 # ─── ALPHABET FRANÇAIS ───────────────────────────────────────────────────────
 
