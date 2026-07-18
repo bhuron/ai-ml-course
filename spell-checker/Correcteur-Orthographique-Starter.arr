@@ -7,8 +7,9 @@ use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-f
 # Adapté de Bootstrap World (Fall 2026)
 # Leçon « Data-Driven Algorithms » / Algorithmes pilotés par les données
 #
-# Ce fichier charge la bibliothèque Bootstrap (core.arr) puis définit
-# des fonctions de correction orthographique adaptées au français.
+# Les fonctions ci-dessous sont des copies exactes de la bibliothèque
+# originale Bootstrap (spell-checker-library.arr), avec une seule
+# modification : l'alphabet inclut les caractères accentués français.
 #
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -18,7 +19,7 @@ ALPHABET-FR-SIMPLE = "abcdefghijklmnopqrstuvwxyzéèêàùç"
 ALPHABET-FR = "abcdefghijklmnopqrstuvwxyzàâéèêëîïôöùûüçæœ"
 
 # ══════════════════════════════════════════════════════════════════════════════
-# APPLY-TRANSFORMATION
+# APPLY-TRANSFORMATION — copie exacte de l'original
 # ══════════════════════════════════════════════════════════════════════════════
 
 fun apply-transformation(transform-word :: (String -> List<String>), word-or-words) -> Table block:
@@ -26,7 +27,7 @@ fun apply-transformation(transform-word :: (String -> List<String>), word-or-wor
   else: word-or-words.column("alternate spellings")
   end
 
-  acc-dict = [SD.mutable-string-dict:]
+  acc-dict = [SD.mutable-string-dict: ]
   for each(word from words):
     for each(result from transform-word(word)):
       acc-dict.set-now(result, true)
@@ -38,50 +39,58 @@ fun apply-transformation(transform-word :: (String -> List<String>), word-or-wor
     .order-by("alternate spellings", true)
 end
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# SUBSTITUTION
+# SUBS — copie exacte de l'original, alphabet modifié
 # ══════════════════════════════════════════════════════════════════════════════
 
 fun subs(word-or-words) -> Table:
+
   words = if is-string(word-or-words): [list: word-or-words]
   else: word-or-words.column("alternate spellings")
   end
 
-  letters = string-explode(ALPHABET-FR-SIMPLE)
+  alphabet = ALPHABET-FR-SIMPLE
+  letters = string-explode(alphabet)
 
   fun transform-word(word :: String) -> List<String>:
     word-chars = string-explode(word)
     word-len = word-chars.length()
 
-    fun substitute-at(pos :: Number) -> List<String>:
-      current = word-chars.get(pos)
-      for fold(acc from [list:], letter from letters):
-        if letter == current:
-          acc
+    fun substitute-at-position(pos :: Number) -> List<String>:
+      current-char = word-chars.get(pos)
+      for fold(substitutions from [list: ], letter from letters):
+        if letter == current-char:
+          substitutions
         else:
-          new-chars = for fold(chars from [list:], i from L.range(0, word-len)):
-            if i == pos: link(letter, chars)
-            else: link(word-chars.get(i), chars)
+          new-chars = for fold(chars from [list: ], i from L.range(0, word-len)):
+            if i == pos:
+              link(letter, chars)
+            else:
+              link(word-chars.get(i), chars)
             end
           end
-          link(L.reverse(new-chars).join-str(""), acc)
+          new-word = L.reverse(new-chars).join-str("")
+          link(new-word, substitutions)
         end
       end
     end
 
-    for fold(all-subs from [list:], pos from L.range(0, word-len)):
-      all-subs + substitute-at(pos)
+    for fold(all-substitutions from [list: ], pos from L.range(0, word-len)):
+      all-substitutions + substitute-at-position(pos)
     end
   end
 
-  apply-transformation(transform-word, words)
+  apply-transformation(transform-word, word-or-words)
 end
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# ÉCHANGE (SWAP)
+# SWAPS — copie exacte de l'original
 # ══════════════════════════════════════════════════════════════════════════════
 
 fun swaps(word-or-words) -> Table:
+
   words = if is-string(word-or-words): [list: word-or-words]
   else: word-or-words.column("alternate spellings")
   end
@@ -90,29 +99,34 @@ fun swaps(word-or-words) -> Table:
     word-chars = string-explode(word)
     word-len = word-chars.length()
 
-    fun swap-at(pos :: Number) -> String:
-      swapped = for fold(chars from [list:], i from L.range(0, word-len)):
-        if i == pos: link(word-chars.get(pos + 1), chars)
-        else if i == (pos + 1): link(word-chars.get(pos), chars)
-        else: link(word-chars.get(i), chars)
+    fun swap-at-position(pos :: Number) -> String:
+      swapped-chars = for fold(chars from [list: ], i from L.range(0, word-len)):
+        if i == pos:
+          link(word-chars.get(pos + 1), chars)
+        else if i == (pos + 1):
+          link(word-chars.get(pos), chars)
+        else:
+          link(word-chars.get(i), chars)
         end
       end
-      L.reverse(swapped).join-str("")
+      L.reverse(swapped-chars).join-str("")
     end
 
-    for fold(all-swaps from [list:], pos from L.range(0, word-len - 1)):
-      link(swap-at(pos), all-swaps)
+    for fold(swapped from [list: ], pos from L.range(0, word-len - 1)):
+      link(swap-at-position(pos), swapped)
     end
   end
 
-  apply-transformation(transform-word, words)
+  apply-transformation(transform-word, word-or-words)
 end
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# SUPPRESSION
+# DELETIONS — copie exacte de l'original
 # ══════════════════════════════════════════════════════════════════════════════
 
 fun deletions(word-or-words) -> Table:
+
   words = if is-string(word-or-words): [list: word-or-words]
   else: word-or-words.column("alternate spellings")
   end
@@ -121,76 +135,89 @@ fun deletions(word-or-words) -> Table:
     word-chars = string-explode(word)
     word-len = word-chars.length()
 
-    fun delete-at(pos :: Number) -> String:
-      deleted = for fold(chars from [list:], i from L.range(0, word-len)):
-        if i == pos: chars
-        else: link(word-chars.get(i), chars)
+    fun delete-at-position(pos :: Number) -> String:
+      deleted-chars = for fold(chars from [list: ], i from L.range(0, word-len)):
+        if i == pos:
+          chars
+        else:
+          link(word-chars.get(i), chars)
         end
       end
-      L.reverse(deleted).join-str("")
+      L.reverse(deleted-chars).join-str("")
     end
 
-    for fold(all-dels from [list:], pos from L.range(0, word-len)):
-      link(delete-at(pos), all-dels)
+    for fold(all-deletions from [list: ], pos from L.range(0, word-len)):
+      link(delete-at-position(pos), all-deletions)
     end
   end
 
-  apply-transformation(transform-word, words)
+  apply-transformation(transform-word, word-or-words)
 end
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# INSERTION
+# INSERTIONS — copie exacte de l'original, alphabet modifié
 # ══════════════════════════════════════════════════════════════════════════════
 
 fun insertions(word-or-words) -> Table:
+
   words = if is-string(word-or-words): [list: word-or-words]
   else: word-or-words.column("alternate spellings")
   end
 
-  letters = string-explode(ALPHABET-FR-SIMPLE)
+  alphabet = ALPHABET-FR-SIMPLE
+  letters = string-explode(alphabet)
 
   fun transform-word(word :: String) -> List<String>:
     word-chars = string-explode(word)
     word-len = word-chars.length()
 
-    fun insert-at(pos :: Number) -> List<String>:
-      for fold(acc from [list:], letter from letters):
-        inserted = for fold(chars from [list:], i from L.range(0, word-len + 1)):
-          if i < pos: link(word-chars.get(i), chars)
-          else if i == pos: link(letter, chars)
-          else: link(word-chars.get(i - 1), chars)
+    fun insert-at-position(pos :: Number) -> List<String>:
+      for fold(shadow insertions from [list: ], letter from letters):
+        new-chars = for fold(chars from [list: ], i from L.range(0, word-len + 1)):
+          if i == pos:
+            link(letter, chars)
+          else if i < pos:
+            link(word-chars.get(i), chars)
+          else:
+            link(word-chars.get(i - 1), chars)
           end
         end
-        link(L.reverse(inserted).join-str(""), acc)
+        new-word = L.reverse(new-chars).join-str("")
+        link(new-word, insertions)
       end
     end
 
-    for fold(all-insertions from [list:], pos from L.range(0, word-len + 1)):
-      all-insertions + insert-at(pos)
+    for fold(all-insertions from [list: ], pos from L.range(0, word-len + 1)):
+      all-insertions + insert-at-position(pos)
     end
   end
 
-  apply-transformation(transform-word, words)
+  apply-transformation(transform-word, word-or-words)
 end
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# ONLY-REAL : filtre par dictionnaire
+# ONLY-REAL — adapté pour List (l'original utilise BKNode)
 # ══════════════════════════════════════════════════════════════════════════════
 
 fun only-real(word-table :: Table, dict :: List<String>) -> Table block:
   words = word-table.column("alternate spellings")
-  filtered = for fold(acc from [list:], w from words):
+  filtered = for fold(acc from [list: ], w from words):
     if L.member(dict, w): link(w, acc) else: acc end
   end
   [T.table-from-columns: {"alternate spellings"; L.reverse(filtered)}]
     .order-by("alternate spellings", true)
 end
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# ALT-WORDS : correction orthographique complète
+# ALT-WORDS — adapté pour List (l'original utilise BKNode)
 # ══════════════════════════════════════════════════════════════════════════════
 
-fun alt-words(word :: String, dict :: List<String>, edits :: Number) -> Table block:
+fun alt-words(orig-s :: String, dict :: List<String>, n :: Number) -> Table block:
+  s = string-to-lower(orig-s)
+
   fun find-edits(w :: String, remaining :: Number, dist :: Number) -> List:
     if remaining <= 0: empty
     else:
@@ -199,7 +226,7 @@ fun alt-words(word :: String, dict :: List<String>, edits :: Number) -> Table bl
       ins = insertions(w).column("alternate spellings")
       del = deletions(w).column("alternate spellings")
       all-variants = L.append(L.append(s, sw), L.append(ins, del))
-      real-words = for fold(acc from [list:], v from all-variants):
+      real-words = for fold(acc from [list: ], v from all-variants):
         if L.member(dict, v): link(v, acc) else: acc end
       end
       real = L.distinct(real-words)
@@ -209,7 +236,7 @@ fun alt-words(word :: String, dict :: List<String>, edits :: Number) -> Table bl
       if remaining == 1:
         current
       else:
-        deeper = for fold(acc from [list:], w2 from real):
+        deeper = for fold(acc from [list: ], w2 from real):
           L.append(acc, find-edits(w2, remaining - 1, dist + 1))
         end
         L.append(current, deeper)
@@ -217,12 +244,13 @@ fun alt-words(word :: String, dict :: List<String>, edits :: Number) -> Table bl
     end
   end
 
-  results = find-edits(word, edits, 1)
+  results = find-edits(s, n, 1)
   uniq = L.distinct(results)
   [T.table-from-columns:
     {"word"; for map(r from uniq): r.word end},
     {"edit-distance"; for map(r from uniq): r.edit-distance end}
   ].order-by("edit-distance", true).order-by("word", true)
+    .filter(lam(r): r["word"] <> orig-s end)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
