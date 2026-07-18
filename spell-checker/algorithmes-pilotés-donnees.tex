@@ -272,7 +272,7 @@ Le correcteur orthographique intégré à votre navigateur web est un exemple cl
 \begin{activitybox}
   \begin{itemize}
     \item Examinons un programme de correction orthographique écrit en Pyret.
-    \item Ouvrez le \textbf{fichier de démarrage du correcteur orthographique} (\texttt{Correcteur-Orthographique-Starter.arr}), enregistrez une copie et cliquez sur «~Run~».
+    \item Ouvrez le \textbf{fichier de démarrage du correcteur orthographique} (\texttt{Correcteur\allowbreak-Orthographique\allowbreak-Starter\allowbreak.arr}), enregistrez une copie et cliquez sur «~Run~».
     \item Dans Pyret, un \emph{commentaire} est toute ligne de code qui commence par \texttt{\#}. Pyret ignore complètement les commentaires, les programmeurs les utilisent donc pour écrire des notes~! \textbf{Lisez les commentaires dans la zone de définitions}. Que vous apprennent ces notes~?
     \item Complétez la première section de \textbf{Un correcteur orthographique en Pyret}.
   \end{itemize}
@@ -282,7 +282,7 @@ Le correcteur orthographique intégré à votre navigateur web est un exemple cl
 
 Le fichier de démarrage reprend \emph{intégralement} la bibliothèque \texttt{spell-checker-library.arr} de Bootstrap World (Fall 2026)~: les fonctions renvoient toutes des \textbf{Tables} et les dictionnaires sont des \textbf{BK-trees} (type \texttt{BKNode}) pour des recherches rapides par distance d'édition. Les seules adaptations françaises sont~:
 \begin{itemize}
-  \item Les deux alphabets anglais \texttt{"abc\ldots xyz"} implicitement utilisés par \texttt{subs} et \texttt{insertions} sont remplacés par \texttt{ALPHABET-FR-SIMPLE} (32~caractères~: 26 + é, è, ê, à, ù, ç). Une variante étendue \texttt{ALPHABET-FR} (44~caractères, avec æ, œ, ë, ï, ô, ö, û, ü) est également fournie.
+  \item Les deux alphabets anglais hardcodés dans \texttt{subs} et \texttt{insertions} sont remplacés par \texttt{ALPHABET-FR-SIMPLE} (32~caractères~: 26 + é, è, ê, à, ù, ç). Une variante étendue \texttt{ALPHABET-FR} (44~caractères, avec æ, œ, ë, ï, ô, ö, û, ü) est également fournie.
   \item Le dictionnaire minimal anglais \texttt{WORDS-XS} est remplacé par \texttt{WORDS-XS-FR}~: 169~mots français de 5~lettres, embarqués dans le fichier et construits en BK-tree au chargement.
   \item Le grand dictionnaire \texttt{WORDS-L-FR} (40~000~mots) est \emph{importé} automatiquement depuis \texttt{dictionaries/WORDS-L-FR.arr} via \texttt{import url-file(...)} en haut du fichier~; son BK-tree est construit au chargement. Les dictionnaires intermédiaires \texttt{WORDS-S-FR} (5~000) et \texttt{WORDS-M-FR} (13~000) sont disponibles dans le même dossier~: décommentez l'\texttt{import} correspondant en haut du fichier pour les utiliser.
 \end{itemize}
@@ -487,22 +487,24 @@ Quand on veut que Pyret \emph{se souvienne} d'une définition, on l'ajoute à la
 Les dictionnaires français sont fournis dans le dossier \texttt{dictionaries/}, en deux formats jumeaux~: \texttt{.txt} (un mot par ligne, lisible) et \texttt{.arr} (\texttt{[list: ...]} littérale Pyret, chargeable via \texttt{import url-file(...)}).
 
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabularx}{\textwidth}{l l X}
   \toprule
-  \textbf{Fichier} & \textbf{Mots} & \textbf{Usage} \\
+  \textbf{Identifiant} & \textbf{Mots} & \textbf{Usage} \\
   \midrule
-  \texttt{WORDS-XS-FR.(\texttt{txt}/\texttt{arr})} & 169 mots de 5 lettres & Embarqué dans le starter, démos rapides \\
-  \texttt{WORDS-S-FR.(\texttt{txt}/\texttt{arr})}  & 5~000 mots courants  & Travail en classe \\
-  \texttt{WORDS-M-FR.(\texttt{txt}/\texttt{arr})}  & 13~000 mots courants & Exploration \\
-  \texttt{WORDS-L-FR.(\texttt{txt}/\texttt{arr})}  & 40~000 mots          & Projets, exemple phare de la leçon \\
+  \texttt{WORDS-XS-FR} & 169 & Embarqué dans le starter, démos rapides (mots de 5 lettres) \\
+  \texttt{WORDS-S-FR}  & 5~000 & Travail en classe \\
+  \texttt{WORDS-M-FR}  & 13~000 & Exploration \\
+  \texttt{WORDS-L-FR}  & 40~000 & Projets, exemple phare de la leçon (auto-importé) \\
   \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{center}
 
-Ces dictionnaires ont été extraits du dictionnaire Hunspell français (\texttt{fr\_FR}) et filtrés pour ne contenir que des mots en minuscules avec accents. Le dictionnaire \texttt{WORDS-XS-FR} a été sélectionné manuellement pour garantir des mots courants et reconnaissables par les élèves. Les fichiers \texttt{.arr} commencent par une directive \texttt{provide *} suivi d'une définition \texttt{WORDS-<SIZE> = [list: ...]}, ce qui permet de les charger depuis le fichier de démarrage via~:
-\begin{center}
-  \texttt{import url-file("https://raw.githubusercontent.com/.../dictionaries", "WORDS-L-FR.arr") as DL}
-\end{center}
+Ces dictionnaires ont été extraits du dictionnaire Hunspell français (\texttt{fr\_FR}) et filtrés pour ne contenir que des mots en minuscules avec accents. Le dictionnaire \texttt{WORDS-XS-FR} a été sélectionné manuellement pour garantir des mots courants et reconnaissables par les élèves. Les fichiers \texttt{.arr} commencent par une directive \texttt{provide *} suivie d'une définition \texttt{WORDS-<SIZE> = [list: ...]}, ce qui permet de les charger depuis le fichier de démarrage via~:
+
+\begin{quote}
+  \footnotesize\ttfamily
+  import url-file(".../dictionaries", "WORDS-L-FR.arr") as DL
+\end{quote}
 
 \section*{Annexe B~: Le français et la distance d'édition}
 
@@ -520,19 +522,19 @@ Ces défis expliquent pourquoi les correcteurs orthographiques modernes combinen
 \section*{Annexe C~: Fichiers du projet}
 
 \begin{center}
-\begin{tabular}{ll}
+\begin{tabularx}{\textwidth}{l X}
   \toprule
   \textbf{Fichier} & \textbf{Description} \\
   \midrule
   \texttt{Correcteur-Orthographique-Starter.arr} & Fichier Pyret (\textasciitilde20~Ko)~: bibliothèque Bootstrap + adaptations FR \\
   \texttt{algorithmes-pilotés-donnees.tex} & Document de cours (ce fichier) \\
-  \texttt{dictionaries/WORDS-XS-FR.\{txt,arr\}} & 169 mots français de 5 lettres (embarqué aussi dans le starter) \\
+  \texttt{dictionaries/WORDS-XS-FR.\{txt,arr\}} & 169 mots français de 5 lettres (aussi embarqué dans le starter) \\
   \texttt{dictionaries/WORDS-S-FR.\{txt,arr\}}  & 5~000 mots français courants \\
   \texttt{dictionaries/WORDS-M-FR.\{txt,arr\}}  & 13~000 mots français \\
   \texttt{dictionaries/WORDS-L-FR.\{txt,arr\}}  & 40~000 mots français (auto-importé dans le starter) \\
   \texttt{images/} & Illustrations de la leçon \\
   \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{center}
 
 \vspace{1em}
