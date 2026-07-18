@@ -1,4 +1,4 @@
-use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/fall2026/libraries", "core.arr")
+use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/fall2026/ai", "../libraries/spell-checker-library.arr")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # CORRECTEUR ORTHOGRAPHIQUE — FICHIER DE DÉMARRAGE (FRANÇAIS)
@@ -198,66 +198,39 @@ end
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ONLY-REAL — adapté pour List (l'original utilise BKNode)
+# CONSTRUCTION DE BK-TREES FRANÇAIS
 # ══════════════════════════════════════════════════════════════════════════════
+#
+# La bibliothèque originale stocke les dictionnaires sous forme de BK-trees
+# (Burkhard-Keller) pour des recherches rapides par distance d'édition.
+# Nous construisons ci-dessous des BK-trees à partir de listes de mots français.
 
-fun only-real(word-table :: Table, dict :: List<String>) -> Table block:
-  words = word-table.column("alternate spellings")
-  filtered = for fold(acc from [list: ], w from words):
-    if L.member(dict, w): link(w, acc) else: acc end
+fun bk-insert(node :: BKNode, word :: String) -> Nothing block:
+  d = levenshtein(node.word, word)
+  key = num-to-string(d)
+  cases (Starter.Option) node.children.get-now(key):
+    | none => node.children.set-now(key, bk-node(word, [SD.mutable-string-dict: ]))
+    | some(child) => bk-insert(child, word)
   end
-  [T.table-from-columns: {"alternate spellings"; L.reverse(filtered)}]
-    .order-by("alternate spellings", true)
 end
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# ALT-WORDS — adapté pour List (l'original utilise BKNode)
-# ══════════════════════════════════════════════════════════════════════════════
-
-fun alt-words(orig-s :: String, dict :: List<String>, n :: Number) -> Table block:
-  s = string-to-lower(orig-s)
-
-  fun find-edits(w :: String, remaining :: Number, dist :: Number) -> List:
-    if remaining <= 0: empty
-    else:
-      s   = subs(w).column("alternate spellings")
-      sw  = swaps(w).column("alternate spellings")
-      ins = insertions(w).column("alternate spellings")
-      del = deletions(w).column("alternate spellings")
-      all-variants = L.append(L.append(s, sw), L.append(ins, del))
-      real-words = for fold(acc from [list: ], v from all-variants):
-        if L.member(dict, v): link(v, acc) else: acc end
+fun build-bk-tree(words :: List<String>) -> BKNode block:
+  cases (List) words:
+    | empty => raise("Cannot build BK-tree from empty list")
+    | link(first, rest) =>
+      root = bk-node(first, [SD.mutable-string-dict: ])
+      for each(w from rest):
+        bk-insert(root, w)
       end
-      real = L.distinct(real-words)
-      current = for map(w2 from real):
-        {word: w2, edit-distance: dist}
-      end
-      if remaining == 1:
-        current
-      else:
-        deeper = for fold(acc from [list: ], w2 from real):
-          L.append(acc, find-edits(w2, remaining - 1, dist + 1))
-        end
-        L.append(current, deeper)
-      end
-    end
+      root
   end
-
-  results = find-edits(s, n, 1)
-  uniq = L.distinct(results)
-  [T.table-from-columns:
-    {"word"; for map(r from uniq): r.word end},
-    {"edit-distance"; for map(r from uniq): r.edit-distance end}
-  ].order-by("edit-distance", true).order-by("word", true)
-    .filter(lam(r): r["word"] <> orig-s end)
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# DICTIONNAIRE FRANÇAIS (embarqué, 169 mots de 5 lettres)
+# DICTIONNAIRE FRANÇAIS — BK-tree (169 mots de 5 lettres)
 # ══════════════════════════════════════════════════════════════════════════════
 
-WORDS-XS = [list:
+WORDS-XS = build-bk-tree([list:
   "abîme", "abord", "abris", "absent", "acheté", "actif", "adore", "aider",
   "aigle", "aimer", "aller", "amour", "appel", "arbre", "asile", "assez",
   "atome", "auber", "aussi", "autre", "avant", "avoir", "bague", "belle",
@@ -280,7 +253,7 @@ WORDS-XS = [list:
   "trame", "triste", "trois", "tuer", "usage", "vague", "valse", "venir",
   "vente", "verse", "vêtir", "vider", "ville", "vivre", "voile", "voler",
   "yeuse"
-]
+])
 
 # ══════════════════════════════════════════════════════════════════════════════
 # DICTIONNAIRES PLUS GRANDS
