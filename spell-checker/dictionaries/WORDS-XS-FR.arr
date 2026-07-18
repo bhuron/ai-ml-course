@@ -1,6 +1,6 @@
 # Dictionnaire français — WORDS-XS
 # 169 mots
-provide WORDS-XS
+provide *
 
 WORDS-XS = [list: "abîme", "abord", "abris", "absent", "acheté", "actif", "adore", "aider", "aigle", "aimer", "aller", "amour", "appel", "arbre", "asile",
   "assez", "atome", "auber", "aussi", "autre", "avant", "avoir", "bague", "belle", "bêtes", "blanc", "bleue", "boire", "bonne", "bruit",

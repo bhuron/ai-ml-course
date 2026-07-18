@@ -1,6 +1,6 @@
 # Dictionnaire français — WORDS-M
 # 13000 mots
-provide WORDS-M
+provide *
 
 WORDS-M = [list: "a", "à", "ab", "abaca", "abacule", "abader", "abaissable", "abaissant", "abaissée", "abaisse-langue", "abaisse-langue", "abaissement", "abaisser", "abaisseur", "abajoue",
   "abalober", "abalone", "abalourdir", "abandon", "abandonnataire", "abandonnateur", "abandonnement", "abandonner", "abandonnique", "abandonnisme", "abandonniste", "abaque", "abarticulaire", "abarticulation", "abasie",
