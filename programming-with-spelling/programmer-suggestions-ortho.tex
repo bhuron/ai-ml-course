@@ -128,12 +128,17 @@
 }
 
 % ---------- Cercles d'Évaluation ----------
-% Rendu simplifié via TikZ : \cercle{fonction}{arg1, arg2, ...}
+% Rendu TikZ : \cercle{fonction}{args} dessine une bulle bleue arrondie,
+% nom de fonction en haut (gras), arguments en dessous. Le baseline fixe
+% (baseline=-0.5ex) garantit que des bulles de hauteurs différentes (ex.
+% imbriquées) s'alignent sur la même ligne de texte quand elles sont
+% placées côte à côte dans un \begin{center}.
 \newcommand{\cercle}[2]{%
-  \begin{tikzpicture}[baseline=(c.base)]
-    \node[draw, rounded corners=8pt, inner sep=4pt] (c) {%
-      \begin{tabular}{c} \ttfamily #1 \\[2pt] \ttfamily #2 \end{tabular}%
-    };
+  \begin{tikzpicture}[baseline=-0.5ex]
+    \node[draw=bsblue, thick, fill=bsblue!8, rounded corners=10pt,
+          inner sep=5pt, align=center, font=\ttfamily\small,
+          text=black]
+      {\textbf{\color{bsblue}#1}\\[2pt]#2};
   \end{tikzpicture}%
 }
 
