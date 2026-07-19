@@ -135,10 +135,10 @@
 % placées côte à côte dans un \begin{center}.
 \newcommand{\cercle}[2]{%
   \begin{tikzpicture}[baseline=-0.5ex]
-    \node[draw=bsblue, thick, fill=bsblue!8, rounded corners=10pt,
-          inner sep=5pt, align=center, font=\ttfamily\small,
-          text=black]
-      {\textbf{\color{bsblue}#1}\\[2pt]#2};
+    \node[draw=bsblue, thick, fill=bsblue!8, rounded corners=6pt,
+          inner xsep=3pt, inner ysep=2pt, align=center,
+          font=\ttfamily\scriptsize, text=black]
+      {\textbf{\color{bsblue}#1}\\[0pt]#2};
   \end{tikzpicture}%
 }
 
@@ -425,11 +425,11 @@ Les règles sont simples~:
 Supposons que nous voulons voir les 5~premiers résultats de \texttt{resultats}, triés par \texttt{edit-distance} croissante. Commençons par générer la table triée, puis utilisons \texttt{first\allowbreak-n\allowbreak-rows} pour prendre les 5~premières.
 
 \begin{center}
-  \cercle{sort}{resultats, "edit-distance", true}
-  \hspace{1.5em}
-  $\to$
-  \hspace{1.5em}
-  \cercle{first-n-rows}{\cercle{sort}{resultats, "edit-distance", true}, 5}
+  \begin{tabular}{@{}c@{}}
+    \cercle{sort}{resultats, "edit\allowbreak-distance", true}%
+    \hspace{1em}$\to$\hspace{1em}%
+    \cercle{first-n-rows}{\cercle{sort}{resultats, "edit\allowbreak-distance", true}, 5}
+  \end{tabular}
 \end{center}
 
 En code Pyret~:
