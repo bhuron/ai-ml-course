@@ -211,70 +211,76 @@ Chaque \textbf{contrat} a trois parties~:
 \section{Composer avec les Cercles d'Évaluation}
 
 \begin{overviewbox}
-  Les \textbf{Cercles d'Évaluation} (\emph{Circles of Evaluation}) sont un outil visuel pour représenter la composition de fonctions. Chaque cercle contient un nom de fonction et ses arguments, et les cercles peuvent être imbriqués.
+  Maintenant qu'on sait trier et réduire des tables, on peut \textbf{combiner} ces fonctions pour obtenir exactement ce qu'on veut. Les \textbf{Cercles d'Évaluation} (\emph{Circles of Evaluation}) sont l'outil visuel utilisé par Bootstrap pour représenter la composition de fonctions~: chaque cercle contient une fonction et ses arguments, et les cercles s'imbriquent.
 \end{overviewbox}
 
-\subsection{Composer \pyret{first-n-rows} et \pyret{sort}}
+\subsection{Pourquoi composer~?}
 
-Supposons qu'on veuille voir les \textbf{5 premiers résultats}, triés par distance d'édition croissante. On va composer deux fonctions~:
+Le tri seul donne une table de 500 suggestions classées. Ce qu'on veut, c'est \textbf{les 5 meilleures} — les plus proches du mot tapé. Pour ça, on a besoin de \emph{deux} fonctions~:
 
 \begin{enumerate}[leftmargin=*]
-  \item D'abord, trier la table~: \pyret{sort(resultats, "edit-distance", true)}
-  \item Ensuite, prendre les 5 premiers~: \pyret{first-n-rows(..., 5)}
+  \item \pyret{sort(resultats, "edit-distance", true)} — trier par distance croissante
+  \item \pyret{first-n-rows(..., 5)} — garder les 5 premiers
 \end{enumerate}
 
-\subsubsection{Du Cercle d'Évaluation au code}
+La composition, c'est mettre la sortie d'une fonction dans l'entrée d'une autre.
+
+\subsection{Du Cercle au code}
+
+Voici comment on représente \pyret{first-n-rows(sort(resultats, "edit-distance", true), 5)} avec un Cercle d'Évaluation~:
 
 \begin{center}
 \fbox{%
-\begin{minipage}{0.8\textwidth}
+\begin{minipage}{0.85\textwidth}
   \centering
-  \textbf{Cercle d'Évaluation}
+  \textbf{Le cercle extérieur} (premier dans le code)~: \pyret{first-n-rows}
 
-  \vspace{0.5em}
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \fbox{\pyret{first-n-rows}}\\[0.3em]
-    \begin{tabular}{c}
-      \fbox{\pyret{sort}} \\[0.3em]
-      \fbox{\pyret{resultats}} \quad
-      \fbox{\pyret{"edit-distance"}} \quad
-      \fbox{\pyret{true}}
-    \end{tabular}
-    \hspace{1em}
-    \fbox{\pyret{5}}
-  \end{minipage}
-  \hspace{1em}$\rightarrow$\hspace{1em}
-  \begin{minipage}{0.35\textwidth}
-    \pyret{first-n-rows(}\\
-    \ \ \pyret{sort(resultats,}\\
-    \ \ \ \ \pyret{"edit-distance", true),}\\
-    \ \ \pyret{5)}
-  \end{minipage}
+  \vspace{0.3em}
+  \qquad \textbf{Son 1\ier{} argument} est lui-même un cercle~: \pyret{sort}
+
+  \vspace{0.3em}
+  \qquad\qquad \textbf{Ses arguments}~: \pyret{resultats}, \pyret{"edit-distance"}, \pyret{true}
+
+  \vspace{0.3em}
+  \qquad \textbf{Son 2\ieme{} argument}~: \pyret{5}
+
+  \vspace{1em}
+  $\rightarrow$ \quad \pyret{first-n-rows(sort(resultats, "edit-distance", true), 5)}
 \end{minipage}%
 }
 \end{center}
 
-\vspace{1em}
-
 \begin{keypointbox}
-  La fonction \textbf{la plus à l'extérieur} du cercle est la \textbf{première} dans le code. On lit les Cercles d'Évaluation de l'extérieur vers l'intérieur, et on écrit le code de gauche à droite.
+  La fonction \textbf{la plus à l'extérieur} du cercle est la \textbf{première} dans le code. On lit de l'extérieur vers l'intérieur.
+
+  Pour écrire le code~: \pyret{first-n-rows(}~$\rightarrow$~\pyret{sort(resultats, "edit-distance", true)}~$\rightarrow$~\pyret{, 5)}
 \end{keypointbox}
 
-\subsection{Exercices de composition}
+\subsection{Composer dans l'autre sens}
+
+\begin{thinkbox}
+  Que se passe-t-il si on inverse l'ordre~? \pyret{sort(first-n-rows(resultats, 5), "edit-distance", true)} — est-ce que ça donne le même résultat que \pyret{first-n-rows(sort(resultats, "edit-distance", true), 5)}~?
+  \begin{itemize}
+    \item \textbf{Non.} Le premier trie seulement 5 lignes (inutile), le second extrait les 5 meilleures après avoir tout trié (utile~!).
+    \item \textbf{L'ordre de composition compte.}
+  \end{itemize}
+\end{thinkbox}
+
+\subsection{Composer avec \pyret{count} et \pyret{bar-chart}}
+
+Même principe pour visualiser~: on ne passe pas la table brute à \pyret{bar-chart}, on passe d'abord par \pyret{count} pour obtenir les fréquences, \emph{puis} on visualise.
+
+\begin{center}
+  \pyret{bar-chart(count(resultats, "edit-distance"), "edit-distance", "count")}
+
+  \vspace{0.3em}
+  $\uparrow$ extérieur \hspace{4em} $\uparrow$ intérieur \hspace{3em} $\uparrow$ colonnes
+\end{center}
 
 \begin{activitybox}
   \begin{enumerate}[leftmargin=*]
-    \item On veut prendre les 200 premières lignes de \pyret{resultats}, puis les trier par distance d'édition décroissante.
-    \begin{itemize}
-      \item Dessine le Cercle d'Évaluation
-      \item Convertis-le en code Pyret
-    \end{itemize}
-    \item On veut les 10 derniers résultats, triés par ordre alphabétique.
-    \begin{itemize}
-      \item Quel est le contrat de \pyret{last-n-rows}~? (Fais une prédiction, puis teste dans Pyret)
-      \item Écris le code
-    \end{itemize}
+    \item Écris le code pour obtenir un \textbf{diagramme circulaire} des 10 premiers résultats triés par distance décroissante.
+    \item Dessine le Cercle d'Évaluation correspondant (combien de cercles emboîtés~?).
   \end{enumerate}
 \end{activitybox}
 
