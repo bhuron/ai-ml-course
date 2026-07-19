@@ -1,0 +1,425 @@
+% ===========================================================================
+% Programmer avec les suggestions orthographiques
+% Traduit et adapté de :
+%   https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/
+% Adapté au contexte français (correcteur orthographique français, exemples français)
+% Licence : Creative Commons 4.0 Unported (Bootstrap Community)
+% ===========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[raster]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---------- Mise en page ----------
+\geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
+\fancyhf{}
+\fancyhead[L]{\textbf{Programmer avec les suggestions orthographiques}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Bootstrap Community — CC BY 4.0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+% ---------- Couleurs ----------
+\definecolor{bsblue}{RGB}{41,128,185}
+\definecolor{bsgreen}{RGB}{39,174,96}
+\definecolor{bsorange}{RGB}{230,126,34}
+\definecolor{bsgray}{RGB}{149,165,166}
+
+% ---------- Styles de sections ----------
+\titleformat{\section}[hang]{\Huge\bfseries\color{bsblue}}{}{0pt}{}[\vspace{-0.5em}\rule{\textwidth}{2pt}]
+\titleformat{\subsection}[hang]{\Large\bfseries\color{bsblue!80!black}}{}{0pt}{}
+\titleformat{\subsubsection}[hang]{\large\bfseries\color{bsgreen!60!black}}{}{0pt}{}
+
+% ---------- Environnements personnalisés ----------
+\newtcolorbox{overviewbox}{
+  colback=bsblue!5!white, colframe=bsblue!60!white,
+  fonttitle=\bfseries, title=Objectif de la section,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{activitybox}{
+  colback=bsgreen!5!white, colframe=bsgreen!60!white,
+  fonttitle=\bfseries, title=Activité,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{thinkbox}{
+  colback=bsorange!5!white, colframe=bsorange!60!white,
+  fonttitle=\bfseries, title=Réflexion,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{keypointbox}{
+  colback=bsgray!10!white, colframe=bsgray!50!white,
+  fonttitle=\bfseries, title=Point clé,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{instructornotes}{
+  colback=yellow!10!white, colframe=yellow!80!black,
+  fonttitle=\bfseries, title=Notes pour l'enseignant·e,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{codeexample}{
+  colback=black!2!white, colframe=black!30,
+  fonttitle=\bfseries, title=Code,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{contractbox}{
+  colback=bsblue!3!white, colframe=bsblue!40!white,
+  fonttitle=\bfseries, title=Contrat,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+
+% ---------- Commandes pratiques ----------
+\newcommand{\img}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{fig:#1}
+  \end{figure}
+}
+
+\newcommand{\pyret}[1]{\texttt{#1}}
+\newcommand{\contrat}[3]{%
+  \begin{contractbox}
+    \textbf{Nom :} \pyret{#1} \hspace{2em}
+    \textbf{Domaine :} #2 \hspace{2em}
+    \textbf{Image :} #3
+  \end{contractbox}
+}
+
+% ---------- Informations du document ----------
+\title{%
+  \vspace{-2cm}
+  {\Huge\bfseries Programmer avec les}\\[0.3em]
+  {\Huge\bfseries suggestions orthographiques}\\[0.5em]
+  {\large Trier, filtrer, visualiser et extraire des données de correction}\\[1em]
+  {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/}{Bootstrap World} (Fall 2026)}\\[0.5em]
+  {\normalsize Adapté au contexte francophone — exemples et dictionnaires français}\\[0.5em]
+  {\normalsize Licence Creative Commons 4.0 International}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ===========================================================================
+\section{Introduction}
+
+\begin{overviewbox}
+  En s'appuyant sur leur compréhension des types de données simples, les élèves découvrent les fonctions Pyret pour travailler avec des tables, créer des visualisations et générer des images. Ils sont également initiés aux \textbf{contrats} comme «~mode d'emploi des fonctions~». Les contrats sont une composante pédagogique \textbf{majeure} du programme, et il est absolument essentiel d'être à l'aise avec leur lecture.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+\img{images/screenshot-texto.png}{width=0.3\textwidth}{Capture d'écran d'une application de messagerie proposant des alternatives pour un mot possiblement mal orthographié}
+
+\begin{activitybox}
+  Assurez-vous d'avoir ouvert le \textbf{fichier de démarrage du correcteur orthographique} (\texttt{Correcteur-Orthographique-Starter.arr}) et que votre Zone de Définitions contient~:
+
+  \begin{center}
+    \pyret{resultats = alt-words("plation", WORDS-XS, 4)}
+  \end{center}
+
+  Cliquez sur «~Run~» pour charger le programme.
+\end{activitybox}
+
+Notre correcteur orthographique nous donne beaucoup de données à explorer, sous forme de \textbf{tables} de mots suggérés avec leurs distances d'édition. Nous savons sauvegarder ces données avec des définitions de variables, pour pouvoir y faire référence sans avoir à recalculer toute la table.
+
+\begin{thinkbox}
+  \centering
+  \textbf{Peut-on faire quelque chose d'\emph{intéressant} avec ces données~?}
+\end{thinkbox}
+
+Un correcteur orthographique ne nous donne pas une table de 500 suggestions. Nos téléphones portables ne nous montrent pas la distance d'édition des suggestions qu'ils font. Mais ce n'est pas parce qu'ils ne \emph{montrent} pas la distance d'édition qu'elle n'est pas \emph{utilisée}~! Votre téléphone et votre correcteur utilisent la distance d'édition pour sélectionner les mots les plus probables à suggérer.
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Si vous avez accès à un téléphone portable, essayez de commencer un nouveau message texte avec le mot \pyret{"plation"}. Sinon, ouvrez un nouveau document texte (Google Docs, TextEdit, Gmail, etc.) et tapez \pyret{"plation"}.
+    \item Quelles orthographes alternatives votre ordinateur suggère-t-il~?
+  \end{itemize}
+\end{activitybox}
+
+\begin{keypointbox}
+  Nous voulons prendre la sortie de \pyret{alt-words} et \emph{en faire quelque chose}, exactement comme le font les correcteurs orthographiques et les téléphones portables.
+\end{keypointbox}
+
+\newpage
+
+% ===========================================================================
+\section{Trier et réduire les tables}
+
+% ---------- Investigate ----------
+\subsection{Exploration}
+
+\subsubsection{Trier les résultats}
+
+Nous avons une table de suggestions. Et si on les triait~?
+
+\begin{codeexample}
+  Dans la Zone d'Interactions, essayez~:
+
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{sort(resultats, "edit-distance", true)}
+    \item \pyret{sort(resultats, "edit-distance", false)}
+    \item \pyret{sort(resultats, "word", true)}
+  \end{itemize}
+\end{codeexample}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item Qu'ont fait ces expressions \pyret{sort}~?
+    \begin{itemize}
+      \item Elles ont pris la table \pyret{resultats}, la colonne \pyret{"edit-distance"} (ou \pyret{"word"}), et \pyret{true} ou \pyret{false}\ldots{} produisant une nouvelle table, triée (ordre croissant pour \pyret{true} et décroissant pour \pyret{false}).
+    \end{itemize}
+    \item Que signifie le fait que l'Image de \pyret{sort} soit \texttt{Table}~?
+    \begin{itemize}
+      \item La fonction produit une nouvelle table.
+    \end{itemize}
+    \item Tapez \pyret{resultats} et appuyez sur «~Entrée~». Est-ce que trier la table a changé sa valeur~?
+    \begin{itemize}
+      \item Non. Elle en a créé une nouvelle.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\contrat{sort}{Table, String, Boolean}{Table}
+
+\subsubsection{Rappel~: les contrats}
+
+Chaque \textbf{contrat} a trois parties~:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Nom} — le nom de la fonction, qu'on tape quand on veut l'utiliser
+  \item \textbf{Domaine} — le(s) type(s) de données qu'on donne à la fonction
+  \item \textbf{Image} — le type de données que la fonction produit
+\end{enumerate}
+
+\begin{keypointbox}
+  Les contrats sont le \textbf{mode d'emploi} des fonctions. Ils nous disent \emph{ce dont la fonction a besoin} et \emph{ce qu'elle produit}, sans qu'on ait besoin de savoir \emph{comment} elle fonctionne à l'intérieur.
+\end{keypointbox}
+
+\subsubsection{Réduire les résultats}
+
+Explorons le contrat d'une autre fonction qui travaille avec les tables~: \pyret{first-n-rows}.
+
+\contrat{first-n-rows}{Table, Number}{Table}
+
+\begin{codeexample}
+  Dans la Zone d'Interactions, essayez~:
+
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{first-n-rows(resultats, 5)}
+    \item \pyret{first-n-rows(sort(resultats, "edit-distance", true), 10)}
+  \end{itemize}
+\end{codeexample}
+
+\begin{activitybox}
+  Complétez la section \textbf{Réduire les résultats} du cahier d'exercices.
+\end{activitybox}
+
+\begin{thinkbox}
+  Il n'y avait que quelques suggestions avec une \pyret{edit-distance} de 1, mais plus avec des distances de 2, 3 et 4. Quand \pyret{edit-distance} augmente, le nombre de suggestions augmente aussi.
+
+  \begin{itemize}
+    \item Mais est-ce que ça augmente de la même quantité à chaque fois~?
+    \begin{itemize}
+      \item Non~! Ça augmente de plus en plus pour chaque \pyret{edit-distance}~!
+      \item C'est presque exponentiel.
+    \end{itemize}
+    \item Comment pourriez-vous communiquer cette croissance à quelqu'un d'autre, sans lui faire parcourir toute la table~?
+    \begin{itemize}
+      \item On pourrait compter le nombre de suggestions pour chaque \pyret{edit-distance}.
+      \item On pourrait faire un graphique.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+\section{Visualiser les données}
+
+\subsection{Exploration}
+
+\subsubsection{Compter et visualiser}
+
+\begin{codeexample}
+  Dans la Zone d'Interactions, essayez~:
+
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{count(resultats, "edit-distance")}
+  \end{itemize}
+\end{codeexample}
+
+La fonction \pyret{count} produit une \textbf{table de fréquences}, montrant combien de fois chaque \pyret{edit-distance} apparaît dans la table.
+
+\contrat{count}{Table, String}{Table}
+
+Maintenant, visualisons ces données~!
+
+\begin{codeexample}
+  Dans la Zone d'Interactions, essayez~:
+
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{bar-chart(count(resultats, "edit-distance"), "edit-distance", "count")}
+  \end{itemize}
+\end{codeexample}
+
+\contrat{bar-chart}{Table, String, String}{Image}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item Quel lien y a-t-il entre notre diagramme en barres et notre table de fréquences~?
+    \begin{itemize}
+      \item Les barres ont la même hauteur que les nombres dans cette table.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\img{images/screenshot-texto.png}{width=0.3\textwidth}{Un téléphone ou un correcteur orthographique ne montre pas des lignes et des colonnes — il montre juste les mots~!}
+
+Un téléphone portable ou un correcteur orthographique ne vous montre pas des lignes et des colonnes — \emph{il vous montre juste les mots~!} Une fois qu'un correcteur nous donne une table pleine de mots et de distances d'édition\ldots{} comment en extraire les mots~?
+
+\begin{instructornotes}
+  Cette leçon n'a pas pour but d'apprendre aux élèves à lire ou interpréter des visualisations de données~! Si vous intégrez ce contenu dans un cours de Science des Données ou de Mathématiques où diverses visualisations font partie de vos objectifs d'apprentissage, nous recommandons vivement d'explorer notre cours de Science des Données.
+\end{instructornotes}
+
+\newpage
+
+% ===========================================================================
+\section{Extraire des valeurs d'une table}
+
+\subsection{Exploration}
+
+Les \textbf{accesseurs de ligne} (\emph{row accessors}) nous permettent d'extraire des données de cellules spécifiques de notre table en spécifiant le numéro de ligne et le titre de la colonne.
+
+\contrat{row-n}{Table, Number}{Row}
+
+\begin{codeexample}
+  Une fois qu'on a une ligne, on peut accéder à ses colonnes avec des crochets~:
+
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{row-n(resultats, 0)["word"]} \hspace{2em} — le premier mot suggéré
+    \item \pyret{row-n(resultats, 0)["edit-distance"]} \hspace{2em} — sa distance d'édition
+    \item \pyret{row-n(resultats, 74)["word"]} \hspace{2em} — le 75\textsuperscript{e} mot suggéré
+  \end{itemize}
+\end{codeexample}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item Quel numéro de ligne utilise-t-on pour extraire les données de la première ligne de notre table~?
+    \begin{itemize}
+      \item \pyret{0}
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\subsubsection{Combiner les fonctions}
+
+On peut maintenant combiner tout ce qu'on a appris~:
+
+\begin{codeexample}
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{top5 = first-n-rows(sort(resultats, "edit-distance", true), 5)}
+    \item \pyret{row-n(top5, 0)["word"]}
+  \end{itemize}
+\end{codeexample}
+
+Cette expression~:
+\begin{enumerate}[leftmargin=*]
+  \item Trie les résultats par distance d'édition croissante
+  \item Prend les 5 premiers (les plus proches du mot original)
+  \item Extrait le mot de la première ligne (la meilleure suggestion~!)
+\end{enumerate}
+
+\begin{keypointbox}
+  C'est exactement ce que font les vrais correcteurs orthographiques~: ils utilisent la distance d'édition (ou des algorithmes similaires) en interne pour \textbf{classer} les suggestions, puis ils \textbf{affichent} seulement les meilleures sans montrer toute la table.
+\end{keypointbox}
+
+\newpage
+
+% ===========================================================================
+\section{Synthèse}
+
+\subsection{Discussion}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \pyret{first-n-rows} et \pyret{last-n-rows} ont exactement le même Domaine et la même Image, mais font des choses différentes. Il en va de même pour \pyret{circle} et \pyret{triangle}. Comment est-il possible d'avoir le même Domaine \emph{et} la même Image tout en se comportant si différemment~?
+    \begin{itemize}
+      \item Ce dont une fonction a \textbf{besoin} n'est pas la même chose que ce qu'elle \textbf{fait}.
+    \end{itemize}
+    \item Pourquoi \pyret{sort} avait-il besoin de plus d'arguments dans son Domaine que les deux autres~?
+    \begin{itemize}
+      \item Il avait besoin de savoir plus de choses~!
+    \end{itemize}
+    \item Pourquoi une application de correction orthographique aurait-elle besoin d'utiliser des accesseurs de ligne~?
+    \begin{itemize}
+      \item Parce qu'on veut suggérer un \emph{mot}, pas toute une ligne d'une table~!
+      \item Et on pourrait vouloir prendre en compte la distance d'édition dans notre suggestion.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+% ===========================================================================
+\section*{Résumé des fonctions découvertes}
+
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  \textbf{Fonction} & \textbf{Domaine} & \textbf{Image} \\
+  \midrule
+  \pyret{sort(t, col, asc)} & Table, String, Boolean & Table \\
+  \pyret{first-n-rows(t, n)} & Table, Number & Table \\
+  \pyret{count(t, col)} & Table, String & Table \\
+  \pyret{bar-chart(t, col1, col2)} & Table, String, String & Image \\
+  \pyret{row-n(t, n)} & Table, Number & Row \\
+  \pyret{row-n(t, n)["col"]} & — & valeur de la cellule \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+\begin{instructornotes}
+  Ces fonctions de table sont utilisées tout au long du programme Bootstrap. Les élèves les reverront dans les leçons sur les arbres de décision, la science des données, et bien d'autres contextes. Prenez le temps de vous assurer que chaque élève est à l'aise avec leur lecture et leur utilisation.
+\end{instructornotes}
+
+% ===========================================================================
+\section*{À propos de ces supports}
+
+Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
+
+\begin{center}
+  \includegraphics[width=2cm]{images/CCbadge.png}
+
+  \textbf{Bootstrap} par la Communauté Bootstrap est sous licence Creative Commons 4.0 Unported.\\[0.5em]
+  \textit{Traduction française réalisée en juillet 2026.}\\
+  \textit{Source originale~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/}}
+\end{center}
+
+\end{document}
