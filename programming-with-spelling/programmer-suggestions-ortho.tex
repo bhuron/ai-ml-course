@@ -1,14 +1,12 @@
 % ===========================================================================
 % Programmer avec les suggestions orthographiques
-% Traduit et adapté de :
-%   https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/
-% Adapté au contexte français (correcteur orthographique français, exemples français)
-% Licence : Creative Commons 4.0 Unported (Bootstrap Community)
+% Traduit et adapté de Bootstrap World (Fall 2026)
+% Adapté au contexte français
+% Licence : Creative Commons 4.0 Unported
 % ===========================================================================
 
 \documentclass[12pt,a4paper]{article}
 
-% ---------- Packages ----------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{libertine}
@@ -26,9 +24,7 @@
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{amsmath}
-\usepackage{amssymb}
 
-% ---------- Mise en page ----------
 \geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
 \fancyhf{}
 \fancyhead[L]{\textbf{Programmer avec les suggestions orthographiques}}
@@ -37,82 +33,60 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \pagestyle{fancy}
 
-% ---------- Couleurs ----------
 \definecolor{bsblue}{RGB}{41,128,185}
 \definecolor{bsgreen}{RGB}{39,174,96}
 \definecolor{bsorange}{RGB}{230,126,34}
 \definecolor{bsgray}{RGB}{149,165,166}
 
-% ---------- Styles de sections ----------
 \titleformat{\section}[hang]{\Huge\bfseries\color{bsblue}}{}{0pt}{}[\vspace{-0.5em}\rule{\textwidth}{2pt}]
 \titleformat{\subsection}[hang]{\Large\bfseries\color{bsblue!80!black}}{}{0pt}{}
 \titleformat{\subsubsection}[hang]{\large\bfseries\color{bsgreen!60!black}}{}{0pt}{}
 
-% ---------- Environnements personnalisés ----------
 \newtcolorbox{overviewbox}{
   colback=bsblue!5!white, colframe=bsblue!60!white,
-  fonttitle=\bfseries, title=Objectif de la section,
-  left=1em, right=1em, top=0.5em, bottom=0.5em
+  fonttitle=\bfseries, title=Objectif, left=1em, right=1em, top=0.5em, bottom=0.5em
 }
 \newtcolorbox{activitybox}{
   colback=bsgreen!5!white, colframe=bsgreen!60!white,
-  fonttitle=\bfseries, title=Activité,
-  left=1em, right=1em, top=0.5em, bottom=0.5em
+  fonttitle=\bfseries, title=Activité, left=1em, right=1em, top=0.5em, bottom=0.5em
 }
 \newtcolorbox{thinkbox}{
   colback=bsorange!5!white, colframe=bsorange!60!white,
-  fonttitle=\bfseries, title=Réflexion,
-  left=1em, right=1em, top=0.5em, bottom=0.5em
+  fonttitle=\bfseries, title=Réflexion, left=1em, right=1em, top=0.5em, bottom=0.5em
 }
 \newtcolorbox{keypointbox}{
   colback=bsgray!10!white, colframe=bsgray!50!white,
-  fonttitle=\bfseries, title=Point clé,
-  left=1em, right=1em, top=0.5em, bottom=0.5em
+  fonttitle=\bfseries, title=Point clé, left=1em, right=1em, top=0.5em, bottom=0.5em
 }
 \newtcolorbox{instructornotes}{
   colback=yellow!10!white, colframe=yellow!80!black,
-  fonttitle=\bfseries, title=Notes pour l'enseignant·e,
-  left=1em, right=1em, top=0.5em, bottom=0.5em
+  fonttitle=\bfseries, title=Notes pour l'enseignant·e, left=1em, right=1em, top=0.5em, bottom=0.5em
 }
 \newtcolorbox{codeexample}{
   colback=black!2!white, colframe=black!30,
-  fonttitle=\bfseries, title=Code,
-  left=1em, right=1em, top=0.5em, bottom=0.5em
+  fonttitle=\bfseries, title=Code, left=1em, right=1em, top=0.5em, bottom=0.5em
 }
 \newtcolorbox{contractbox}{
   colback=bsblue!3!white, colframe=bsblue!40!white,
-  fonttitle=\bfseries, title=Contrat,
-  left=1em, right=1em, top=0.5em, bottom=0.5em
+  left=1em, right=1em, top=0.6em, bottom=0.6em
 }
 
-% ---------- Commandes pratiques ----------
 \newcommand{\img}[3]{%
-  \begin{figure}[H]
-    \centering
-    \includegraphics[#2]{#1}
-    \caption{#3}
-    \label{fig:#1}
-  \end{figure}
+  \begin{figure}[H]\centering\includegraphics[#2]{#1}\caption{#3}\label{fig:#1}\end{figure}
 }
-
 \newcommand{\pyret}[1]{\texttt{#1}}
-\newcommand{\contrat}[3]{%
+\newcommand{\contrat}[1]{%
   \begin{contractbox}
-    \textbf{Nom :} \pyret{#1} \hspace{2em}
-    \textbf{Domaine :} #2 \hspace{2em}
-    \textbf{Image :} #3
+    \pyret{#1}
   \end{contractbox}
 }
 
-% ---------- Informations du document ----------
 \title{%
   \vspace{-2cm}
   {\Huge\bfseries Programmer avec les}\\[0.3em]
   {\Huge\bfseries suggestions orthographiques}\\[0.5em]
-  {\large Trier, filtrer, visualiser et extraire des données de correction}\\[1em]
-  {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/}{Bootstrap World} (Fall 2026)}\\[0.5em]
-  {\normalsize Adapté au contexte francophone — exemples et dictionnaires français}\\[0.5em]
-  {\normalsize Licence Creative Commons 4.0 International}
+  {\large Trier, filtrer, visualiser et extraire — contrats et composition de fonctions}\\[1em]
+  {\normalsize Traduit de \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/}{Bootstrap World} (Fall 2026) — CC BY 4.0}
 }
 \date{}
 \author{}
@@ -130,59 +104,44 @@
 \section{Introduction}
 
 \begin{overviewbox}
-  En s'appuyant sur leur compréhension des types de données simples, les élèves découvrent les fonctions Pyret pour travailler avec des tables, créer des visualisations et générer des images. Ils sont également initiés aux \textbf{contrats} comme «~mode d'emploi des fonctions~». Les contrats sont une composante pédagogique \textbf{majeure} du programme, et il est absolument essentiel d'être à l'aise avec leur lecture.
+  En s'appuyant sur les types de données simples, les élèves découvrent les fonctions Pyret pour travailler avec des tables, créer des visualisations et des images. Ils sont initiés aux \textbf{contrats} comme «~mode d'emploi des fonctions~» et aux \textbf{Cercles d'Évaluation} pour visualiser la composition de fonctions.
 \end{overviewbox}
 
-% ---------- Launch ----------
 \subsection{Lancement}
 
-\img{images/screenshot-texto.png}{width=0.3\textwidth}{Capture d'écran d'une application de messagerie proposant des alternatives pour un mot possiblement mal orthographié}
+\img{images/screenshot-texto.png}{width=0.3\textwidth}{Capture d'une appli de messagerie proposant des alternatives}
 
 \begin{activitybox}
-  Assurez-vous d'avoir ouvert le \textbf{fichier de démarrage du correcteur orthographique} (\texttt{Correcteur-Orthographique-Starter.arr}) et que votre Zone de Définitions contient~:
+  Assurez-vous d'avoir ouvert le fichier \texttt{Correcteur-Orthographique-Starter.arr} et que votre Zone de Définitions contient~:
 
   \begin{center}
     \pyret{resultats = alt-words("plation", WORDS-XS, 4)}
   \end{center}
 
-  Cliquez sur «~Run~» pour charger le programme.
+  Cliquez sur «~Run~».
 \end{activitybox}
 
-Notre correcteur orthographique nous donne beaucoup de données à explorer, sous forme de \textbf{tables} de mots suggérés avec leurs distances d'édition. Nous savons sauvegarder ces données avec des définitions de variables, pour pouvoir y faire référence sans avoir à recalculer toute la table.
+Notre correcteur nous donne des données sous forme de \textbf{tables} de mots suggérés avec leurs distances d'édition. On peut sauvegarder ces données avec des définitions de variables.
 
 \begin{thinkbox}
-  \centering
   \textbf{Peut-on faire quelque chose d'\emph{intéressant} avec ces données~?}
 \end{thinkbox}
 
-Un correcteur orthographique ne nous donne pas une table de 500 suggestions. Nos téléphones portables ne nous montrent pas la distance d'édition des suggestions qu'ils font. Mais ce n'est pas parce qu'ils ne \emph{montrent} pas la distance d'édition qu'elle n'est pas \emph{utilisée}~! Votre téléphone et votre correcteur utilisent la distance d'édition pour sélectionner les mots les plus probables à suggérer.
+Un correcteur ne montre pas 500 suggestions, ni la distance d'édition. Mais il les \emph{utilise} en interne pour sélectionner les mots les plus probables.
 
 \begin{activitybox}
-  \begin{itemize}
-    \item Si vous avez accès à un téléphone portable, essayez de commencer un nouveau message texte avec le mot \pyret{"plation"}. Sinon, ouvrez un nouveau document texte (Google Docs, TextEdit, Gmail, etc.) et tapez \pyret{"plation"}.
-    \item Quelles orthographes alternatives votre ordinateur suggère-t-il~?
-  \end{itemize}
+  Essayez de taper \pyret{"plation"} dans un nouveau message texte ou document. Quelles alternatives votre appareil suggère-t-il~?
 \end{activitybox}
-
-\begin{keypointbox}
-  Nous voulons prendre la sortie de \pyret{alt-words} et \emph{en faire quelque chose}, exactement comme le font les correcteurs orthographiques et les téléphones portables.
-\end{keypointbox}
 
 \newpage
 
 % ===========================================================================
 \section{Trier et réduire les tables}
 
-% ---------- Investigate ----------
-\subsection{Exploration}
-
-\subsubsection{Trier les résultats}
-
-Nous avons une table de suggestions. Et si on les triait~?
+\subsection{Découvrir \pyret{sort}}
 
 \begin{codeexample}
-  Dans la Zone d'Interactions, essayez~:
-
+  Dans la Zone d'Interactions~:
   \begin{itemize}[leftmargin=*]
     \item \pyret{sort(resultats, "edit-distance", true)}
     \item \pyret{sort(resultats, "edit-distance", false)}
@@ -190,48 +149,44 @@ Nous avons une table de suggestions. Et si on les triait~?
   \end{itemize}
 \end{codeexample}
 
-\begin{thinkbox}
-  \begin{itemize}
-    \item Qu'ont fait ces expressions \pyret{sort}~?
-    \begin{itemize}
-      \item Elles ont pris la table \pyret{resultats}, la colonne \pyret{"edit-distance"} (ou \pyret{"word"}), et \pyret{true} ou \pyret{false}\ldots{} produisant une nouvelle table, triée (ordre croissant pour \pyret{true} et décroissant pour \pyret{false}).
-    \end{itemize}
-    \item Que signifie le fait que l'Image de \pyret{sort} soit \texttt{Table}~?
-    \begin{itemize}
-      \item La fonction produit une nouvelle table.
-    \end{itemize}
-    \item Tapez \pyret{resultats} et appuyez sur «~Entrée~». Est-ce que trier la table a changé sa valeur~?
-    \begin{itemize}
-      \item Non. Elle en a créé une nouvelle.
-    \end{itemize}
-  \end{itemize}
-\end{thinkbox}
+La fonction \pyret{sort} prend trois \textbf{arguments}~:
 
-\contrat{sort}{Table, String, Boolean}{Table}
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  \textbf{Argument} & \textbf{Type} & \textbf{Ce qu'il contient} \\
+  \midrule
+  1 & Table  & La table à trier \\
+  2 & String & La colonne sur laquelle trier \\
+  3 & Boolean & \pyret{true} = croissant, \pyret{false} = décroissant \\
+  \bottomrule
+\end{tabular}
+\end{center}
 
-\subsubsection{Rappel~: les contrats}
+\subsection{Les contrats}
 
 Chaque \textbf{contrat} a trois parties~:
-
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Nom} — le nom de la fonction, qu'on tape quand on veut l'utiliser
-  \item \textbf{Domaine} — le(s) type(s) de données qu'on donne à la fonction
-  \item \textbf{Image} — le type de données que la fonction produit
+  \item \textbf{Nom} — le nom de la fonction
+  \item \textbf{Domaine} — le(s) type(s) des données qu'on donne
+  \item \textbf{Image} — le type de donnée produite
 \end{enumerate}
 
 \begin{keypointbox}
-  Les contrats sont le \textbf{mode d'emploi} des fonctions. Ils nous disent \emph{ce dont la fonction a besoin} et \emph{ce qu'elle produit}, sans qu'on ait besoin de savoir \emph{comment} elle fonctionne à l'intérieur.
+  Les contrats sont le \textbf{mode d'emploi} des fonctions. Le contrat de \pyret{sort} s'écrit~:
+
+  \contrat{sort :: Table, String, Boolean -> Table}
+
+  On peut aussi annoter le Domaine avec des noms de variables~:
+
+  \pyret{sort :: (t :: Table, column :: String, ascending :: Boolean) -> Table}
 \end{keypointbox}
 
-\subsubsection{Réduire les résultats}
+\subsection{Découvrir \pyret{first-n-rows}}
 
-Explorons le contrat d'une autre fonction qui travaille avec les tables~: \pyret{first-n-rows}.
-
-\contrat{first-n-rows}{Table, Number}{Table}
+\contrat{first-n-rows :: Table, Number -> Table}
 
 \begin{codeexample}
-  Dans la Zone d'Interactions, essayez~:
-
   \begin{itemize}[leftmargin=*]
     \item \pyret{first-n-rows(resultats, 5)}
     \item \pyret{first-n-rows(sort(resultats, "edit-distance", true), 10)}
@@ -239,187 +194,274 @@ Explorons le contrat d'une autre fonction qui travaille avec les tables~: \pyret
 \end{codeexample}
 
 \begin{activitybox}
-  Complétez la section \textbf{Réduire les résultats} du cahier d'exercices.
+  Complétez la section \textbf{Trier et réduire les tables} du cahier d'exercices.
 \end{activitybox}
 
 \begin{thinkbox}
-  Il n'y avait que quelques suggestions avec une \pyret{edit-distance} de 1, mais plus avec des distances de 2, 3 et 4. Quand \pyret{edit-distance} augmente, le nombre de suggestions augmente aussi.
-
+  Peu de suggestions ont une \pyret{edit-distance} de 1, mais beaucoup plus aux distances 2, 3 et 4. La croissance est presque exponentielle~! Comment communiquer cela sans faire parcourir toute la table~?
   \begin{itemize}
-    \item Mais est-ce que ça augmente de la même quantité à chaque fois~?
-    \begin{itemize}
-      \item Non~! Ça augmente de plus en plus pour chaque \pyret{edit-distance}~!
-      \item C'est presque exponentiel.
-    \end{itemize}
-    \item Comment pourriez-vous communiquer cette croissance à quelqu'un d'autre, sans lui faire parcourir toute la table~?
-    \begin{itemize}
-      \item On pourrait compter le nombre de suggestions pour chaque \pyret{edit-distance}.
-      \item On pourrait faire un graphique.
-    \end{itemize}
+    \item Compter les suggestions par distance
+    \item Faire un graphique
   \end{itemize}
 \end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+\section{Composer avec les Cercles d'Évaluation}
+
+\begin{overviewbox}
+  Les \textbf{Cercles d'Évaluation} (\emph{Circles of Evaluation}) sont un outil visuel pour représenter la composition de fonctions. Chaque cercle contient un nom de fonction et ses arguments, et les cercles peuvent être imbriqués.
+\end{overviewbox}
+
+\subsection{Composer \pyret{first-n-rows} et \pyret{sort}}
+
+Supposons qu'on veuille voir les \textbf{5 premiers résultats}, triés par distance d'édition croissante. On va composer deux fonctions~:
+
+\begin{enumerate}[leftmargin=*]
+  \item D'abord, trier la table~: \pyret{sort(resultats, "edit-distance", true)}
+  \item Ensuite, prendre les 5 premiers~: \pyret{first-n-rows(..., 5)}
+\end{enumerate}
+
+\subsubsection{Du Cercle d'Évaluation au code}
+
+\begin{center}
+\fbox{%
+\begin{minipage}{0.8\textwidth}
+  \centering
+  \textbf{Cercle d'Évaluation}
+
+  \vspace{0.5em}
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \fbox{\pyret{first-n-rows}}\\[0.3em]
+    \begin{tabular}{c}
+      \fbox{\pyret{sort}} \\[0.3em]
+      \fbox{\pyret{resultats}} \quad
+      \fbox{\pyret{"edit-distance"}} \quad
+      \fbox{\pyret{true}}
+    \end{tabular}
+    \hspace{1em}
+    \fbox{\pyret{5}}
+  \end{minipage}
+  \hspace{1em}$\rightarrow$\hspace{1em}
+  \begin{minipage}{0.35\textwidth}
+    \pyret{first-n-rows(}\\
+    \ \ \pyret{sort(resultats,}\\
+    \ \ \ \ \pyret{"edit-distance", true),}\\
+    \ \ \pyret{5)}
+  \end{minipage}
+\end{minipage}%
+}
+\end{center}
+
+\vspace{1em}
+
+\begin{keypointbox}
+  La fonction \textbf{la plus à l'extérieur} du cercle est la \textbf{première} dans le code. On lit les Cercles d'Évaluation de l'extérieur vers l'intérieur, et on écrit le code de gauche à droite.
+\end{keypointbox}
+
+\subsection{Exercices de composition}
+
+\begin{activitybox}
+  \begin{enumerate}[leftmargin=*]
+    \item On veut prendre les 200 premières lignes de \pyret{resultats}, puis les trier par distance d'édition décroissante.
+    \begin{itemize}
+      \item Dessine le Cercle d'Évaluation
+      \item Convertis-le en code Pyret
+    \end{itemize}
+    \item On veut les 10 derniers résultats, triés par ordre alphabétique.
+    \begin{itemize}
+      \item Quel est le contrat de \pyret{last-n-rows}~? (Fais une prédiction, puis teste dans Pyret)
+      \item Écris le code
+    \end{itemize}
+  \end{enumerate}
+\end{activitybox}
+
+\newpage
+
+% ===========================================================================
+\section{Interface utilisateur pour notre correcteur}
+
+\begin{overviewbox}
+  On découvre comment extraire des valeurs d'une table, mesurer des chaînes, et créer des images avec Pyret — pour construire une interface qui affiche les suggestions orthographiques.
+\end{overviewbox}
+
+\subsection{Accéder aux lignes~: \pyret{row-n}}
+
+\contrat{row-n :: Table, Number -> Row}
+
+\begin{codeexample}
+  \begin{itemize}[leftmargin=*]
+    \item \pyret{row-n(resultats, 0)["word"]} \hspace{2em} — premier mot suggéré
+    \item \pyret{row-n(resultats, 0)["edit-distance"]} \hspace{2em} — sa distance
+    \item \pyret{row-n(resultats, 1)["word"]} \hspace{2em} — deuxième mot suggéré
+  \end{itemize}
+\end{codeexample}
+
+\begin{keypointbox}
+  \pyret{row-n(t, n)["colonne"]} s'appelle un \textbf{accesseur de ligne} (\emph{row accessor}). Il extrait la valeur d'une cellule spécifique.
+\end{keypointbox}
+
+\subsection{Mesurer des chaînes~: \pyret{string-length}}
+
+\contrat{string-length :: String -> Number}
+
+\begin{codeexample}
+  \pyret{string-length("bonjour")} \hspace{2em} $\rightarrow$ \texttt{7}
+
+  \pyret{string-length(row-n(resultats, 0)["word"])} \hspace{2em} — longueur du 1\textsuperscript{er} mot
+\end{codeexample}
+
+\subsection{Dessiner du texte~: \pyret{text}}
+
+\contrat{text :: String, Number, String -> Image}
+
+\begin{codeexample}
+  \pyret{text("Bonjour !", 50, "blue")} \hspace{2em} — texte bleu de taille 50
+\end{codeexample}
+
+\subsection{Fonctions d'images}
+
+Plusieurs fonctions produisent des \pyret{Image}~:
+
+\begin{center}
+\begin{tabular}{ll}
+  \toprule
+  \textbf{Contrat} & \textbf{Description} \\
+  \midrule
+  \pyret{triangle :: Number, String, String -> Image} & Triangle (taille, type, couleur) \\
+  \pyret{circle :: Number, String, String -> Image}   & Cercle (rayon, type, couleur) \\
+  \pyret{star :: Number, String, String -> Image}     & Étoile (rayon, type, couleur) \\
+  \pyret{rectangle :: Number, Number, String, String -> Image} & Rectangle (largeur, hauteur, type, couleur) \\
+  \pyret{ellipse :: Number, Number, String, String -> Image}  & Ellipse (largeur, hauteur, type, couleur) \\
+  \pyret{regular-polygon :: Number, Number, String, String -> Image} & Polygone régulier (nb~côtés, rayon, type, couleur) \\
+  \pyret{overlay :: Image, Image -> Image} & Superpose deux images \\
+  \pyret{rotate :: Number, Image -> Image} & Fait pivoter une image (degrés) \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Construire une interface — Cercle d'Évaluation}
+
+\begin{activitybox}
+  \textbf{Objectif}~: superposer le mot \pyret{"Platoon"} (noir, taille 20) au-dessus d'un rectangle gris plein de 150×50.
+
+  \begin{enumerate}[leftmargin=*]
+    \item Dessine le Cercle d'Évaluation (fonction extérieure~: \pyret{overlay})
+    \item Convertis-le en code~:\\
+      \pyret{overlay(}\\
+      \ \ \pyret{text("Platoon", 20, "black"),}\\
+      \ \ \pyret{rectangle(150, 50, "solid", "gray"))}
+    \item \textbf{Sois créatif·ve~!} Ajoute de la couleur, plusieurs formes, voire plusieurs suggestions~!
+  \end{enumerate}
+\end{activitybox}
 
 \newpage
 
 % ===========================================================================
 \section{Visualiser les données}
 
-\subsection{Exploration}
+\subsection{Table de fréquences~: \pyret{count}}
 
-\subsubsection{Compter et visualiser}
+\contrat{count :: Table, String -> Table}
 
 \begin{codeexample}
-  Dans la Zone d'Interactions, essayez~:
-
-  \begin{itemize}[leftmargin=*]
-    \item \pyret{count(resultats, "edit-distance")}
-  \end{itemize}
+  \pyret{count(resultats, "edit-distance")}
 \end{codeexample}
 
-La fonction \pyret{count} produit une \textbf{table de fréquences}, montrant combien de fois chaque \pyret{edit-distance} apparaît dans la table.
+\pyret{count} produit une table de fréquences~: combien de suggestions pour chaque distance.
 
-\contrat{count}{Table, String}{Table}
+\subsection{Diagramme en barres~: \pyret{bar-chart}}
 
-Maintenant, visualisons ces données~!
-
-\begin{codeexample}
-  Dans la Zone d'Interactions, essayez~:
-
-  \begin{itemize}[leftmargin=*]
-    \item \pyret{bar-chart(count(resultats, "edit-distance"), "edit-distance", "count")}
-  \end{itemize}
-\end{codeexample}
-
-\contrat{bar-chart}{Table, String, String}{Image}
-
-\begin{thinkbox}
-  \begin{itemize}
-    \item Quel lien y a-t-il entre notre diagramme en barres et notre table de fréquences~?
-    \begin{itemize}
-      \item Les barres ont la même hauteur que les nombres dans cette table.
-    \end{itemize}
-  \end{itemize}
-\end{thinkbox}
-
-\img{images/screenshot-texto.png}{width=0.3\textwidth}{Un téléphone ou un correcteur orthographique ne montre pas des lignes et des colonnes — il montre juste les mots~!}
-
-Un téléphone portable ou un correcteur orthographique ne vous montre pas des lignes et des colonnes — \emph{il vous montre juste les mots~!} Une fois qu'un correcteur nous donne une table pleine de mots et de distances d'édition\ldots{} comment en extraire les mots~?
-
-\begin{instructornotes}
-  Cette leçon n'a pas pour but d'apprendre aux élèves à lire ou interpréter des visualisations de données~! Si vous intégrez ce contenu dans un cours de Science des Données ou de Mathématiques où diverses visualisations font partie de vos objectifs d'apprentissage, nous recommandons vivement d'explorer notre cours de Science des Données.
-\end{instructornotes}
-
-\newpage
-
-% ===========================================================================
-\section{Extraire des valeurs d'une table}
-
-\subsection{Exploration}
-
-Les \textbf{accesseurs de ligne} (\emph{row accessors}) nous permettent d'extraire des données de cellules spécifiques de notre table en spécifiant le numéro de ligne et le titre de la colonne.
-
-\contrat{row-n}{Table, Number}{Row}
+\contrat{bar-chart :: Table, String -> Image}
 
 \begin{codeexample}
-  Une fois qu'on a une ligne, on peut accéder à ses colonnes avec des crochets~:
-
-  \begin{itemize}[leftmargin=*]
-    \item \pyret{row-n(resultats, 0)["word"]} \hspace{2em} — le premier mot suggéré
-    \item \pyret{row-n(resultats, 0)["edit-distance"]} \hspace{2em} — sa distance d'édition
-    \item \pyret{row-n(resultats, 74)["word"]} \hspace{2em} — le 75\textsuperscript{e} mot suggéré
-  \end{itemize}
+  \pyret{bar-chart(count(resultats, "edit-distance"), "edit-distance", "count")}
 \end{codeexample}
 
 \begin{thinkbox}
   \begin{itemize}
-    \item Quel numéro de ligne utilise-t-on pour extraire les données de la première ligne de notre table~?
-    \begin{itemize}
-      \item \pyret{0}
-    \end{itemize}
+    \item Passe le curseur sur une barre. Quelle information obtiens-tu~?
+    \item Essaie \pyret{bar-chart} avec la colonne \pyret{"word"}. Est-ce utile~? Pourquoi~?
   \end{itemize}
 \end{thinkbox}
 
-\subsubsection{Combiner les fonctions}
+\subsection{Diagramme circulaire~: \pyret{pie-chart}}
 
-On peut maintenant combiner tout ce qu'on a appris~:
+\contrat{pie-chart :: Table, String -> Image}
 
 \begin{codeexample}
-  \begin{itemize}[leftmargin=*]
-    \item \pyret{top5 = first-n-rows(sort(resultats, "edit-distance", true), 5)}
-    \item \pyret{row-n(top5, 0)["word"]}
-  \end{itemize}
+  \pyret{pie-chart(resultats, "edit-distance")}
 \end{codeexample}
 
-Cette expression~:
-\begin{enumerate}[leftmargin=*]
-  \item Trie les résultats par distance d'édition croissante
-  \item Prend les 5 premiers (les plus proches du mot original)
-  \item Extrait le mot de la première ligne (la meilleure suggestion~!)
-\end{enumerate}
+\subsection{Les vrais correcteurs renvoient des mots, pas des tables~!}
 
-\begin{keypointbox}
-  C'est exactement ce que font les vrais correcteurs orthographiques~: ils utilisent la distance d'édition (ou des algorithmes similaires) en interne pour \textbf{classer} les suggestions, puis ils \textbf{affichent} seulement les meilleures sans montrer toute la table.
-\end{keypointbox}
+\begin{activitybox}
+  \begin{enumerate}[leftmargin=*]
+    \item Dans la Zone de Définitions, ajoute~: \pyret{ligne2 = row-n(resultats, 1)}. Clique «~Run~».
+    \item Évalue \pyret{ligne2}. Qu'obtiens-tu~?
+    \item Évalue \pyret{ligne2["word"]} et \pyret{ligne2["edit-distance"]}.
+    \item Comment obtenir la distance d'édition du 5\textsuperscript{e} mot suggéré~?
+  \end{enumerate}
+\end{activitybox}
 
 \newpage
 
 % ===========================================================================
 \section{Synthèse}
 
-\subsection{Discussion}
-
 \begin{thinkbox}
   \begin{itemize}
-    \item \pyret{first-n-rows} et \pyret{last-n-rows} ont exactement le même Domaine et la même Image, mais font des choses différentes. Il en va de même pour \pyret{circle} et \pyret{triangle}. Comment est-il possible d'avoir le même Domaine \emph{et} la même Image tout en se comportant si différemment~?
+    \item \pyret{first-n-rows} et \pyret{last-n-rows} ont le même Domaine et la même Image, mais font des choses différentes. Comment est-ce possible~?
     \begin{itemize}
-      \item Ce dont une fonction a \textbf{besoin} n'est pas la même chose que ce qu'elle \textbf{fait}.
+      \item Ce dont une fonction a \textbf{besoin} $\neq$ ce qu'elle \textbf{fait}.
     \end{itemize}
-    \item Pourquoi \pyret{sort} avait-il besoin de plus d'arguments dans son Domaine que les deux autres~?
+    \item Pourquoi \pyret{sort} a-t-il besoin de plus d'arguments que les autres~?
+    \item Pourquoi un correcteur a-t-il besoin d'accesseurs de ligne~?
     \begin{itemize}
-      \item Il avait besoin de savoir plus de choses~!
-    \end{itemize}
-    \item Pourquoi une application de correction orthographique aurait-elle besoin d'utiliser des accesseurs de ligne~?
-    \begin{itemize}
-      \item Parce qu'on veut suggérer un \emph{mot}, pas toute une ligne d'une table~!
-      \item Et on pourrait vouloir prendre en compte la distance d'édition dans notre suggestion.
+      \item On veut suggérer un \emph{mot}, pas une ligne entière~!
     \end{itemize}
   \end{itemize}
 \end{thinkbox}
 
-% ===========================================================================
-\section*{Résumé des fonctions découvertes}
+\section*{Résumé des fonctions}
 
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{ll}
   \toprule
-  \textbf{Fonction} & \textbf{Domaine} & \textbf{Image} \\
+  \textbf{Fonction} & \textbf{Contrat} \\
   \midrule
-  \pyret{sort(t, col, asc)} & Table, String, Boolean & Table \\
-  \pyret{first-n-rows(t, n)} & Table, Number & Table \\
-  \pyret{count(t, col)} & Table, String & Table \\
-  \pyret{bar-chart(t, col1, col2)} & Table, String, String & Image \\
-  \pyret{row-n(t, n)} & Table, Number & Row \\
-  \pyret{row-n(t, n)["col"]} & — & valeur de la cellule \\
+  \pyret{sort}          & \pyret{sort :: Table, String, Boolean -> Table} \\
+  \pyret{first-n-rows}  & \pyret{first-n-rows :: Table, Number -> Table} \\
+  \pyret{last-n-rows}   & \pyret{last-n-rows :: Table, Number -> Table} \\
+  \pyret{count}         & \pyret{count :: Table, String -> Table} \\
+  \pyret{bar-chart}     & \pyret{bar-chart :: Table, String -> Image} \\
+  \pyret{pie-chart}     & \pyret{pie-chart :: Table, String -> Image} \\
+  \pyret{row-n}         & \pyret{row-n :: Table, Number -> Row} \\
+  \pyret{string-length} & \pyret{string-length :: String -> Number} \\
+  \pyret{text}          & \pyret{text :: String, Number, String -> Image} \\
   \bottomrule
 \end{tabular}
 \end{center}
 
 \vspace{1em}
+
 \begin{instructornotes}
-  Ces fonctions de table sont utilisées tout au long du programme Bootstrap. Les élèves les reverront dans les leçons sur les arbres de décision, la science des données, et bien d'autres contextes. Prenez le temps de vous assurer que chaque élève est à l'aise avec leur lecture et leur utilisation.
+  Ces fonctions de table et d'image sont utilisées tout au long du programme Bootstrap. Les élèves les reverront dans les leçons sur les arbres de décision, la science des données, et bien d'autres contextes. Prenez le temps de vous assurer que chaque élève est à l'aise avec leur lecture, leurs contrats, et la composition via les Cercles d'Évaluation.
 \end{instructornotes}
 
 % ===========================================================================
-\section*{À propos de ces supports}
+\section*{À propos}
 
 Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
 
 \begin{center}
   \includegraphics[width=2cm]{images/CCbadge.png}
 
-  \textbf{Bootstrap} par la Communauté Bootstrap est sous licence Creative Commons 4.0 Unported.\\[0.5em]
-  \textit{Traduction française réalisée en juillet 2026.}\\
-  \textit{Source originale~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/}}
+  Bootstrap Community — CC BY 4.0.\\[0.3em]
+  \textit{Traduction française — juillet 2026.}\\
+  \textit{Source~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/programming-spelling-suggestions/}}
 \end{center}
 
 \end{document}
