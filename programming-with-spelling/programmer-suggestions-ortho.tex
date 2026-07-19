@@ -542,13 +542,8 @@ La plupart des fonctions ci-dessous ont leur contrat \emph{incomplet}~: à vous 
     \item Le Cercle d'Évaluation ci-dessous superpose le mot \texttt{"Platon"} au-dessus d'un rectangle gris plein. Convertissez-le en code et tapez-le dans Pyret~:
 
     \begin{center}
-      \ttfamily\small
-      (overlay\\
-      \quad (text "Platon" 20 "black")\\
-      \quad (rectangle 150 50 "solid" "gray"))
+      \cercleN{overlay}{\cercle{text}{"Platon", 20, "black"}, \cercle{rectangle}{150, 50, "solid", "gray"}}
     \end{center}
-
-    En notation Cercles imbriqués~: \texttt{(overlay (text "Platon" 20 "black") (rectangle 150 50 "solid" "gray"))}.
   \end{enumerate}
 \end{activitybox}
 
