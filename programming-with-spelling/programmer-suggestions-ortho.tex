@@ -142,6 +142,18 @@
   \end{tikzpicture}%
 }
 
+% Variante \cercleV : args sur plusieurs lignes (utile quand un arg est
+% lui-même un cercle imbriqué + une valeur courte comme ", 5").
+%   \cercleV{first-n-rows}{<cercle{sort}{...}>}{, 5}
+\newcommand{\cercleV}[3]{%
+  \begin{tikzpicture}[baseline=-0.5ex]
+    \node[draw=bsblue, thick, fill=bsblue!8, rounded corners=6pt,
+          inner xsep=3pt, inner ysep=2pt, align=center,
+          font=\ttfamily\scriptsize, text=black]
+      {\textbf{\color{bsblue}#1}\\[0pt]#2\\#3};
+  \end{tikzpicture}%
+}
+
 % ---------- Informations du document ----------
 \title{%
   \vspace{-2cm}
@@ -428,7 +440,7 @@ Supposons que nous voulons voir les 5~premiers résultats de \texttt{resultats},
   \begin{tabular}{@{}c@{}}
     \cercle{sort}{resultats, "edit\allowbreak-distance", true}%
     \hspace{1em}$\to$\hspace{1em}%
-    \cercle{first-n-rows}{\cercle{sort}{resultats, "edit\allowbreak-distance", true}, 5}
+    \cercleV{first-n-rows}{\cercle{sort}{resultats, "edit\allowbreak-distance", true}}{, 5}
   \end{tabular}
 \end{center}
 
