@@ -142,15 +142,17 @@
   \end{tikzpicture}%
 }
 
-% Variante \cercleV : args sur plusieurs lignes (utile quand un arg est
-% lui-même un cercle imbriqué + une valeur courte comme ", 5").
-%   \cercleV{first-n-rows}{<cercle{sort}{...}>}{, 5}
-\newcommand{\cercleV}[3]{%
+% Variante \cercleN : pour un cercle qui contient lui-même un (ou des)
+% cercle(s) imbriqué(s) parmi ses arguments. Comme les cercles internes
+% ont déjà leur propre cadre bleu, on donne plus de « respiration » au
+% cadre externe (inner sep=8pt) pour éviter que les deux bordures ne se
+% touchent visuellement. Le rendu est moins « écrasé ».
+\newcommand{\cercleN}[2]{%
   \begin{tikzpicture}[baseline=-0.5ex]
-    \node[draw=bsblue, thick, fill=bsblue!8, rounded corners=6pt,
-          inner xsep=3pt, inner ysep=2pt, align=center,
+    \node[draw=bsblue, thick, fill=bsblue!8, rounded corners=8pt,
+          inner sep=8pt, align=center,
           font=\ttfamily\scriptsize, text=black]
-      {\textbf{\color{bsblue}#1}\\[0pt]#2\\#3};
+      {\textbf{\color{bsblue}#1}\\[2pt]#2};
   \end{tikzpicture}%
 }
 
@@ -440,7 +442,7 @@ Supposons que nous voulons voir les 5~premiers résultats de \texttt{resultats},
   \begin{tabular}{@{}c@{}}
     \cercle{sort}{resultats, "edit\allowbreak-distance", true}%
     \hspace{1em}$\to$\hspace{1em}%
-    \cercleV{first-n-rows}{\cercle{sort}{resultats, "edit\allowbreak-distance", true}}{, 5}
+    \cercleN{first-n-rows}{\cercle{sort}{resultats, "edit\allowbreak-distance", true}, 5}
   \end{tabular}
 \end{center}
 
