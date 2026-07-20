@@ -1,0 +1,16 @@
+nom,espece,sexe,poids,queue,mammifere,nage
+Firepaw,chat,male,9.50,TRUE,TRUE,FALSE
+Leafpool,chat,femelle,10.60,TRUE,TRUE,FALSE
+Shadestar,chat,femelle,9.00,TRUE,TRUE,TRUE
+Bramble,chat,femelle,4.10,TRUE,TRUE,FALSE
+Brick,chat,male,8.50,TRUE,TRUE,FALSE
+Frisky,chien,femelle,9.60,TRUE,TRUE,TRUE
+Socks,chien,femelle,10.00,TRUE,TRUE,TRUE
+Stripe,chien,male,11.10,TRUE,TRUE,TRUE
+Snickers,chien,male,10.30,TRUE,TRUE,TRUE
+Bruni,lezard,femelle,8.20,TRUE,FALSE,TRUE
+Jesus,lezard,male,3.50,TRUE,FALSE,FALSE
+Gary,escargot,hermaphrodite,0.02,FALSE,FALSE,FALSE
+Turbo,escargot,hermaphrodite,0.03,FALSE,FALSE,FALSE
+Charlotte,tarentule,male,0.35,FALSE,FALSE,FALSE
+Webs,tarentule,femelle,0.40,FALSE,FALSE,FALSE

@@ -1,0 +1,16 @@
+nom,espece,sexe,poids,queue,mammifere,nage
+Luna,chat,femelle,12.4,TRUE,TRUE,FALSE
+Whisker,chat,male,6.8,TRUE,TRUE,FALSE
+Shadow,chat,femelle,3.2,TRUE,TRUE,TRUE
+Mittens,chat,femelle,14.1,TRUE,TRUE,FALSE
+Tiger,chat,male,7.5,TRUE,TRUE,FALSE
+Buddy,chien,male,14.5,TRUE,TRUE,TRUE
+Bella,lapin,femelle,7.2,TRUE,TRUE,TRUE
+Rocky,chien,male,18.3,TRUE,TRUE,TRUE
+Daisy,chien,femelle,5.6,TRUE,TRUE,TRUE
+Spike,lezard,male,1.1,TRUE,FALSE,FALSE
+Gecko,lezard,femelle,11.5,TRUE,FALSE,TRUE
+Speedy,escargot,hermaphrodite,0.08,FALSE,FALSE,FALSE
+Flash,escargot,hermaphrodite,0.03,FALSE,FALSE,FALSE
+Boris,tarentule,male,0.15,FALSE,FALSE,FALSE
+Fang,tarentule,femelle,0.62,FALSE,FALSE,FALSE
