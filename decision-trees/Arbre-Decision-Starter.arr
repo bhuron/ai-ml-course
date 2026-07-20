@@ -22,13 +22,15 @@ TRAINING-URL = "https://raw.githubusercontent.com/bhuron/ai-ml-course/master/dec
 TESTING-URL  = "https://raw.githubusercontent.com/bhuron/ai-ml-course/master/decision-trees/dictionaries/testing-fr.csv"
 
 training =
-  load-table: nom, espece, sexe, poids, queue, mammifere, nage
-    source: csv.csv-table-url(TRAINING-URL, { header-row: true, infer-content: false })
+  load-table: nom :: String, espece :: String, sexe :: String,
+              poids :: Number, queue :: Boolean, mammifere :: Boolean, nage :: Boolean
+    source: csv.csv-table-url(TRAINING-URL, { header-row: true, infer-content: true })
   end
 
 testing =
-  load-table: nom, espece, sexe, poids, queue, mammifere, nage
-    source: csv.csv-table-url(TESTING-URL, { header-row: true, infer-content: false })
+  load-table: nom :: String, espece :: String, sexe :: String,
+              poids :: Number, queue :: Boolean, mammifere :: Boolean, nage :: Boolean
+    source: csv.csv-table-url(TESTING-URL, { header-row: true, infer-content: true })
   end
 
 #####################################################################
