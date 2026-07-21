@@ -1,0 +1,11 @@
+nom,espece,sexe,age,sterilise,pattes,poids,semaines
+Amy,lezard,femelle,1,FALSE,4,5,7
+Aries,lezard,femelle,4,FALSE,4,4,7
+Boss,lezard,femelle,5,FALSE,4,6,5
+Brittany,lezard,male,1,FALSE,4,3,8
+Buck,lezard,femelle,2,FALSE,4,7,4
+Butterscotch,lezard,femelle,3,FALSE,4,1,6
+Chico,lezard,male,2,TRUE,4,8,4
+Coconut,lezard,femelle,3,FALSE,4,6,6
+Dodger,lezard,femelle,5,TRUE,4,5,8
+Dylan,lezard,male,5,FALSE,4,7,3
