@@ -1,0 +1,509 @@
+% ===========================================================================
+% Modèles de régression multiple
+% Traduit et adapté de :
+%   https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/regression-models-multiple/
+% Suite de la leçon « Modèles de régression simples »
+% Licence : Creative Commons 4.0 Unported (Bootstrap Community)
+% ===========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage[raster]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+
+% ---------- Mise en page ----------
+\geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
+\fancyhf{}
+\fancyhead[L]{\textbf{Modèles de régression multiple}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Bootstrap Community — CC BY 4.0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+% ---------- Couleurs ----------
+\definecolor{bsblue}{RGB}{41,128,185}
+\definecolor{bsgreen}{RGB}{39,174,96}
+\definecolor{bsorange}{RGB}{230,126,34}
+\definecolor{bsgray}{RGB}{149,165,166}
+\definecolor{codebg}{RGB}{245,247,250}
+
+% ---------- Styles de sections ----------
+\titleformat{\section}[hang]{\Huge\bfseries\color{bsblue}}{}{0pt}{}[\vspace{-0.5em}\rule{\textwidth}{2pt}]
+\titleformat{\subsection}[hang]{\Large\bfseries\color{bsblue!80!black}}{}{0pt}{}
+\titleformat{\subsubsection}[hang]{\large\bfseries\color{bsgreen!60!black}}{}{0pt}{}
+
+% ---------- Environnements personnalisés ----------
+\newtcolorbox{overviewbox}{
+  colback=bsblue!5!white, colframe=bsblue!60!white,
+  fonttitle=\bfseries, title=Objectif de la section,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{activitybox}{
+  colback=bsgreen!5!white, colframe=bsgreen!60!white,
+  fonttitle=\bfseries, title=Activité,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{thinkbox}{
+  colback=bsorange!5!white, colframe=bsorange!60!white,
+  fonttitle=\bfseries, title=Réflexion,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{keypointbox}{
+  colback=bsgray!10!white, colframe=bsgray!50!white,
+  fonttitle=\bfseries, title=Point clé,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{instructornotes}{
+  colback=yellow!10!white, colframe=yellow!80!black,
+  fonttitle=\bfseries, title=Notes pour l'enseignant·e,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{codebox}{
+  colback=codebg, colframe=bsgray!40,
+  fonttitle=\bfseries, title=Code Pyret,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{contractbox}{
+  colback=bsblue!3!white, colframe=bsblue!40!white,
+  left=1em, right=1em, top=0.6em, bottom=0.6em
+}
+
+% ---------- Style listings pour Pyret ----------
+\lstdefinelanguage{Pyret}{
+  keywords={use,context,url-file,and,or,not,if,else,for,fun,data,sharing,include,import,as,where,let,rec,is,=,true,false,end,Table,String,Number,Boolean,Image,Row,List,Code},
+  sensitive=true,
+  comment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+}
+\lstset{
+  language=Pyret,
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{bsgreen!70!black}\itshape,
+  keywordstyle=\color{bsblue}\bfseries,
+  stringstyle=\color{bsorange},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framesep=5pt,
+  rulecolor=\color{bsgray!40},
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  aboveskip=0.8em,
+  belowskip=0.8em,
+}
+
+% ---------- Commandes pratiques ----------
+\newcommand{\img}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{fig:#1}
+  \end{figure}
+}
+\newcommand{\contrat}[1]{%
+  \begin{contractbox}
+    \ttfamily #1
+  \end{contractbox}
+}
+
+% ---------- Informations du document ----------
+\title{%
+  \vspace{-2cm}
+  {\Huge\bfseries Modèles de régression}\\[0.3em]
+  {\Huge\bfseries multiple}\\[0.5em]
+  {\large Plans de meilleur ajustement, poids, et compromis entre capteurs}\\[1em]
+  {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/regression-models-multiple/}{Bootstrap World} (Fall 2026)}\\
+  {\normalsize Suite de la leçon «~Modèles de régression simples~»}\\[0.5em]
+  {\normalsize Licence Creative Commons 4.0 International}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{2cm}
+\begin{center}
+  \textit{Ces supports ont été développés en partie grâce au soutien de la National Science Foundation\\
+  (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).}
+\end{center}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ===========================================================================
+% SECTION 1 : RÉGRESSION MULTIPLE
+% ===========================================================================
+\section{Régression multiple}
+
+\begin{overviewbox}
+  Les élèves étendent leur compréhension de la régression linéaire à une variable à la régression multiple avec deux prédicteurs. En utilisant \texttt{curve} et \texttt{skew}, ils découvrent que chaque nuage de points de la leçon précédente était une projection 2D de données de dimension supérieure, et que le plan de meilleur ajustement est l'extension naturelle de la droite de meilleur ajustement.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement~: ombres et cylindres}
+
+\img{images/cylinder.png}{width=0.35\textwidth}{Rendu 3D d'un cylindre projetant des ombres sur deux surfaces perpendiculaires. L'une des ombres est un cercle, l'autre est un carré.}
+
+Regardez cette image d'un cylindre flottant dans une boîte.
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Qu'est-ce qui crée l'ombre carrée sur le mur bleu~?}
+    \begin{itemize}
+      \item Une lumière dirigée sur le côté du cylindre projette une ombre carrée.
+    \end{itemize}
+    \item \textbf{Qu'est-ce qui crée l'ombre circulaire sur le mur jaune~?}
+    \begin{itemize}
+      \item Une \emph{autre} lumière dirigée sur l'une des extrémités du cylindre projette une ombre circulaire.
+    \end{itemize}
+    \item \textbf{Quelle serait la forme de l'ombre au sol~?}
+    \begin{itemize}
+      \item Un carré.
+    \end{itemize}
+    \item \textbf{Comment une seule forme peut-elle projeter des ombres si différentes~?}
+    \begin{itemize}
+      \item Un objet 3D a plusieurs côtés, donc différentes lumières projettent des ombres différentes.
+    \end{itemize}
+    \item \textbf{Si nous ne voyions que l'ombre circulaire, saurions-nous avec certitude qu'elle a été projetée par un cylindre comme celui-ci~?}
+    \begin{itemize}
+      \item Non. Elle pourrait être projetée par un cylindre court ou grand…~ou même une sphère, un cône, un sablier, etc.
+    \end{itemize}
+    \item \textbf{Si la \emph{vraie} forme est un cylindre, les ombres circulaire et carrée nous «~mentent~»-elles~?}
+    \begin{itemize}
+      \item Non — chacune raconte juste une \textbf{partie} de l'histoire~!
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\img{images/63c0a48efc22a390.png}{width=0.55\textwidth}{Nuage de points de \texttt{steering-angle} en fonction de \texttt{curve}, avec la droite de meilleur ajustement.}
+
+Dans la leçon \emph{Modèles de régression simples}, nous avons fait un nuage de points pour chaque variable explicative, montrant une relation 2D entre elle et \texttt{steering-angle}.
+
+Mais \texttt{curve}, \texttt{skew}, \texttt{offset}, et \texttt{speed} sont toutes mesurées \emph{en même temps}, pour le même point de données. Chaque nuage de points que nous avons fait ne montrait qu'une seule «~ombre~» des données — une projection 2D.
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Si \texttt{curve} et \texttt{skew} sont des entrées, et \texttt{steering-angle} est la sortie, de combien de dimensions aurions-nous besoin pour les représenter toutes les trois à la fois~?}
+    \begin{itemize}
+      \item Trois~! Un axe pour \texttt{curve}, un pour \texttt{skew}, un pour \texttt{steering-angle}.
+    \end{itemize}
+  \end{itemize}
+
+  Laissez les élèves discuter et réfléchir avant de continuer.
+\end{thinkbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration~: nuages de points en 3D}
+
+\begin{activitybox}
+  Explorons à quoi ressemble un nuage de points en 3D, en utilisant un \emph{sous-ensemble réduit} de nos données de conduite~:
+
+  \begin{itemize}
+    \item Complétez \emph{Prédire l'angle de braquage à partir de \texttt{curve} \emph{et} \texttt{skew}} en utilisant l'activité \href{https://www.desmos.com/3d/omnchml87a}{Driving Data (Desmos 3D)}.
+    \item Soyez prêt à partager votre réflexion~!
+  \end{itemize}
+\end{activitybox}
+
+\begin{instructornotes}
+  \textbf{Utiliser la perspective dans Desmos 3D}
+
+  Notre cerveau traite naturellement le monde 3D avec la \emph{perspective}, ce qui fait que les Rails de train parallèles semblent converger au loin. Dans Desmos, vous pouvez contrôler cet effet en cliquant sur l'icône de la clé et en ajustant le curseur de perspective.
+
+  \begin{itemize}
+    \item \textbf{Perspective minimale} — Quand on regarde «~de face~» les plans X-Z ou Y-Z, on ne veut pas de perspective. Pour faire le pont entre 2D et 3D, utilisez la perspective minimale pour que les nuages de points ressemblent à une feuille de papier plate, le plan de meilleur ajustement ressemble à une ligne droite, et les points 3D s'alignent parfaitement.
+    \item \textbf{Perspective maximale} — En tournant et en regardant le cube en 3D, nous voulons de la perspective~! Tourner le cube \emph{sans} perspective rend plus difficile pour les élèves d'utiliser leur traitement visuel pour comprendre l'espace.
+  \end{itemize}
+
+  Nous avons réglé l'activité Desmos pour démarrer avec une perspective minimale, mais les enseignant·es doivent être prêt·es à ajuster la perspective si les élèves ont du mal à comprendre le graphique en 3D.
+\end{instructornotes}
+
+\img{images/0cfd90058e7d3834.png}{width=0.55\textwidth}{Un plan dans un repère $(x, y, z)$, avec des points de données regroupés autour de lui.}
+
+\begin{keypointbox}
+  Si nous voulons considérer les trois variables dans notre modèle, nous devons considérer chaque instantané du corpus d'entraînement comme un point 3D, avec des valeurs pour \texttt{curve}, \texttt{skew}, \emph{et} \texttt{steering-angle}.
+
+  \begin{itemize}
+    \item Si \texttt{curve} et \texttt{skew} sont toutes deux des valeurs dans un instantané donné, elles expliquent chacune une \emph{partie} de l'angle de braquage à cet instant.
+    \item Pour faire des \emph{prédictions} en trois dimensions, nous devons faire de la \emph{régression} en trois dimensions.
+  \end{itemize}
+
+  Au lieu d'une droite de meilleur ajustement, nous cherchons un \textbf{plan de meilleur ajustement}.
+\end{keypointbox}
+
+\begin{instructornotes}
+  Établissez des liens avec l'image du cylindre et des ombres~: chaque nuage de points 2D de la leçon précédente est une «~ombre~» littérale des données 3D, projetée en aplatisant une dimension.
+\end{instructornotes}
+
+\subsubsection{Deux vocabulaires pour les mêmes idées}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{X X}
+  \toprule
+  \textbf{En mathématiques…} & \textbf{En apprentissage automatique…} \\
+  \midrule
+  Variable & Paramètre \\
+  Pente & Poids (\emph{weight}) \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+En mathématiques, la «~force de tirage~» d'une variable sur la sortie est sa \emph{pente}. En apprentissage automatique, la même idée s'appelle un \emph{poids}. Quand les entreprises technologiques parlent de «~publier les poids d'un modèle~» — ou refusent de le faire — elles parlent des coefficients appris de leurs modèles de régression.
+
+Certaines entreprises font un show de l'\emph{open-sourcing} de leurs modèles tout en refusant de partager les poids. C'est un peu comme dire «~nous prédisons l'angle de braquage à partir de \texttt{curve} et \texttt{skew}~» mais refuser de dire la pente de chacun.
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\img{images/0cfd90058e7d3834.png}{width=0.45\textwidth}{Un plan dans un repère $(x, y, z)$, avec des points de données regroupés autour de lui.}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Pourquoi notre fonction de régression multiple a-t-elle \textbf{deux} pentes~?}
+    \begin{itemize}
+      \item Parce que nous définissons un \textbf{plan}. Une feuille plate peut pencher selon deux axes différents indépendamment, donc elle a besoin de deux pentes — une pour chaque.
+    \end{itemize}
+    \item \textbf{Chaque nuage de points de la leçon précédente était une «~ombre~» des données 3D. Quand nous regardions \texttt{curve} vs.\ \texttt{steering-angle}, dans quelle direction la lumière brillait-elle~?}
+    \begin{itemize}
+      \item Le long de l'axe \texttt{skew} — toute la variation de \texttt{skew} a été aplatie en une vue 2D.
+    \end{itemize}
+    \item \textbf{Cela signifie-t-il que le nuage de points \texttt{curve} vs.\ \texttt{steering-angle} était «~faux~»~?}
+    \begin{itemize}
+      \item Non — il était exact, juste incomplet. Il racontait une partie de l'histoire.
+    \end{itemize}
+    \item \textbf{Saveons-nous que le modèle ajusté dans Desmos est vraiment le meilleur pour les données~?}
+    \begin{itemize}
+      \item Non~! Nous avons juste utilisé nos yeux pour trouver un plan qui semblait représenter le motif dans les points.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% SECTION 2 : RÉGRESSION MULTIPLE EN PYRET
+% ===========================================================================
+\section{Régression multiple en Pyret}
+
+\begin{overviewbox}
+  Les élèves utilisent \texttt{regression-model-code} avec plusieurs colonnes d'entrée pour construire un prédicteur de braquage à deux variables, et \texttt{regression-model-S} pour évaluer et comparer les modèles. Ils réfléchissent de façon critique aux variables à conserver.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+ Utilisons Pyret pour trouver le meilleur modèle pour nos données~!
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Pour la régression linéaire, nous avons utilisé une fonction appelée \texttt{lr-plot}. Que faisait-elle~?}
+    \begin{itemize}
+      \item Elle affichait un nuage de points avec une droite de meilleur ajustement.
+      \item Elle définissait la fonction prédicteur.
+      \item Elle nous indiquait l'erreur attendue des prédictions faites avec le modèle en rapportant la valeur~$S$ et $r^2$.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  Pyret ne peut pas \emph{tracer} de données dans plus de deux dimensions à la fois, mais il peut \emph{calculer} dans autant de dimensions que nous voulons~!
+
+  Pour obtenir le code d'une fonction prédicteur, nous utilisons \texttt{regression-model-code}.
+
+  \contrat{\# regression-model-code :: (Table t, List<String> explicatives, String reponse) -> Code}
+
+  Dans la leçon précédente, nous lui avons donné une liste avec une seule variable explicative~:
+  \begin{lstlisting}
+regression-model-code(training, [list: "curve"], "steering-angle")
+  \end{lstlisting}
+
+  Ajouter une deuxième variable à la liste est tout ce qu'il faut pour passer d'une \emph{droite} de régression à un \textbf{plan de régression~!}
+  \begin{lstlisting}
+regression-model-code(training, [list: "curve", "skew"], "steering-angle")
+  \end{lstlisting}
+
+  Pyret possède aussi un outil pour mesurer l'ajustement de n'importe quel modèle de régression consommant une Row~:
+
+  \contrat{\# regression-model-S :: (Table t, List<String> explicatives, String reponse, (Row -> Number) modele) -> Number\\
+\# calcule la valeur S d'un modele de regression multiple, ajuste aux colonnes specifiees}
+\end{keypointbox}
+
+\begin{instructornotes}
+  Considérez le compromis entre clarté et quantité de frappe~: pour certain·es élèves, renommer leurs prédicteurs avec un raccourci est un grand avantage~! Par exemple, \texttt{curve\allowbreak-skew\allowbreak-offset\allowbreak-predictor} pourrait être renommé \texttt{cso-pred}.
+
+  \vspace{0.3em}
+  \textbf{Pourquoi \texttt{regression-model-S} a-t-il besoin de connaître vos colonnes explicatives~?}
+
+  Quand nous calculions $S$ dans un modèle à 2~dimensions (1~explicative, 1~de réponse), nous avions \emph{besoin} de plus de deux lignes. Deux points suffisent à définir une droite, mais s'il n'y a pas de troisième ligne, il n'y a rien d'autre pour ajuster la droite~! Mais maintenant nous traitons des modèles à 3~dimensions (2~explicatives, 1~de réponse), et nous avons besoin de \emph{plus de trois lignes}.
+
+  (C'est pourquoi la liste des colonnes explicatives est importante~!)
+\end{instructornotes}
+
+% ---------- Investigate ----------
+\subsection{Exploration}
+
+\img{images/c0b8e3daef30440c.jpg}{width=0.4\textwidth}{Une voiture autonome avec un capteur sur le toit, garée au milieu d'une route vide.}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Ouvrez votre copie du fichier \textbf{Voiture Autonome} (\texttt{Voiture\allowbreak-Autonome\allowbreak-Starter.arr}) et cliquez sur «~Run~».
+    \item Utilisez \texttt{regression-model-code} et \texttt{regression-model-S} pour compléter la première section de \emph{Apprentissage supervisé — Régression multiple}.
+  \end{itemize}
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Comment la valeur~$S$ a-t-elle changé quand vous avez ajouté \texttt{skew} comme deuxième prédicteur~?}
+    \begin{itemize}
+      \item Elle a diminué — l'utilisation de deux prédicteurs explique davantage de variation dans \texttt{steering-angle}, laissant moins d'erreur inexpliquée.
+    \end{itemize}
+    \item \textbf{En regardant les coefficients pour \texttt{curve} et \texttt{skew}, lequel a le plus d'\emph{influence} sur l'angle de braquage prédit~?}
+    \begin{itemize}
+      \item \texttt{curve} — son coefficient est plus grand, ce qui signifie qu'un changement d'une unité de \texttt{curve} déplace la prédiction plus qu'un changement d'une unité de \texttt{skew}.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  \textbf{Les capteurs coûtent cher~!}
+
+  Ajouter tous les différents capteurs pour rendre une voiture autonome ajoute des milliers d'euros au coût de fabrication, et la puissance de calcul supplémentaire nécessaire pour traiter les données rend les puces utilisées dans ces voitures plus chères aussi. Pour rendre les voitures abordables, les entreprises doivent prendre des décisions difficiles sur les capteurs à conserver et ceux à supprimer.
+\end{keypointbox}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Complétez le reste de \emph{Apprentissage supervisé — Régression multiple}.
+    \item Pour une exploration plus approfondie, complétez \emph{Supprimer des variables}.
+  \end{itemize}
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Si vous deviez supprimer une des deux variables, laquelle supprimeriez-vous et pourquoi~?}
+    \begin{itemize}
+      \item \texttt{skew} — elle a le coefficient le plus petit et la supprimer coûterait moins de précision que supprimer \texttt{curve}.
+    \end{itemize}
+    \item \textbf{Si vous ne pouviez pas utiliser \texttt{curve} du tout, pourriez-vous quand même construire un modèle viable~?}
+    \begin{itemize}
+      \item On pourrait construire un modèle, mais il fonctionnerait nettement moins bien.
+      \item \texttt{curve} porte le plus d'information sur la façon de braquer~; les autres variables ne comblent qu'une partie du manque.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  La régression multiple est la même idée que la régression linéaire, étendue à un nombre quelconque de variables d'entrée. Chaque entrée a sa propre pente (poids), et le modèle les apprend toutes en même temps pour minimiser l'erreur.
+
+  \vspace{0.4em}
+  La régression multiple est le moteur derrière de nombreux systèmes d'IA réels~:
+  \begin{itemize}
+    \item Tarifs d'assurance auto basés sur l'âge, le lieu, et l'historique de conduite.
+    \item Prévisions météo basées sur la température, l'humidité, la pression, et la vitesse du vent.
+  \end{itemize}
+
+  Les trois mêmes phases s'appliquent toujours pour entraîner et utiliser un modèle~:
+  \begin{enumerate}
+    \item Collecter des données étiquetées.
+    \item Entraîner une fonction.
+    \item Appliquer la fonction à de nouvelles entrées.
+  \end{enumerate}
+\end{keypointbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Les voitures autonomes modernes utilisent les données de \emph{douzaines} de capteurs comme entrées. Comment cela se relie-t-il à ce que nous venons de faire~?}
+    \begin{itemize}
+      \item Nous combinons plusieurs variables pour déterminer une seule sortie.
+    \end{itemize}
+    \item \textbf{Que signifierait-il pour un capteur d'avoir un très \emph{petit} poids dans le modèle de notre voiture~?}
+    \begin{itemize}
+      \item Ce capteur mesure quelque chose qui affecte à peine la prédiction de braquage — il capture probablement quelque chose qui compte rarement pour le braquage, comme le nombre de personnes dans la voiture.
+    \end{itemize}
+    \item \textbf{Que signifierait-il pour un capteur d'avoir un très \emph{grand} poids dans le modèle de notre voiture~?}
+    \begin{itemize}
+      \item Ce capteur mesure quelque chose qui influence fortement l'angle de braquage prédit — comme \texttt{curve} ou \texttt{skew}.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% ANNEXES
+% ===========================================================================
+\section*{Annexe A~: Mathématiques vs.\ apprentissage automatique}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{l X X}
+  \toprule
+  \textbf{Concept} & \textbf{Mathématiques} & \textbf{Apprentissage automatique} \\
+  \midrule
+  Entrée       & Variable        & Paramètre \\
+  Coefficient  & Pente           & Poids (\emph{weight}) \\
+  Ajustement   & Droite de meilleur ajustement & Plan de meilleur ajustement \\
+  Évaluation   & $S$ (écart-type des résidus) & Score de perte (\emph{loss}) \\
+  Données      & Nuage de points (\emph{scatter plot}) & Données d'entraînement (\emph{training corpus}) \\
+  Sortie       & Variable de réponse & Prédiction \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\section*{Annexe B~: Fichiers du projet}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{l X}
+  \toprule
+  \textbf{Fichier} & \textbf{Description} \\
+  \midrule
+  \texttt{Voiture\allowbreak-Autonome\allowbreak-Starter.arr} & Fichier de démarrage Pyret (inchangé par rapport à la leçon précédente). Fournit \texttt{training}, \texttt{drive}, \texttt{lr-plot}, \texttt{regression\allowbreak-model\allowbreak-code}, \texttt{regression\allowbreak-model\allowbreak-S}, etc. via \texttt{self\allowbreak-driving\allowbreak-car\allowbreak-library.arr}. \\
+  \texttt{modeles-regression-multiple.tex} & Document de cours (ce fichier) \\
+  \texttt{images/cylinder.png} & Rendu 3D du cylindre projetant deux ombres \\
+  \texttt{images/0cfd90058e7d3834.png} & Plan de meilleur ajustement en 3D avec données \\
+  \texttt{images/63c0a48efc22a390.png} & Nuage de points \texttt{steering-angle} vs.\ \texttt{curve} avec droite de meilleur ajustement \\
+  \texttt{images/c0b8e3daef30440c.jpg} & Photo de voiture autonome \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\vspace{1em}
+\textbf{À noter~:} cette leçon utilise \emph{le même} fichier de démarrage que la leçon précédente (\emph{Modèles de régression simples}). Aucune modification du code n'est nécessaire~: \texttt{regression\allowbreak-model\allowbreak-code} et \texttt{regression\allowbreak-model\allowbreak-S} acceptent tous deux une liste de colonnes explicatives, il suffit d'ajouter \texttt{"skew"} (ou \texttt{"offset"}, \texttt{"speed"}) à la liste pour étendre le modèle à plusieurs variables. Les noms de colonnes (\texttt{steering-angle}, \texttt{curve}, \texttt{speed}, \texttt{skew}, \texttt{offset}) restent en anglais car ils sont codés en dur dans la bibliothèque Bootstrap.
+
+\section*{À propos de ces supports}
+
+Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
+
+\begin{center}
+  \textbf{Bootstrap} par la Communauté Bootstrap est sous licence Creative Commons 4.0 Unported.\\
+  Cette licence n'accorde pas la permission d'organiser des formations ou du développement professionnel.\\[1em]
+  \textit{Traduction et adaptation française réalisées en juillet 2026.}\\
+  \textit{Source originale~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/regression-models-multiple/}}
+\end{center}
+
+\end{document}
