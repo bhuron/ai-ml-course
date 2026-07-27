@@ -1,0 +1,712 @@
+% ===========================================================================
+% Traitement du langage naturel
+% Traduit et adapté de :
+%   https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/natural-language/
+% Licence : Creative Commons 4.0 Unported (Bootstrap Community)
+% ===========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage[raster]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+
+% ---------- Mise en page ----------
+\geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
+\fancyhf{}
+\fancyhead[L]{\textbf{Traitement du langage naturel}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Bootstrap Community — CC BY 4.0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+% ---------- Couleurs ----------
+\definecolor{bsblue}{RGB}{41,128,185}
+\definecolor{bsgreen}{RGB}{39,174,96}
+\definecolor{bsorange}{RGB}{230,126,34}
+\definecolor{bsgray}{RGB}{149,165,166}
+\definecolor{codebg}{RGB}{245,247,250}
+
+% ---------- Styles de sections ----------
+\titleformat{\section}[hang]{\Huge\bfseries\color{bsblue}}{}{0pt}{}[\vspace{-0.5em}\rule{\textwidth}{2pt}]
+\titleformat{\subsection}[hang]{\Large\bfseries\color{bsblue!80!black}}{}{0pt}{}
+\titleformat{\subsubsection}[hang]{\large\bfseries\color{bsgreen!60!black}}{}{0pt}{}
+
+% ---------- Environnements personnalisés ----------
+\newtcolorbox{overviewbox}{
+  colback=bsblue!5!white, colframe=bsblue!60!white,
+  fonttitle=\bfseries, title=Objectif de la section,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{activitybox}{
+  colback=bsgreen!5!white, colframe=bsgreen!60!white,
+  fonttitle=\bfseries, title=Activité,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{thinkbox}{
+  colback=bsorange!5!white, colframe=bsorange!60!white,
+  fonttitle=\bfseries, title=Réflexion,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{keypointbox}{
+  colback=bsgray!10!white, colframe=bsgray!50!white,
+  fonttitle=\bfseries, title=Point clé,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{instructornotes}{
+  colback=yellow!10!white, colframe=yellow!80!black,
+  fonttitle=\bfseries, title=Notes pour l'enseignant·e,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{codebox}{
+  colback=codebg, colframe=bsgray!40,
+  fonttitle=\bfseries, title=Code Pyret,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{contractbox}{
+  colback=bsblue!3!white, colframe=bsblue!40!white,
+  left=1em, right=1em, top=0.6em, bottom=0.6em
+}
+
+% ---------- Style listings pour Pyret ----------
+\lstdefinelanguage{Pyret}{
+  keywords={use,context,url-file,and,or,not,if,else,for,fun,data,sharing,include,import,as,where,let,rec,is,=,true,false,end,Table,String,Number,Boolean,Image,Row,List,Code},
+  sensitive=true,
+  comment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+}
+\lstset{
+  language=Pyret,
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{bsgreen!70!black}\itshape,
+  keywordstyle=\color{bsblue}\bfseries,
+  stringstyle=\color{bsorange},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framesep=5pt,
+  rulecolor=\color{bsgray!40},
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  aboveskip=0.8em,
+  belowskip=0.8em,
+}
+
+% ---------- Commandes pratiques ----------
+\newcommand{\img}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{fig:#1}
+  \end{figure}
+}
+\newcommand{\contrat}[1]{%
+  \begin{contractbox}
+    \ttfamily #1
+  \end{contractbox}
+}
+
+% ---------- Informations du document ----------
+\title{%
+  \vspace{-2cm}
+  {\Huge\bfseries Traitement du langage naturel}\\[0.5em]
+  {\large Sac de mots, normalisation, plagiat et analyse de sentiment}\\[1em]
+  {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/natural-language/}{Bootstrap World} (Fall 2026)}\\
+  {\normalsize Adapté au contexte francophone — textes et stop words en français}\\[0.5em]
+  {\normalsize Licence Creative Commons 4.0 International}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{2cm}
+\begin{center}
+  \textit{Ces supports ont été développés en partie grâce au soutien de la National Science Foundation\\
+  (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).}
+\end{center}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ===========================================================================
+% SECTION 1 : TRACER DES ESSAIS DANS L'ESPACE
+% ===========================================================================
+\section{Tracer des essais dans l'espace}
+
+\begin{overviewbox}
+  Les élèves révisent leur progression du tracé de données numériques au tracé de données d'images, puis considèrent le défi de tracer du texte écrit par des humains. Ils appliquent le modèle sac de mots de \emph{Construire des centroïdes}, et confrontent les défis supplémentaires que le langage naturel présente.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+Aujourd'hui, nous allons explorer comment les modèles d'apprentissage automatique travaillent avec le langage naturel — les langues que les humains utilisent — en commençant par des textes écrits en français.
+
+Rappelons notre discussion sur la \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/measuring-similarity/}{similarité}.
+
+\begin{keypointbox}
+  Nous pouvons \textbf{tracer des documents dans l'espace} et utiliser la \textbf{géométrie} pour calculer une notion de «~proximité~».
+
+  \img{images/340821c2f0c96706.png}{width=0.45\textwidth}{Système de coordonnées 3D avec des points orange représentant le prix vs.\ la qualité des frites vs.\ la qualité des burgers. Un point vert représente In-N-Out, avec des lignes tracées vers l'origine et l'angle mesuré à 18 degrés.}
+
+  \begin{itemize}
+    \item Une table avec $n$ attributs numériques (par exemple, nombre de pixels à dominante verte) peut être tracée comme des points dans un espace à $n$~dimensions.
+    \item L'emplacement de ces points dans l'espace peut être utilisé pour calculer différentes mesures de similarité (égalité, distance, angle, etc.).
+    \item Les ingénieur·es en apprentissage automatique utilisent généralement la mesure d'angle, car elle reflète mieux l'intuition humaine.
+  \end{itemize}
+\end{keypointbox}
+
+\begin{keypointbox}
+  Si les données d'entrée ne sont \emph{pas} numériques, nous pouvons calculer des nombres quand même~!
+  \begin{itemize}
+    \item Dans notre \emph{fichier Images Similaires}, nous avons généré des attributs numériques comme \texttt{SYMMETRY}, \texttt{LUMINANCE}, et \texttt{ENTROPY}.
+    \item Nous avons aussi généré de très longues chaînes de \texttt{COLOR-NAMES}, listant chaque couleur primaire dominante dans l'ordre des pixels.
+    \item Pour chaque image, nous avons transformé notre chaîne ordonnée de couleurs en un modèle sac de mots~: un compte \emph{non ordonné} du nombre de pixels à dominante \texttt{red}, \texttt{green}, et \texttt{blue}, nous permettant de tracer des images dans un «~espace des couleurs~» à 3~dimensions.
+  \end{itemize}
+\end{keypointbox}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Ouvrez le \textbf{fichier Langage Naturel} (\texttt{Langage\allowbreak-Naturel\allowbreak-Starter.arr}), enregistrez une copie, et cliquez sur «~Run~».
+    \item Trouvez les lignes 25--39 de la Zone de Définitions, qui définissent notre table \texttt{corpus} initiale.
+  \end{itemize}
+\end{activitybox}
+
+\img{images/928dcfdd1820b4bb.jpg}{width=0.4\textwidth}{Un plan avec deux points $(2,2)$ et $(6,1)$. Le triangle rectangle avec son hypoténuse entre ces points est dessiné en gris.}
+
+\begin{keypointbox}
+  Rappelez-vous notre fonction de similarité d'angle~:
+  \contrat{\# angle-similarity :: (Table t, String id, List<String> colonnes) -> Table}
+  Nous voulons lui demander de trouver des correspondances pour un essai particulier, et lui indiquer quels attributs nous intéressent.
+\end{keypointbox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Pourquoi ne pouvons-nous pas utiliser \texttt{angle-similarity} avec notre \texttt{corpus}, tel quel~?}
+    \begin{itemize}
+      \item Elle ne contient aucune colonne quantitative~!
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Les lignes 3--23 de la Zone de Définitions définissent une série de courts textes sur des animaux, en français.
+    \item Trouvez \texttt{mystere} à la ligne~23 et lisez le texte.
+  \end{itemize}
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Lequel des autres documents vous attendez-vous à être le plus similaire à \texttt{mystere}~? Pourquoi~?}
+    \begin{itemize}
+      \item \texttt{elephant}, parce que les deux documents parlent d'éléphants.
+    \end{itemize}
+    \item \textbf{En tant qu'humain, qu'est-ce qui vous dit de quoi un essai «~parle~»~?}
+    \begin{itemize}
+      \item le titre, la phrase de sujet, un mot utilisé beaucoup…
+      \item je le sais juste en lisant…
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration~: attributs quantitatifs du texte}
+
+\begin{thinkbox}
+  Comme nous le savons, Pyret ne comprend rien à ce que ces documents \emph{signifient}. Mais il \emph{peut} calculer divers attributs à partir des documents, et comparer leur similarité en utilisant des angles ou des distances.
+
+  \begin{itemize}
+    \item \textbf{Quelles idées avez-vous pour des colonnes quantitatives que Pyret pourrait calculer sur ces documents~?}
+  \end{itemize}
+
+  Notez une liste au tableau. Les réponses possibles incluent~:
+  \begin{itemize}
+    \item Nombre de mots
+    \item Nombre de phrases
+    \item Nombre moyen de mots par phrase
+    \item Longueur moyenne des mots utilisés
+    \item Nombre de syllabes dans le document
+    \item Nombre moyen de syllabes par mot
+    \item Sac de mots $\to$ le nombre de fois où chaque mot apparaît
+  \end{itemize}
+
+  \begin{itemize}
+    \item \textbf{Lequel des attributs de notre liste ferait le meilleur travail pour décider quel document est le plus similaire à \texttt{mystere}~?}
+    \item \textbf{Lequel des attributs de notre liste sont des choses auxquelles vous avez pensé en décidant quel texte était le plus similaire à notre texte \texttt{mystere}~?}
+    \begin{itemize}
+      \item Probablement aucun.
+    \end{itemize}
+    \item \textbf{En repensant à la façon dont vous avez décidé quel texte était le plus similaire, avez-vous d'autres idées pour des colonnes que Pyret pourrait calculer~?}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  \textbf{Pyret possède un certain nombre de fonctions qui calculent des nombres décrivant différentes caractéristiques du texte~:}
+
+  \contrat{\# string-length :: String -> Number\\
+\# num-words :: String -> Number\\
+\# num-syllables :: String -> Number\\
+\# num-sentences :: String -> Number\\
+\# text-grade :: String -> Number}
+\end{keypointbox}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Retournez à votre fichier \textbf{Langage Naturel}.
+    \item Évaluez \texttt{decorated} pour voir une table avec des colonnes générées par ces fonctions.
+    \item \textbf{Que remarquez-vous~? Que vous demandez-vous~?}
+  \end{itemize}
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Combien de dimensions Pyret pourrait-il calculer pour la similarité en utilisant cette table~? Comment le savez-vous~?}
+    \begin{itemize}
+      \item 5~dimensions. Il y a 5~colonnes quantitatives.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  Nous pouvons utiliser \texttt{angle-similarity}, \texttt{image-scatter-plot} et \texttt{image-dot-plot} pour explorer les relations dans nos nouvelles colonnes.
+
+  Pyret possède aussi une autre fonction de similarité qui \emph{utilise toutes les colonnes numériques} pour calculer la similarité d'angle par rapport à une ligne donnée~:
+
+  \contrat{\# all-cols-similarity :: (Table t, String id) -> Table}
+
+  Par exemple~: \texttt{all-cols-similarity(decorated, "?")} trouvera la similarité d'angle de chaque document par rapport à notre ligne mystère \texttt{"?"}, en utilisant chaque colonne contenant des nombres dans notre table \texttt{decorated}.
+\end{keypointbox}
+
+\begin{activitybox}
+  Prenez un moment pour expérimenter avec nos nouvelles colonnes en utilisant les fonctions suivantes~:
+  \begin{itemize}
+    \item \texttt{all-cols-similarity}
+    \item \texttt{angle-similarity}
+    \item \texttt{image-scatter-plot}
+    \item \texttt{image-dot-plot}
+  \end{itemize}
+
+  \textbf{Quelle est l'utilité de ces colonnes pour identifier quels textes sont les plus similaires à \texttt{?}~?}
+\end{activitybox}
+
+\begin{instructornotes}
+  Ne passez pas trop de temps là-dessus car ces colonnes ne sont PAS très utiles~!
+\end{instructornotes}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Avez-vous trouvé des comparaisons qui auraient aidé à déterminer quel texte était le plus similaire à \texttt{mystere}~?}
+    \begin{itemize}
+      \item Probablement pas.
+    \end{itemize}
+    \item \textbf{Une des colonnes que Pyret a calculées capte-t-elle ce dont un essai \emph{parle}~?}
+    \begin{itemize}
+      \item Le nombre de caractères, de mots, de syllabes et de phrases ne nous dit rien sur le \emph{sujet} d'un essai.
+      \item Nous avons besoin d'informations sur \emph{quels} mots sont utilisés pour apprendre le \emph{sujet} d'un essai.
+      \item Avec notre exemple d'images, \texttt{luminance} et \texttt{entropy} nous disaient au moins \emph{quelque chose} sur l'apparence de l'image. Imaginez si nous avions essayé de comparer nos images de montagnes en utilisant seulement leur largeur et leur hauteur~!
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  Notre meilleur outil pour comparer le contenu réel des textes est de calculer leur sac de mots.
+
+  Évaluez \texttt{computed} pour voir une table avec des colonnes représentant les comptes pour chaque mot.
+\end{keypointbox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Que remarquez-vous~? Que vous demandez-vous~?}
+  \end{itemize}
+
+  Prenez le temps de laisser les élèves faire émerger beaucoup d'observations~! Celles-ci peuvent inclure~:
+  \begin{itemize}
+    \item Beaucoup de mots n'apparaissent qu'une seule fois dans un seul essai~!
+    \item Il n'y a pas beaucoup de chevauchement entre les mots utilisés.
+    \item Il y a certains mots qui apparaissent dans presque chaque essai.
+    \item Certains mots sont en réalité des nombres.
+    \item Certains mots sont listés avec de la ponctuation comme des virgules et des points.
+    \item À moins que les mots soient exactement les mêmes, ils sont comptés séparément, par exemple \texttt{adult}, \texttt{adulthood.}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Pourquoi ce sac de mots pourrait-il s'avérer moins utile que ceux que nous avons utilisés pour définir l'espace des couleurs de nos images~?}
+    \begin{itemize}
+      \item Il y a beaucoup de colonnes dans la table \texttt{computed}~! Et la plupart ont soit des valeurs similaires dans chaque ligne, soit aucune valeur qui se chevauche~!
+      \item Quand nous avons calculé un sac de mots pour nos images, il n'y avait que 3~colonnes et elles étaient pertinentes pour chaque image.
+    \end{itemize}
+    \item \textbf{Si notre table \texttt{computed} a 365~colonnes \emph{au total}, combien de dimensions notre modèle sac de mots \texttt{computed} a-t-il~?}
+    \begin{itemize}
+      \item 360, parce que 5 de nos colonnes ne sont pas quantitatives.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Quelles sont les limites de nos fonctions de calcul de similarité appliquées au texte~?}
+    \begin{itemize}
+      \item Elles ne peuvent travailler qu'avec des colonnes quantitatives.
+      \item Toutes les colonnes quantitatives ne nous en disent pas beaucoup sur la similarité de deux textes.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% SECTION 2 : NORMALISATION DES DONNÉES
+% ===========================================================================
+\section{Normalisation des données}
+
+\begin{overviewbox}
+  Les élèves explorent l'importance de la normalisation des données, quand nous organisons les données pour suivre un modèle standard.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+Maintenant que nous utilisons un modèle sac de mots pour du texte plus complexe que nos longues listes de pixels \texttt{red}, \texttt{blue}, et \texttt{green}, nous nous retrouvons avec \emph{beaucoup} de colonnes, dont beaucoup ne contiennent pas d'information utile.
+
+\begin{activitybox}
+  Prenons un moment pour considérer \textbf{ce que les humains savent du texte que les machines ne savent pas}.
+
+  Complétez la première section de \emph{Normaliser du texte}.
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Pourquoi Pyret n'a-t-il pas identifié le même nombre de références à «~blaireau~» dans le texte que vous~?}
+    \begin{itemize}
+      \item Nos données sont «~sales~»~:
+      \begin{itemize}
+        \item Ponctuation~: \texttt{blaireau} et \texttt{blaireau,} ne sont pas différents mots.
+        \item Majuscules~: \texttt{Le} et \texttt{le} ne sont pas différents mots.
+      \end{itemize}
+    \end{itemize}
+    \item \textbf{Quels mots suggéreriez-vous que Pyret ignore lors de la recherche de similarité entre documents~?}
+    \begin{itemize}
+      \item \texttt{le}, \texttt{la}, \texttt{les}, \texttt{un}, \texttt{une}, \texttt{et}, \texttt{de}, \texttt{en}, \texttt{est}, \texttt{qui}, \texttt{que}…
+    \end{itemize}
+    \item \textbf{Quelles idées avez-vous pour améliorer la capacité de Pyret à reconnaître les mots identiques comme identiques~?}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  \textbf{Normalisation des données}
+
+  Nos données sont «~sales~». Des \textbf{majuscules} et de la \textbf{ponctuation} inconsistantes empêchent l'ordinateur de reconnaître le même mot chaque fois qu'il est utilisé. En conséquence~:
+  \begin{enumerate}
+    \item Nos comptes pour ces mots sont faux, donc nous ne voyons pas à quel point ils sont vraiment communs.
+    \item Nous créons des dimensions supplémentaires sans signification dans lesquelles le texte est comparé~!
+  \end{enumerate}
+
+  La présence quasi-universelle de mots comme «~le~», «~la~», «~les~», «~et~», «~de~», «~est~», etc. (connus sous le nom de \textbf{stop words} ou \emph{mots vides}) dans chaque essai est aussi un problème~:
+  \begin{enumerate}
+    \item Cela crée de nombreuses dimensions dans lesquelles les essais sont proches.
+    \item Ces dimensions augmentent le score de similarité entre deux essais simplement parce qu'ils sont tous deux en français~!
+  \end{enumerate}
+
+  S'attaquer à cette «~saleté~» s'appelle la \textbf{normalisation des données}.
+\end{keypointbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration~: trois fonctions de normalisation}
+
+\begin{keypointbox}
+  Les ingénieur·es en apprentissage automatique et les data scientist·es se soucient beaucoup de normaliser leurs données afin de couper le bruit non pertinent et de se concentrer sur ce qui compte. Nous avons fourni trois fonctions de normalisation pour que vous expérimentiez~:
+
+  \contrat{\# lowercase :: String -> String\\
+\# remove-punct :: String -> String\\
+\# remove-stop-words :: String -> String}
+\end{keypointbox}
+
+\begin{activitybox}
+  Complétez la deuxième section de \emph{Normaliser du texte} pour explorer ce que fait chacune de ces fonctions.
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Que remarquez-vous~? Que vous demandez-vous~?}
+  \end{itemize}
+
+  Les réponses varieront, mais peuvent inclure~:
+  \begin{itemize}
+    \item Le texte devient beaucoup plus court.
+    \item Le texte n'a pas totalement de sens après normalisation.
+    \item La fonction \texttt{remove-punct} est imparfaite car \texttt{blaireau's} devient \texttt{blaireaus}, qui finira quand même dans sa propre colonne.
+    \item Nous n'avons pas de fonction pour supprimer les pluriels.
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  \textbf{Adaptation française des stop words}
+
+  Dans l'original anglais, la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit une liste de \emph{stop words} anglais («~the~», «~and~», «~a~», etc.). Notre fichier de démarrage français \textbf{redéfinit} cette liste avec des stop words français («~le~», «~la~», «~les~», «~un~», «~et~», «~de~», «~est~», etc.), ainsi que les fonctions \texttt{remove-stop-words} et \texttt{normalize-text-table} qui l'utilisent. C'est la seule modification du code de la bibliothèque nécessaire pour adapter cette leçon au français.
+\end{keypointbox}
+
+\begin{activitybox}
+  Voyons si Pyret peut identifier quel document est le plus similaire à \texttt{?}.
+
+  Complétez la dernière section de \emph{Normaliser du texte}.
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Avant que nous normalisions nos données, Pyret a-t-il calculé \texttt{elephant} comme le texte le plus similaire à \texttt{mystere}~?}
+    \begin{itemize}
+      \item Oui.
+    \end{itemize}
+    \item \textbf{Avant la normalisation, Pyret a-t-il calculé d'autres textes comme étant quelque peu similaires à \texttt{mystere}~?}
+    \item \textbf{Comment cela se compare-t-il aux calculs de similarité après normalisation~?}
+    \item \textbf{Expliquez pourquoi la normalisation a changé les résultats~?}
+    \begin{itemize}
+      \item La suppression des données inutiles et des mots courants nous a permis de concentrer notre comparaison sur seulement les mots qui comptent, et de les compter correctement.
+    \end{itemize}
+    \item \textbf{Quel modèle sac de mots avait le plus de dimensions, celui pour \texttt{computed} ou pour \texttt{norm-computed}~?}
+    \begin{itemize}
+      \item \texttt{computed}. Notre modèle \texttt{norm-computed} devrait avoir beaucoup moins de colonnes~!
+    \end{itemize}
+    \item \textbf{Vous attendriez-vous à ce qu'un modèle sac de mots construit avec 1000~colonnes ou 200~colonnes soit meilleur~?}
+    \begin{itemize}
+      \item Ça dépend~! Le nombre de colonnes de données disponibles n'est pas un bon moyen de déterminer la qualité d'un modèle sac de mots~!
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Que signifie normaliser du texte~?}
+    \begin{itemize}
+      \item Le standardiser pour réduire les redondances et le bruit.
+      \item Objectif~1~: s'assurer que chaque occurrence d'un mot finit par être comptée comme le même mot.
+      \item Objectif~2~: supprimer les stop words pour qu'ils ne conduisent pas à des faux calculs de similarité.
+    \end{itemize}
+    \item \textbf{À quoi ressemblerait la normalisation de données impliquant des adresses~?}
+    \begin{itemize}
+      \item Standardiser la façon dont les noms sont écrits pour ne pas se retrouver avec des entrées séparées pour Rue, St. et Saint.
+    \end{itemize}
+    \item \textbf{À quoi ressemblerait la normalisation de données sur les niveaux de classe~?}
+    \begin{itemize}
+      \item Standardiser pour que «~sixième~», «~6\textsuperscript{e}~» et «~6~» ne soient pas tous enregistrés séparément.
+    \end{itemize}
+    \item \textbf{À quoi ressemblerait la normalisation de données sur les numéros de téléphone~?}
+    \begin{itemize}
+      \item Standardiser le nombre de chiffres et le formatage attendu. Voulons-nous commencer par l'indicatif pays~? Voulons-nous utiliser des espaces, des tirets, ou rien~?
+    \end{itemize}
+    \item \textbf{À quoi ressemblerait la normalisation de données sur la taille des personnes~?}
+    \begin{itemize}
+      \item Standardiser les unités~: voulons-nous 1~m~72 ou 172~cm~?
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% SECTION 3 : SIMILARITÉ SUPERVISÉE ET NON SUPERVISÉE
+% ===========================================================================
+\section{Similarité supervisée et non supervisée du langage}
+
+\begin{overviewbox}
+  Forts de leur détection de similarité, les élèves explorent comment cet algorithme peut être utilisé pour détecter le plagiat et effectuer une analyse de sentiment. Maintenant qu'ils savent comment il fonctionne, ils considèrent les limites de l'algorithme et quand il pourrait ne pas être éthique pour les enseignant·es d'utiliser ces modèles pour la détection de plagiat, ou quand l'utiliser pour vérifier le ton de leurs courriels.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+\begin{keypointbox}
+  Un \textbf{corpus d'entraînement} est une collection de données utilisée pour entraîner des modèles d'IA/ML, leur permettant d'apprendre des motifs et de faire des prédictions.
+
+  \textbf{Considérons une application non supervisée…}
+  \begin{itemize}
+    \item Quand pourrions-nous vouloir savoir si deux essais sont similaires~?
+    \item Quand un·e \emph{enseignant·e} pourrait-iel vouloir savoir si deux essais sont similaires~?
+  \end{itemize}
+
+  \textbf{Considérons une application supervisée…}
+  \begin{itemize}
+    \item Pourquoi pourrait-il être utile d'avoir des centroïdes pour des courriels avec beaucoup de «~mots en colère~»~? Avec des «~mots amicaux~»~?
+    \item Pourquoi pourrait-il être utile d'avoir des centroïdes pour des centaines de sujets différents~?
+  \end{itemize}
+\end{keypointbox}
+
+\begin{thinkbox}
+  Pour un détecteur de plagiat, le corpus est l'ensemble des documents précédemment fournis au détecteur.
+
+  \begin{itemize}
+    \item \textbf{Quels types de documents composent le corpus d'entraînement d'un détecteur de plagiat \emph{efficace}~? Listez-en autant que possible.}
+    \begin{itemize}
+      \item Le corpus inclurait probablement~:
+      \begin{itemize}
+        \item les essais écrits et soumis par les élèves actuellement dans la classe
+        \item les essais écrits et soumis par les élèves précédemment dans la classe
+        \item les articles Wikipédia
+        \item les articles sur des sujets pertinents disponibles sur Internet, etc.
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  Supposons qu'une enseignante construise un détecteur de plagiat pour de courts essais sur des animaux. Elle transforme des paragraphes pour dix animaux différents en sacs de mots et les ajoute au modèle. Cette configuration est faite une seule fois, et peut être réutilisée pour toute soumission d'élève.
+
+  La phase d'entraînement est l'endroit où l'énorme corpus d'essais, d'articles Wikipédia, etc. est converti en sac de mots pour chaque document, et stocké.
+
+  \textbf{Notre table \texttt{bags} est notre modèle~!}
+\end{keypointbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration~: détecter le plagiat}
+
+\begin{keypointbox}
+  Une fois qu'un modèle est entraîné, le corpus peut être interrogé autant de fois que nous le voulons sans avoir à répéter le travail fait pendant l'entraînement~!
+
+  Pour attraper le plagiat dans \emph{n'importe quel} essai, une enseignante a besoin d'un modèle entraîné sur une collection de documents \emph{massive}. Le traitement de ce grand corpus crée un espace complexe et de haute dimension où chaque mot unique ajoute une nouvelle dimension.
+\end{keypointbox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Si une enseignante fournit vingt essais d'élèves de 500~mots à un détecteur de plagiat comme corpus d'entraînement, combien de dimensions le modèle résultant aura-t-il environ~?}
+  \end{itemize}
+
+  Les élèves devraient fournir une large gamme d'estimations.
+  \begin{itemize}
+    \item La plus grande estimation possible serait 10~000~dimensions (20~essais $\times$ 500~mots) — mais ce n'est pas une bonne estimation, car nous répétons et réutilisons couramment des mots comme «~le~», «~et~», «~un~», etc.
+    \item Avant de faire une estimation, les élèves pourraient avoir des questions de clarification, comme~:
+    \begin{itemize}
+      \item Tous les élèves ont-ils écrit sur le même sujet~?
+      \item Quel est le niveau de sophistication de l'écriture des élèves~?
+      \item Tous les élèves ont-ils réellement écrit 500~mots~?
+    \end{itemize}
+    \item Une prédiction raisonnable serait qu'il y aurait au moins quelques centaines de dimensions dans le modèle.
+  \end{itemize}
+\end{thinkbox}
+
+\begin{activitybox}
+  Complétez \emph{Détecter le plagiat avec la similarité}.
+\end{activitybox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Quels mots apparaîtraient dans un centroïde pour «~mots en colère~»~?}
+    \item \textbf{Quels mots apparaîtraient dans un centroïde pour «~mots amicaux~»~?}
+    \item \textbf{Quels mots apparaîtraient dans un centroïde pour «~mots professionnels~»~?}
+    \item \textbf{Comment Grammarly vérifie-t-il si le courriel à votre patron va vous attirer des ennuis~?}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  En ajoutant l'apprentissage supervisé à notre ceinture d'outils, nous pouvons commencer à effectuer ce que les ingénieur·es ML appellent l'\textbf{analyse de sentiment} sur le \emph{ton} ou le \emph{sujet} de nos courriels et messages texte~!
+  \begin{itemize}
+    \item Cela permet à l'algorithme de vérifier si notre courriel est «~amical~» ou «~en colère~».
+    \item Cela permet à notre téléphone de résumer tous les textos reçus de notre ami·e en une notification concise.
+  \end{itemize}
+\end{keypointbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse~: éthique des détecteurs de plagiat}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Dans la classe~A, des élèves de 6\textsuperscript{e} doivent écrire des essais d'un paragraphe sur les zèbres.}
+    \item \textbf{Dans la classe~B, des lycéen·nes doivent écrire un devoir de 3~pages sur leur série préférée.}
+  \end{itemize}
+
+  \textbf{Sachant ce que vous savez sur le fonctionnement des détecteurs de plagiat, pourquoi s'attendrait-on à ce que le détecteur de plagiat accuse plus d'élèves dans la classe~A que dans la classe~B~?}
+
+  \begin{itemize}
+    \item Tous les essais portent sur les zèbres, donc le nombre de mots uniques sera petit (ils utiliseront tous «~zèbre~», «~rayures~», et «~Afrique~», par exemple).
+    \item N'ayant qu'un paragraphe de long, il n'y a pas beaucoup de place pour que la fréquence des mots diffère~! Il est très probable qu'il y aura des faux positifs dans la classe~A, et un détecteur de plagiat n'est tout simplement pas approprié.
+    \item Les élèves de 6\textsuperscript{e} ont des vocabulaires plus petits que les lycéen·nes, donc leurs essais auront plus de mots en commun peu importe le sujet.
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% ANNEXES
+% ===========================================================================
+\section*{Annexe A~: Stop words français}
+
+Le fichier de démarrage \texttt{Langage-Naturel-Starter.arr} redéfinit la liste des stop words avec une liste française standard. Voici quelques-uns des mots les plus courants qui sont supprimés lors de la normalisation~:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{X X X X}
+  \toprule
+  \textbf{Articles} & \textbf{Pronoms} & \textbf{Prépositions} & \textbf{Conjonctions \& autres} \\
+  \midrule
+  le, la, les & je, tu, il, elle & de, en, dans & et, ou, mais \\
+  un, une, des & nous, vous, ils & sur, sous, avec & donc, or, ni, car \\
+  du, de, d & on, me, te, se & sans, pour, par & que, qui, quoi \\
+  au, aux & mon, ma, mes & vers, chez, entre & ne, pas, plus \\
+  ce, cet, cette & ton, ta, tes & hors, parmi & aussi, très, bien \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+La liste complète (environ 100~mots) est définie dans le fichier de démarrage. Elle inclut également les formes verbales courantes («~est~», «~sont~», «~était~», «~ont~», «~eu~», «~été~») et les pronoms démonstratifs («~ceci~», «~cela~», «~celui~», «~celle~»).
+
+\section*{Annexe B~: Fichiers du projet}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{l X}
+  \toprule
+  \textbf{Fichier} & \textbf{Description} \\
+  \midrule
+  \texttt{Langage\allowbreak-Naturel\allowbreak-Starter.arr} & Fichier de démarrage Pyret~: charge \texttt{ai-library.arr} depuis Bootstrap. \textbf{Redéfinit} \texttt{stop-words}, \texttt{remove-stop-words}, et \texttt{normalize-text-table} avec des stop words français. Textes d'animaux traduits en français. \\
+  \texttt{traitement-langage-naturel.tex} & Document de cours (ce fichier) \\
+  \texttt{images/} & 3~images~: système de coordonnées 3D, triangle rectangle, CCbadge \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\vspace{1em}
+\textbf{À noter~:} contrairement à la leçon originale anglaise où les stop words sont définis dans la bibliothèque Bootstrap, notre adaptation française redéfinit \texttt{stop-words}, \texttt{remove\allowbreak-stop\allowbreak-words} et \texttt{normalize\allowbreak-text\allowbreak-table} directement dans le fichier de démarrage. C'est la seule modification nécessaire — toutes les autres fonctions de la bibliothèque (\texttt{decorate\allowbreak-text\allowbreak-table}, \texttt{add\allowbreak-bag\allowbreak-cols}, \texttt{angle\allowbreak-similarity}, \texttt{all\allowbreak-cols\allowbreak-similarity}, \texttt{lowercase}, \texttt{remove\allowbreak-punct}) fonctionnent inchangées. Les textes d'animaux sont traduits en français.
+
+\section*{À propos de ces supports}
+
+Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
+
+\begin{center}
+  \textbf{Bootstrap} par la Communauté Bootstrap est sous licence Creative Commons 4.0 Unported.\\
+  Cette licence n'accorde pas la permission d'organiser des formations ou du développement professionnel.\\[1em]
+  \textit{Traduction et adaptation française réalisées en juillet 2026.}\\
+  \textit{Source originale~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/natural-language/}}
+\end{center}
+
+\end{document}
