@@ -70,7 +70,7 @@ computed = add-bag-cols(corpus, "DOC")
 # Une liste standard de stop words français (mots courants comme "le", "et",
 # "un", etc.) qui portent peu de sens et peuvent être ignorés lors de la
 # comparaison de documents pour la similarité.
-stop-words = [list:
+shadow stop-words = [list:
   "le", "la", "les", "un", "une", "des", "du", "de", "d", "l",
   "et", "ou", "mais", "donc", "or", "ni", "car",
   "que", "qui", "quoi", "dont", "où",
@@ -97,7 +97,7 @@ stop-words = [list:
 
 # Redéfinition de remove-stop-words avec la liste française
 # remove-stop-words :: String -> String
-fun remove-stop-words(s :: String) -> String:
+shadow fun remove-stop-words(s :: String) -> String:
   string-split-all(s, " ")
     .filter({(w): not(stop-words.member(w))})
     .filter(is-non-empty-string)
@@ -105,7 +105,7 @@ fun remove-stop-words(s :: String) -> String:
 end
 
 # Redéfinition de normalize-text-table avec notre remove-stop-words français
-fun normalize-text-table(t :: Table, col :: String) -> Table:
+shadow fun normalize-text-table(t :: Table, col :: String) -> Table:
   t.transform-column(
     col,
     {(txt): remove-stop-words(remove-punct(lowercase(txt)))}
