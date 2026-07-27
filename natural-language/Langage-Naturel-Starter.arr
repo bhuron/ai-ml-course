@@ -96,8 +96,8 @@ shadow stop-words = [list:
 ]
 
 # Redéfinition de remove-stop-words avec la liste française
-# remove-stop-words :: String -> String
-shadow fun remove-stop-words(s :: String) -> String:
+# remove-stop-words-fr :: String -> String
+fun remove-stop-words-fr(s :: String) -> String:
   string-split-all(s, " ")
     .filter({(w): not(stop-words.member(w))})
     .filter(is-non-empty-string)
@@ -105,10 +105,11 @@ shadow fun remove-stop-words(s :: String) -> String:
 end
 
 # Redéfinition de normalize-text-table avec notre remove-stop-words français
-shadow fun normalize-text-table(t :: Table, col :: String) -> Table:
+# normalize-text-table-fr :: Table, String -> Table
+fun normalize-text-table-fr(t :: Table, col :: String) -> Table:
   t.transform-column(
     col,
-    {(txt): remove-stop-words(remove-punct(lowercase(txt)))}
+    {(txt): remove-stop-words-fr(remove-punct(lowercase(txt)))}
   )
 end
 
@@ -118,9 +119,9 @@ end
 vacances = "Les vacances c'est amusant ! L'une de mes choses préférées à propos des vacances c'est que j'ai le temps pour le petit-déjeuner. Qu'est-ce que tu aimes des vacances ?"
 
 # Nous pouvons composer ces fonctions pour qu'elles travaillent ensemble.
-# lowercase(remove-punct(remove-stop-words("")))
+# lowercase(remove-punct(remove-stop-words-fr("")))
 
-norm = normalize-text-table(corpus, "DOC")
+norm = normalize-text-table-fr(corpus, "DOC")
 
 norm-computed = add-bag-cols(norm, "DOC")
 
