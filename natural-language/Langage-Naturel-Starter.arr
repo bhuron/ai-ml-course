@@ -65,7 +65,10 @@ computed = add-bag-cols(corpus, "DOC")
 # ══════════════════════════════════════════════════════════════════════════════
 # La bibliothèque ai-library.arr définit remove-stop-words et
 # normalize-text-table avec une liste de stop words ANGLAIS.
-# Nous redéfinissons ces fonctions ci-dessous avec des stop words FRANÇAIS.
+# De plus, la fonction is-non-punct de la bibliothèque ne garde que
+# les caractères a-z/A-Z, ce qui SUPPRIME tous les accents français
+# (é, è, ê, à, ç, etc.). Nous redéfinissons ci-dessous toutes les
+# fonctions de normalisation pour le français.
 
 # Une liste standard de stop words français (mots courants comme "le", "et",
 # "un", etc.) qui portent peu de sens et peuvent être ignorés lors de la
@@ -80,23 +83,42 @@ shadow stop-words = [list:
   "notre", "nos", "votre", "vos", "leur", "leurs",
   "est", "sont", "était", "étaient", "être", "avoir", "a",
   "en", "dans", "sur", "sous", "avec", "sans", "pour",
-  "par", "vers", "chez", "entre", "chez", "hors",
+  "par", "vers", "chez", "entre", "hors",
   "ne", "pas", "plus", "rien", "jamais", "guère",
   "aussi", "très", "bien", "tout", "tous", "toute", "toutes",
   "comme", "si", "quand", "lorsque", "pendant",
-  "son", "sa", "ses", "leur", "leurs",
-  "y", "en", "cela", "ça", "celui", "celle", "ceux", "celles",
-  "au", "aux", "du", "des",
-  "ne", "pas", "que", "se",
+  "y", "cela", "ça", "celui", "celle", "ceux", "celles",
+  "au", "aux",
   "ont", "eu", "été",
-  "ceci", "cela", "cela",
-  "peut", "peuvent", "pour", "pourtant",
-  "dont", "lequel", "laquelle", "lesquels", "lesquelles",
-  "au", "aux", "celui", "celle"
+  "ceci",
+  "peut", "peuvent", "pourtant",
+  "lequel", "laquelle", "lesquels", "lesquelles"
 ]
 
-# Redéfinition de remove-stop-words avec la liste française
-# remove-stop-words-fr :: String -> String
+# ─── remove-punct-fr : préserve les accents français ─────────────────────
+# La fonction remove-punct de la bibliothèque supprime tout ce qui n'est
+# pas a-z/A-Z. Nous redéfinissons une version qui garde les caractères
+# accentués français (é è ê ë à â ç ù û ü ô î ï æ œ) et les apostrophes
+# sont remplacées par des espaces (pour que "l'éléphant" devienne
+# "l éléphant" plutôt que "léphant").
+punct-chars = [list:
+  ".", ",", ";", ":", "!", "?", "(", ")", "[", "]", "{", "}",
+  "\"", "-", "—", "–", "/", "\\", "%", "*", "&", "#", "@",
+  "+", "=", "<", ">", "|", "_", "`", "^", "°", "€", "$", "£",
+  "«", "»", "“", "”", "‘", "’", "…", "\n", "\t"
+]
+
+fun remove-punct-fr(s :: String) -> String:
+  # D'abord remplacer les apostrophes par des espaces
+  s-no-apostrophe = string-replace(s, "'", " ")
+  # Puis supprimer les caractères de ponctuation
+  result = for fold(acc from s-no-apostrophe, c from string-explode(s-no-apostrophe)):
+    if punct-chars.member(c): acc else: acc + c end
+  end
+  result
+end
+
+# ─── remove-stop-words-fr :: String -> String ────────────────────────────
 fun remove-stop-words-fr(s :: String) -> String:
   string-split-all(s, " ")
     .filter({(w): not(stop-words.member(w))})
@@ -104,12 +126,13 @@ fun remove-stop-words-fr(s :: String) -> String:
     .join-str(" ")
 end
 
-# Redéfinition de normalize-text-table avec notre remove-stop-words français
-# normalize-text-table-fr :: Table, String -> Table
+# ─── normalize-text-table-fr :: Table, String -> Table ───────────────────
+# Compose lowercase (de la bibliothèque — gère bien les accents),
+# remove-punct-fr (notre version française), et remove-stop-words-fr.
 fun normalize-text-table-fr(t :: Table, col :: String) -> Table:
   t.transform-column(
     col,
-    {(txt): remove-stop-words-fr(remove-punct(lowercase(txt)))}
+    {(txt): remove-stop-words-fr(remove-punct-fr(lowercase(txt)))}
   )
 end
 
@@ -119,7 +142,7 @@ end
 vacances = "Les vacances c'est amusant ! L'une de mes choses préférées à propos des vacances c'est que j'ai le temps pour le petit-déjeuner. Qu'est-ce que tu aimes des vacances ?"
 
 # Nous pouvons composer ces fonctions pour qu'elles travaillent ensemble.
-# lowercase(remove-punct(remove-stop-words-fr("")))
+# lowercase(remove-punct-fr(remove-stop-words-fr("")))
 
 norm = normalize-text-table-fr(corpus, "DOC")
 
