@@ -132,7 +132,7 @@
   {\Huge\bfseries Traitement du langage naturel}\\[0.5em]
   {\large Sac de mots, normalisation, plagiat et analyse de sentiment}\\[1em]
   {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/natural-language/}{Bootstrap World} (Fall 2026)}\\
-  {\normalsize Adapté au contexte francophone — textes et stop words en français}\\[0.5em]
+  {\normalsize Adapté au contexte francophone — textes, stop words et normalisation en français}\\[0.5em]
   {\normalsize Licence Creative Commons 4.0 International}
 }
 \date{}
@@ -229,7 +229,7 @@ Rappelons notre discussion sur la \href{https://www.bootstrapworld.org/materials
     \end{itemize}
     \item \textbf{En tant qu'humain, qu'est-ce qui vous dit de quoi un essai «~parle~»~?}
     \begin{itemize}
-      \item le titre, la phrase de sujet, un mot utilisé beaucoup…
+      \item le titre, la phrase d'introduction, un mot qui revient souvent…
       \item je le sais juste en lisant…
     \end{itemize}
   \end{itemize}
@@ -411,8 +411,8 @@ Maintenant que nous utilisons un modèle sac de mots pour du texte plus complexe
     \begin{itemize}
       \item Nos données sont «~sales~»~:
       \begin{itemize}
-        \item Ponctuation~: \texttt{blaireau} et \texttt{blaireau,} ne sont pas différents mots.
-        \item Majuscules~: \texttt{Le} et \texttt{le} ne sont pas différents mots.
+        \item Ponctuation~: \texttt{blaireau,} et \texttt{blaireau.} ne sont pas deux mots différents, mais le système les compte séparément à cause de la virgule et du point.
+        \item Majuscules~: \texttt{Le} et \texttt{le} ne sont pas deux mots différents, mais le système les distingue à cause de la majuscule.
       \end{itemize}
     \end{itemize}
     \item \textbf{Quels mots suggéreriez-vous que Pyret ignore lors de la recherche de similarité entre documents~?}
@@ -445,11 +445,11 @@ Maintenant que nous utilisons un modèle sac de mots pour du texte plus complexe
 \subsection{Exploration~: trois fonctions de normalisation}
 
 \begin{keypointbox}
-  Les ingénieur·es en apprentissage automatique et les data scientist·es se soucient beaucoup de normaliser leurs données afin de couper le bruit non pertinent et de se concentrer sur ce qui compte. Nous avons fourni trois fonctions de normalisation pour que vous expérimentiez~:
+  Les ingénieur·es en apprentissage automatique et les data scientistes se soucient beaucoup de normaliser leurs données afin de couper le bruit non pertinent et de se concentrer sur ce qui compte. Nous avons fourni trois fonctions de normalisation pour que vous expérimentiez~:
 
   \contrat{\# lowercase :: String -> String\\
-\# remove-punct :: String -> String\\
-\# remove-stop-words :: String -> String}
+\# remove-punct-fr :: String -> String\\
+\# remove-stop-words-fr :: String -> String}
 \end{keypointbox}
 
 \begin{activitybox}
@@ -465,15 +465,21 @@ Maintenant que nous utilisons un modèle sac de mots pour du texte plus complexe
   \begin{itemize}
     \item Le texte devient beaucoup plus court.
     \item Le texte n'a pas totalement de sens après normalisation.
-    \item La fonction \texttt{remove-punct} est imparfaite car \texttt{blaireau's} devient \texttt{blaireaus}, qui finira quand même dans sa propre colonne.
+    \item La fonction \texttt{remove\allowbreak-punct\allowbreak-fr} remplace les apostrophes par des espaces (ainsi \texttt{l'éléphant} devient \texttt{l eléphant}), ce qui permet de séparer les articles élidés.
     \item Nous n'avons pas de fonction pour supprimer les pluriels.
   \end{itemize}
 \end{thinkbox}
 
 \begin{keypointbox}
-  \textbf{Adaptation française des stop words}
+  \textbf{Adaptation française des fonctions de normalisation}
 
-  Dans l'original anglais, la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit une liste de \emph{stop words} anglais («~the~», «~and~», «~a~», etc.). Notre fichier de démarrage français \textbf{redéfinit} cette liste avec des stop words français («~le~», «~la~», «~les~», «~un~», «~et~», «~de~», «~est~», etc.), ainsi que les fonctions \texttt{remove-stop-words} et \texttt{normalize-text-table} qui l'utilisent. C'est la seule modification du code de la bibliothèque nécessaire pour adapter cette leçon au français.
+  Dans l'original anglais, la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit une liste de \emph{stop words} anglais («~the~», «~and~», «~a~», etc.) et des fonctions de normalisation adaptées à l'anglais. Notre fichier de démarrage français \textbf{redéfinit} trois éléments~:
+  \begin{enumerate}
+    \item \texttt{stop-words} — remplacé par une liste de mots vides français («~le~», «~la~», «~les~», «~un~», «~et~», «~de~», «~est~», etc.).
+    \item\texttt{remove-punct-fr} — nouvelle fonction qui \emph{préserve les accents français} (é, è, ê, à, ç, ù, etc.). La fonction originale de la bibliothèque supprimait tous les caractères en dehors de \texttt{a-z}, ce qui aurait détruit les accents~!
+    \item \texttt{remove-stop-words-fr} et \texttt{normalize\allowbreak-text\allowbreak-table-fr} — utilisent la liste française et la nouvelle fonction de ponctuation.
+  \end{enumerate}
+  C'est la seule modification du code nécessaire pour adapter cette leçon au français.
 \end{keypointbox}
 
 \begin{activitybox}
@@ -631,7 +637,7 @@ Maintenant que nous utilisons un modèle sac de mots pour du texte plus complexe
 \end{thinkbox}
 
 \begin{keypointbox}
-  En ajoutant l'apprentissage supervisé à notre ceinture d'outils, nous pouvons commencer à effectuer ce que les ingénieur·es ML appellent l'\textbf{analyse de sentiment} sur le \emph{ton} ou le \emph{sujet} de nos courriels et messages texte~!
+  En ajoutant l'apprentissage supervisé à notre boîte à outils, nous pouvons commencer à effectuer ce que les ingénieur·es ML appellent l'\textbf{analyse de sentiment} sur le \emph{ton} ou le \emph{sujet} de nos courriels et SMS~!
   \begin{itemize}
     \item Cela permet à l'algorithme de vérifier si notre courriel est «~amical~» ou «~en colère~».
     \item Cela permet à notre téléphone de résumer tous les textos reçus de notre ami·e en une notification concise.
@@ -663,7 +669,7 @@ Maintenant que nous utilisons un modèle sac de mots pour du texte plus complexe
 % ===========================================================================
 \section*{Annexe A~: Stop words français}
 
-Le fichier de démarrage \texttt{Langage-Naturel-Starter.arr} redéfinit la liste des stop words avec une liste française standard. Voici quelques-uns des mots les plus courants qui sont supprimés lors de la normalisation~:
+Le fichier de démarrage \texttt{Langage\allowbreak-Naturel\allowbreak-Starter.arr} redéfinit la liste des stop words avec une liste française standard, et fournit une version française de toutes les fonctions de normalisation qui préservent les accents. Voici quelques-uns des mots les plus courants qui sont supprimés lors de la normalisation~:
 
 \begin{center}
 \begin{tabularx}{\textwidth}{X X X X}
@@ -688,7 +694,7 @@ La liste complète (environ 100~mots) est définie dans le fichier de démarrage
   \toprule
   \textbf{Fichier} & \textbf{Description} \\
   \midrule
-  \texttt{Langage\allowbreak-Naturel\allowbreak-Starter.arr} & Fichier de démarrage Pyret~: charge \texttt{ai-library.arr} depuis Bootstrap. \textbf{Redéfinit} \texttt{stop-words}, \texttt{remove-stop-words}, et \texttt{normalize-text-table} avec des stop words français. Textes d'animaux traduits en français. \\
+  \texttt{Langage\allowbreak-Naturel\allowbreak-Starter.arr} & Fichier de démarrage Pyret~: charge \texttt{ai-library.arr} depuis Bootstrap. \textbf{Redéfinit} \texttt{stop-words} avec une liste française, ajoute \texttt{remove\allowbreak-punct\allowbreak-fr} (préserve les accents), et \texttt{remove-stop-words-fr} / \texttt{normalize\allowbreak-text\allowbreak-table-fr}. Textes d'animaux traduits en français. \\
   \texttt{traitement-langage-naturel.tex} & Document de cours (ce fichier) \\
   \texttt{images/} & 3~images~: système de coordonnées 3D, triangle rectangle, CCbadge \\
   \bottomrule
@@ -696,7 +702,7 @@ La liste complète (environ 100~mots) est définie dans le fichier de démarrage
 \end{center}
 
 \vspace{1em}
-\textbf{À noter~:} contrairement à la leçon originale anglaise où les stop words sont définis dans la bibliothèque Bootstrap, notre adaptation française redéfinit \texttt{stop-words}, \texttt{remove\allowbreak-stop\allowbreak-words} et \texttt{normalize\allowbreak-text\allowbreak-table} directement dans le fichier de démarrage. C'est la seule modification nécessaire — toutes les autres fonctions de la bibliothèque (\texttt{decorate\allowbreak-text\allowbreak-table}, \texttt{add\allowbreak-bag\allowbreak-cols}, \texttt{angle\allowbreak-similarity}, \texttt{all\allowbreak-cols\allowbreak-similarity}, \texttt{lowercase}, \texttt{remove\allowbreak-punct}) fonctionnent inchangées. Les textes d'animaux sont traduits en français.
+\textbf{À noter~:} contrairement à la leçon originale anglaise où les stop words et les fonctions de normalisation sont définis dans la bibliothèque Bootstrap, notre adaptation française redéfinit \texttt{stop-words} (avec \texttt{shadow}) et ajoute \texttt{remove\allowbreak-punct\allowbreak-fr}, \texttt{remove\allowbreak-stop\allowbreak-words-fr} et \texttt{normalize\allowbreak-text\allowbreak-table-fr} directement dans le fichier de démarrage. La fonction \texttt{remove\allowbreak-punct\allowbreak-fr} est \emph{indispensable} pour le français~: la fonction originale de la bibliothèque supprime tous les caractères en dehors de \texttt{a-z}/\texttt{A-Z}, ce qui détruit les accents (é, è, ê, à, ç, etc.). Notre version préserve les accents et remplace les apostrophes par des espaces. Toutes les autres fonctions de la bibliothèque fonctionnent inchangées.
 
 \section*{À propos de ces supports}
 
