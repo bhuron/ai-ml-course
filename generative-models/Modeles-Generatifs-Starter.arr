@@ -229,7 +229,7 @@ fun dessiner-lignes(txt):
 
   words = string-split-all(txt, " ")
   fun build-lines(remaining, current-line):
-    cases (List) remaining:
+    cases (L.List) remaining:
       | empty =>
         if current-line == "":
           empty
