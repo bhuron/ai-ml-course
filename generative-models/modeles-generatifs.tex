@@ -1,0 +1,722 @@
+% ===========================================================================
+% Modèles génératifs
+% Traduit et adapté de :
+%   https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/stat-lang-models-generating-text/
+% Licence : Creative Commons 4.0 Unported (Bootstrap Community)
+% ===========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage[raster]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+
+% ---------- Mise en page ----------
+\geometry{margin=2.5cm, headheight=15pt, footskip=30pt}
+\fancyhf{}
+\fancyhead[L]{\textbf{Modèles génératifs}}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Bootstrap Community — CC BY 4.0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+% ---------- Couleurs ----------
+\definecolor{bsblue}{RGB}{41,128,185}
+\definecolor{bsgreen}{RGB}{39,174,96}
+\definecolor{bsorange}{RGB}{230,126,34}
+\definecolor{bsgray}{RGB}{149,165,166}
+\definecolor{codebg}{RGB}{245,247,250}
+
+% ---------- Styles de sections ----------
+\titleformat{\section}[hang]{\Huge\bfseries\color{bsblue}}{}{0pt}{}[\vspace{-0.5em}\rule{\textwidth}{2pt}]
+\titleformat{\subsection}[hang]{\Large\bfseries\color{bsblue!80!black}}{}{0pt}{}
+\titleformat{\subsubsection}[hang]{\large\bfseries\color{bsgreen!60!black}}{}{0pt}{}
+
+% ---------- Environnements personnalisés ----------
+\newtcolorbox{overviewbox}{
+  colback=bsblue!5!white, colframe=bsblue!60!white,
+  fonttitle=\bfseries, title=Objectif de la section,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{activitybox}{
+  colback=bsgreen!5!white, colframe=bsgreen!60!white,
+  fonttitle=\bfseries, title=Activité,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{thinkbox}{
+  colback=bsorange!5!white, colframe=bsorange!60!white,
+  fonttitle=\bfseries, title=Réflexion,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{keypointbox}{
+  colback=bsgray!10!white, colframe=bsgray!50!white,
+  fonttitle=\bfseries, title=Point clé,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{instructornotes}{
+  colback=yellow!10!white, colframe=yellow!80!black,
+  fonttitle=\bfseries, title=Notes pour l'enseignant·e,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{codebox}{
+  colback=codebg, colframe=bsgray!40,
+  fonttitle=\bfseries, title=Code Pyret,
+  left=1em, right=1em, top=0.5em, bottom=0.5em
+}
+\newtcolorbox{contractbox}{
+  colback=bsblue!3!white, colframe=bsblue!40!white,
+  left=1em, right=1em, top=0.6em, bottom=0.6em
+}
+
+% ---------- Style listings pour Pyret ----------
+\lstdefinelanguage{Pyret}{
+  keywords={use,context,url-file,and,or,not,if,else,for,fun,data,sharing,include,import,as,where,let,rec,is,=,true,false,end,Table,String,Number,Boolean,Image,Row,List,Model},
+  sensitive=true,
+  comment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+}
+\lstset{
+  language=Pyret,
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{bsgreen!70!black}\itshape,
+  keywordstyle=\color{bsblue}\bfseries,
+  stringstyle=\color{bsorange},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framesep=5pt,
+  rulecolor=\color{bsgray!40},
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  aboveskip=0.8em,
+  belowskip=0.8em,
+}
+
+% ---------- Commandes pratiques ----------
+\newcommand{\img}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{fig:#1}
+  \end{figure}
+}
+\newcommand{\contrat}[1]{%
+  \begin{contractbox}
+    \ttfamily #1
+  \end{contractbox}
+}
+
+% ---------- Informations du document ----------
+\title{%
+  \vspace{-2cm}
+  {\Huge\bfseries Modèles génératifs}\\[0.5em]
+  {\large Modèles de langue statistiques, n-grammes et génération de texte}\\[1em]
+  {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/stat-lang-models-generating-text/}{Bootstrap World} (Fall 2026)}\\
+  {\normalsize Adapté au contexte francophone — corpus de la chanson «~Il était une dame qui avalait une mouche~»}\\[0.5em]
+  {\normalsize Licence Creative Commons 4.0 International}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{2cm}
+\begin{center}
+  \textit{Ces supports ont été développés en partie grâce au soutien de la National Science Foundation\\
+  (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).}
+\end{center}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ===========================================================================
+% SECTION 1 : INTRODUCTION À LA MODÉLISATION STATISTIQUE DU LANGAGE
+% ===========================================================================
+\section{Introduction à la modélisation statistique du langage}
+
+\begin{overviewbox}
+  Les élèves découvrent comment la prédiction de texte repose sur la modélisation statistique du langage.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+En envoyant des textos, des courriels, ou même en effectuant une recherche web, vous avez probablement remarqué que vos phrases sont parfois terminées pour vous~! Le texte prédictif est maintenant une fonctionnalité courante de nombreuses applications, et il est rendu possible par une certaine forme d'IA~: le \textbf{modèle de langue}.
+
+Considérez ce début de phrase~: «~Ferme la…~»
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Quel mot pourrait venir ensuite~?}
+    \item \textbf{En classe, y a-t-il plus d'un «~mot suivant~» possible~?}
+    \item \textbf{Lequel est le plus probable~?}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{instructornotes}
+  Les élèves penseront à des mots comme «~porte~», «~boîte~», «~fenêtre~», «~radio~»… Affichez les résultats de la classe. Si un mot est répété, résumez les résultats en tenant le compte de combien d'élèves proposent chaque mot particulier.
+\end{instructornotes}
+
+\begin{thinkbox}
+  Regardons de plus près les mots que nous avons générés.
+  \begin{itemize}
+    \item \textbf{Quels mots ont été proposés le plus souvent~?}
+    \item \textbf{Le moins souvent~?}
+    \item \textbf{Êtes-vous surpris·e par les mots les plus et les moins courants~? Pourquoi~?}
+    \item \textbf{Quelle fraction de notre classe a proposé chacun de nos trois principaux mots~?}
+    \begin{itemize}
+      \item Par exemple~: s'il y a 25~élèves dans votre classe et que 8~élèves ont choisi «~porte~», il a été choisi 8/25\textsuperscript{es} du temps.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  Les modèles de langue statistiques reposent sur l'hypothèse que la fraction du temps où un mot suit une série de mots dans un corpus d'entraînement peut aider à prédire la probabilité que ce soit le bon mot pour suivre cette même série de mots dans une situation future. Dans cette leçon, nous appellerons cette fraction sa \textbf{probabilité}.
+\end{keypointbox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Pensez-vous qu'une application de messagerie avec une fonctionnalité de texte prédictif produirait les mêmes résultats que notre classe~? Pourquoi~?}
+    \begin{itemize}
+      \item Les réponses varieront. Invitez à la conversation.
+      \item Une application ne proposera probablement pas tous les mêmes mots.
+      \item Notre classe est un assez petit échantillon, tout·e·s de la même génération et de la même géographie, et nous sommes tou·te·s à l'école — nos esprits sont préparés à répondre différemment que si nous étions ailleurs.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  Comme d'autres systèmes d'IA dont nous avons parlé, les fonctionnalités de texte prédictif sont entraînées sur une grande quantité de données, en l'occurrence du texte.
+
+  \textbf{Pendant l'entraînement~:}
+  \begin{enumerate}
+    \item L'ordinateur extrait chaque utilisation de la phrase «~Ferme la~» du corpus, ainsi que le mot qui suit.
+    \item Il détermine ensuite la probabilité de chaque mot suivant possible.
+  \end{enumerate}
+\end{keypointbox}
+
+\img{images/5d73ec3f3c44568f.png}{width=0.45\textwidth}{Capture d'écran d'une application de messagerie proposant des suggestions après la phrase «~Ferme la~» (l'original anglais proposait «~Close the~»).}
+
+\begin{keypointbox}
+  \textbf{Quand elle fait une suggestion~:}
+
+  L'application propose les mots qui avaient la plus forte probabilité de suivre «~Ferme la~» dans le corpus sur lequel elle a été entraînée. Considérez cette capture d'écran d'une application de messagerie. Dans le corpus d'entraînement sur lequel elle a été construite, «~porte~», «~portes~» et «~maison~» apparaissaient le plus souvent après «~Ferme la~». En conséquence, ces mots sont proposés.
+
+  \textbf{Mais est-ce que tous·tes les utilisateur·ices reçoivent les \emph{mêmes} complétions~?}
+\end{keypointbox}
+
+\begin{thinkbox}
+  \textbf{Qu'en pensez-vous~? Votre téléphone proposera-t-il les mêmes mots que les téléphones de vos camarades~? Pourquoi~?}
+\end{thinkbox}
+
+\begin{instructornotes}
+  Avant d'entrer dans l'explication détaillée ci-dessous, invitez à la discussion~! Cette question est une excellente occasion de revisiter les concepts précédents, en particulier le processus d'entraînement et d'échantillonnage que les élèves ont abordé en parlant d'\emph{Évaluer des arbres de décision} et de \emph{Modèles de régression simples}.
+\end{instructornotes}
+
+\begin{keypointbox}
+  \textbf{Pour toutes sortes de raisons, tous les téléphones ne proposeront pas les mêmes complétions~:}
+  \begin{itemize}
+    \item S'il y a plusieurs mots avec une probabilité égale, le système sélectionnera le mot \emph{au hasard}. Par conséquent, même le même téléphone ne proposera pas nécessairement le même mot à chaque fois.
+    \item Tous les téléphones n'utilisent pas le même corpus, les mêmes règles de prédiction, ou la même quantité d'aléatoire.
+    \item Une application de messagerie inclut aussi un modèle de \emph{les mots que le propriétaire utilise}, pour personnaliser les suggestions selon la façon dont l'utilisateur·ice écrit.
+    \item Certaines fonctionnalités de texte prédictif prennent même en compte le message spécifique en cours de rédaction~! Taper la première lettre d'un mot inhabituel que vous avez utilisé dans le même message déclenche l'application pour proposer ce mot inhabituel.
+  \end{itemize}
+\end{keypointbox}
+
+\begin{keypointbox}
+  Vous venez d'examiner le fonctionnement et l'utilisation contextuelle d'un modèle de langue. Espérons que vous avez découvert que, même s'il peut parfois \emph{sembler} que votre application de messagerie peut lire dans vos pensées…~elle ne le peut pas. Elle ne connaît pas les règles de grammaire, ni la signification des mots, ni vos intentions lorsque vous composez un texto. Elle ne connaît que la probabilité, qu'elle utilise de manières souvent très impressionnantes (mais parfois pas~!).
+
+  Tout au long de la leçon, nous explorerons le très important «~parfois pas~» entre parenthèses, ci-dessus.
+\end{keypointbox}
+
+\begin{keypointbox}
+  Utiliser des ordinateurs pour traiter des langues, souvent en consommant un corpus et en construisant un modèle, est appelé \textbf{traitement du langage naturel} (\emph{Natural Language Processing}). Dans cette leçon, nous explorerons plus en détail ce que le traitement du langage naturel implique exactement.
+\end{keypointbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{La modélisation statistique du langage serait-elle possible pour d'autres langues humaines parlées~? Lesquelles~?}
+    \begin{itemize}
+      \item La modélisation statistique du langage fonctionnera pour n'importe quelle langue~! L'IA n'a pas besoin de «~connaître~» quoi que ce soit des règles de grammaire~; elle suit juste des règles qui lui permettent d'identifier des motifs.
+    \end{itemize}
+    \item \textbf{Pouvez-vous penser à d'autres choses, en dehors des langues humaines parlées, pour lesquelles une approche similaire pourrait fonctionner~?}
+    \begin{itemize}
+      \item Avec la modélisation statistique du langage, l'IA peut composer de la musique, jouer aux échecs, et plus encore. Le «~texte~» n'a pas besoin d'être composé de mots~: n'importe quelle notation symbolique fera l'affaire tant qu'elle utilise des espaces pour séparer les «~mots~» symboliques.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% SECTION 2 : CONSTRUIRE UN MODÈLE DE LANGUE STATISTIQUE
+% ===========================================================================
+\section{Construire un modèle de langue statistique}
+
+\begin{overviewbox}
+  Les élèves construisent un modèle de langue statistique en décomposant le texte et en calculant les probabilités de différents mots qui se suivent.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement~: une chanson enfantine française}
+
+La meilleure façon de donner du sens à la modélisation statistique du langage est de l'essayer soi-même~! Nous allons commencer par construire un modèle.
+
+Pour notre corpus, nous utiliserons la chanson enfantine française \textbf{«~Il était une dame qui avalait une mouche~»} — l'équivalent français de la chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} — qui raconte l'histoire absurde d'une dame qui avale une mouche, et la série d'événements malheureux qui s'ensuit.
+
+\begin{keypointbox}
+  \textbf{Le corpus}
+
+  Notre fichier de démarrage (\texttt{Modeles\allowbreak-Generatifs\allowbreak-Starter.arr}) contient le corpus suivant~: le titre et les paroles de la chanson.
+
+  \vspace{0.5em}
+  \begin{quote}
+  \small
+  Il était une dame qui avalait une mouche
+
+  \medskip
+  Il était une dame qui avalait une mouche,\\
+  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+
+  \medskip
+  Il était une dame qui avalait une araignée\\
+  Qui gigotait et frétillait dans son ventre~;\\
+  Elle avala l'araignée pour attraper la mouche~;\\
+  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+
+  \medskip
+  Il était une dame qui avalait un oiseau~;\\
+  Quel étonnement d'avaler un oiseau~!\\
+  Elle avala l'oiseau pour attraper l'araignée\\
+  Qui gigotait et frétillait dans son ventre,\\
+  Elle avala l'araignée pour attraper la mouche~;\\
+  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+
+  \medskip
+  Il était une dame qui avalait un chat~;\\
+  Eh bien, figurez-vous, elle avala un chat~!\\
+  Elle avala le chat pour attraper l'oiseau,\\
+  Elle avala l'oiseau pour attraper l'araignée\\
+  Qui gigotait et frétillait dans son ventre,\\
+  Elle avala l'araignée pour attraper la mouche~;\\
+  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+  \end{quote}
+
+  \vspace{0.5em}
+  \emph{Comme la version anglaise, le corpus inclut le titre. La structure est identique~: une mouche, une araignée, un oiseau, un chat — chaque couplet ajoutant un animal plus gros que le précédent, et le refrain répétant la même phrase.}
+\end{keypointbox}
+
+\begin{activitybox}
+  Lisez les paroles de la chanson. Vous avez découpé la première ligne de notre corpus en morceaux de tailles différentes (un mot à la fois, deux mots à la fois, etc.)~:
+
+  \begin{center}
+  \begin{tabularx}{\textwidth}{c c X}
+    \toprule
+    \textbf{Taille du morceau} & \textbf{Quantité} & \textbf{Décomposition} \\
+    \midrule
+    1 mot  & 8 & (Il) (était) (une) (dame) (qui) (avalait) (une) (mouche) \\
+    2 mots & 7 & (Il était) (était une) (une dame) (dame qui) (qui avalait) (avalait une) (une mouche) \\
+    3 mots & 6 & (Il était une) (était une dame) (une dame qui) (dame qui avalait) (qui avalait une) (avalait une mouche) \\
+    \bottomrule
+  \end{tabularx}
+  \end{center}
+\end{activitybox}
+
+\begin{keypointbox}
+  \textbf{Les n-grammes}
+
+  Le mot formel que les informaticien·nes utilisent dans ce contexte n'est pas «~morceau~» mais \textbf{n-gramme}. Dans un \emph{n}-gramme, $n$ représente le nombre de mots dans le morceau. Pour les cas particuliers où $n$ vaut 1, 2, ou 3, les $n$-grammes sont appelés \textbf{unigrammes}, \textbf{bigrammes}, et \textbf{trigrammes}.
+\end{keypointbox}
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{Quelles autres collections de mots commençant par «~uni~», «~bi~» et «~tri~» avez-vous déjà rencontrées~?}
+    \begin{itemize}
+      \item Les réponses varieront~! \emph{unicycle} (monocycle), \emph{bicycle} (bicyclette), \emph{tricycle}~; monôme, binôme, trinôme~; biceps, triceps~; triangle~; licorne…
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\subsubsection{La table des unigrammes est effectivement un sac de mots}
+
+\img{images/d510b0e5605dc53e.png}{width=0.3\textwidth}{Un sac de dessin animé, rempli avec les mots «~Red~», «~Green~» et «~Blue~».}
+
+\begin{keypointbox}
+  Quand on se restreint à des mots uniques (unigrammes), un modèle n-grammes stocke exactement les mêmes données qu'un \textbf{sac de mots} (\emph{bag of words}), même s'ils proviennent de concepts très différents~:
+  \begin{itemize}
+    \item Le modèle sac de mots représente des documents comme des coordonnées à $n$~dimensions, leur permettant d'être utilisés pour la classification ou la régression.
+    \item Les unigrammes proviennent de la modélisation du langage et — avec les bigrammes et trigrammes — sont utilisés pour \emph{calculer des probabilités}.
+  \end{itemize}
+
+  \emph{Les mêmes données, des objectifs très différents.}
+\end{keypointbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration~: construire le modèle en Pyret}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Ouvrez le fichier \textbf{Modèles Génératifs} (\texttt{Modeles\allowbreak-Generatifs\allowbreak-Starter.arr}), enregistrez une copie, et cliquez sur «~Run~».
+    \item Évaluez \texttt{corpus} dans la Zone d'Interactions.
+    \item Évaluez \texttt{generate-ngrams-fr(corpus, 1)}.
+  \end{itemize}
+\end{activitybox}
+
+\subsubsection{Approfondissons~: la probabilité conditionnelle}
+
+La phrase «~il était une dame qui avalait une…~» est répétée dans notre corpus~! Concentrons-nous sur un unigramme de cette phrase~: «~il~».
+
+\begin{thinkbox}
+  \begin{itemize}
+    \item \textbf{En vous référant au corpus (les paroles \emph{et le titre})~: combien de fois le mot «~il~» apparaît-il dans la chanson~?}
+    \begin{itemize}
+      \item 5.
+    \end{itemize}
+    \item \textbf{Dans ce corpus, combien de fois le mot «~il~» a-t-il été suivi du mot «~était~»~?}
+    \begin{itemize}
+      \item 5.
+    \end{itemize}
+    \item \textbf{Quelle est la probabilité que le mot «~il~» soit suivi du mot «~était~»~?}
+    \begin{itemize}
+      \item 5/5, soit 100~\%.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+Dans l'exemple que vous venez de traiter, vous avez calculé la \textbf{probabilité conditionnelle} que «~était~» apparaisse après l'unigramme «~il~» en divisant le nombre de fois où \textbf{«~il~» est suivi de «~était~»} (cinq fois) par le nombre de fois où nous voyons \textbf{«~il~» suivi de n'importe quoi} (cinq fois).
+
+Cette fraction représente la probabilité que «~était~» vienne après «~il~»~:
+
+\[
+p(\text{était} \mid \text{il}) = \frac{\text{nombre de (il était)}}{\text{nombre de (il…)}} = \frac{5}{5}
+\]
+
+\begin{activitybox}
+  Complétez \emph{Construire un modèle de langue}.
+
+  \begin{itemize}
+    \item \textbf{Quel corpus d'entraînement avons-nous utilisé pour construire le modèle de langue~?}
+    \begin{itemize}
+      \item Les paroles de la chanson, y compris le titre de la chanson, étaient notre corpus.
+    \end{itemize}
+    \item \textbf{Faites une prédiction~: comment pouvons-nous utiliser les ratios que nous avons complétés~?}
+    \begin{itemize}
+      \item Nous pouvons nous référer à nos ratios pour déterminer quel mot est le plus susceptible de suivre un mot donné.
+    \end{itemize}
+  \end{itemize}
+\end{activitybox}
+
+\begin{instructornotes}
+  Si vous voulez explorer la probabilité et l'échantillonnage plus en profondeur, consultez la leçon Bootstrap sur \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/probability-inference/index.shtml}{la probabilité et l'inférence}~!
+\end{instructornotes}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item Retournez au fichier \textbf{Modèles Génératifs}.
+    \item \textbf{Dans la Zone de Définitions}, construisez votre modèle de langue en évaluant \texttt{m = build-lang-model-fr(corpus)}, puis cliquez sur «~Run~».
+    \item Évaluez \texttt{m} pour voir à quoi il ressemble~!
+    \item Pour trouver la probabilité qu'un mot suive un autre, évaluez~:
+    \begin{lstlisting}
+next-word-probability-fr(m, "avalait une", "mouche")
+    \end{lstlisting}
+  \end{itemize}
+\end{activitybox}
+
+\begin{keypointbox}
+  \textbf{Adaptation française de la normalisation}
+
+  Dans la leçon originale anglaise, la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit une fonction \texttt{massage-string} qui met le texte en minuscules et supprime la ponctuation, mais qui ne conserve que les lettres \texttt{a-z}/\texttt{A-Z}. Cette fonction est utilisée \emph{en interne} par toutes les fonctions n-grammes de la bibliothèque.
+
+  Notre fichier de démarrage fournit des versions \texttt{-fr} autonomes de toutes ces fonctions (\texttt{massage-string-fr}, \texttt{generate-ngrams-fr}, \texttt{build-lang-model-fr}, \texttt{completions-fr}, \texttt{next-word-probability-fr}, \texttt{choose-completion-fr}, \texttt{generate-from-fr}). Les différences avec l'original~:
+  \begin{enumerate}
+    \item \textbf{Les accents sont conservés} — \texttt{était} reste \texttt{était} (l'original aurait supprimé le \texttt{é}~!).
+    \item \textbf{Les apostrophes deviennent des espaces} — \texttt{l'araignée} devient \texttt{l araignée}, ce qui permet de traiter l'article élidé \texttt{l'} comme un mot à part entière.
+    \item \textbf{Les tirets sont supprimés} — \texttt{peut-être} devient \texttt{peutêtre} dans le modèle.
+  \end{enumerate}
+\end{keypointbox}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  Dans notre corpus de chanson,
+  \begin{itemize}
+    \item il y avait \emph{trois} complétions possibles pour l'unigramme «~avala~»~: \texttt{l}, \texttt{un}, \texttt{le}.
+    \item il n'y avait que \emph{deux} complétions possibles pour le trigramme «~elle avala l~»~: \texttt{araignée} et \texttt{oiseau}.
+  \end{itemize}
+
+  Nous pouvons dire que, \emph{dans ce corpus}, à mesure que le n-gramme devient plus long, le nombre d'options de complétion diminue.
+
+  \begin{itemize}
+    \item \textbf{Pensez-vous que cela sera généralement vrai pour d'autres corpus~: à mesure que le n-gramme devient plus long, le nombre d'options de complétion diminue~?}
+    \begin{itemize}
+      \item Oui, en général, c'est une affirmation vraie~: les phrases plus longues ont moins de complétions possibles que les mots uniques.
+    \end{itemize}
+  \end{itemize}
+\end{thinkbox}
+
+\newpage
+
+% ===========================================================================
+% SECTION 3 : ÉCHANTILLONNER À PARTIR DU MODÈLE
+% ===========================================================================
+\section{Échantillonner à partir du modèle}
+
+\begin{overviewbox}
+  Les élèves utilisent leur modèle de langue statistique de manière générative, pour produire une sortie.
+\end{overviewbox}
+
+% ---------- Launch ----------
+\subsection{Lancement}
+
+Une fois le modèle de langue construit, que pouvons-nous en faire~? Nous pouvons l'utiliser de manière générative~: nous pouvons produire une sortie~!
+
+\begin{keypointbox}
+  \textbf{Comment pourrions-nous procéder~?}
+  \begin{enumerate}
+    \item Nous pouvons commencer par choisir notre premier mot. Une approche courante est de demander~: «~Quel est le \emph{n}-gramme le plus courant du corpus~?~», mais nous pouvons aussi choisir le mot de départ nous-mêmes, si nous le voulons.
+    \item Ensuite, nous demandons~: «~Étant donné le premier \emph{n}-gramme, quel est le successeur le plus courant~?~»
+    \item Nous répétons cette deuxième étape pour toujours~! …~ou, plus réalistement, jusqu'à ce que nous décidions d'arrêter le programme. Un modèle de langue statistique simple, cependant, générera du texte \emph{ad infinitum}.
+  \end{enumerate}
+\end{keypointbox}
+
+% ---------- Investigate ----------
+\subsection{Exploration~: générer du texte}
+
+\begin{keypointbox}
+  Nous avons créé des fonctions auxiliaires pour cela, aussi~:
+  \contrat{\# completions-fr :: (Model model, String debut) -> Table\\
+\# choose-completion-fr :: (Model model, String debut, Number n) -> String}
+
+  \begin{itemize}
+    \item Nous pouvons utiliser ces contrats pour trouver toutes les complétions possibles d'une chaîne de départ~:
+    \begin{lstlisting}
+completions-fr(m, "avalait une")
+    \end{lstlisting}
+    \item Ou pour choisir les $n$ prochains mots au hasard~:
+    \begin{lstlisting}
+choose-completion-fr(m, "avalait une", 1)
+choose-completion-fr(m, "avalait une", 2)
+    \end{lstlisting}
+  \end{itemize}
+\end{keypointbox}
+
+\begin{instructornotes}
+  Notez que sur la page \emph{Échantillonner à partir du modèle de langue}, les questions se construisent les unes sur les autres. En d'autres termes, un·e élève qui rate la question~2 aura aussi la question~3 incorrecte. Pour que la classe se déroule sans accroc, nous vous encourageons à exiger que les élèves vérifient leur travail avec un·e partenaire avant de passer d'une question à la suivante. Encourager les élèves à annoter les paroles de la chanson permettra aussi un comptage plus précis et donc des réponses plus correctes~!
+\end{instructornotes}
+
+\begin{activitybox}
+  \textbf{Exercice de génération de texte~1}
+
+  \begin{enumerate}[leftmargin=*]
+    \item Commençons notre génération de texte avec la phrase «~elle~».
+    \item Déterminez quel mot est le plus susceptible de suivre «~elle~» et notez-le comme deuxième mot.
+    \item Déterminez quel mot est le plus susceptible de suivre le mot que vous venez d'écrire et notez-le comme troisième mot.
+    \item Utilisez la modélisation statistique du langage pour déterminer le quatrième mot.
+    \item Tout le monde dans votre classe aurait dû générer le \emph{même} texte. Pourquoi pensez-vous que ce fut le résultat~?
+  \end{enumerate}
+
+  \textbf{Réponse attendue~:} \texttt{elle avala l araignée}
+
+  \begin{itemize}
+    \item \texttt{elle} $\to$ \texttt{avala} (7 occurrences, le plus fréquent) $\to$ \texttt{l} (5) $\to$ \texttt{araignée} (5). Il n'y a jamais d'égalité~: chaque étape a un mot clairement le plus probable.
+  \end{itemize}
+\end{activitybox}
+
+\begin{activitybox}
+  \textbf{Exercice de génération de texte~2}
+
+  Voici une liste des unigrammes les plus courants du corpus~: \texttt{"elle"}~: 15~fois, \texttt{"une"}~: 12~fois, \texttt{"avalait"}~: 9~fois, \texttt{"mouche"}~: 9~fois.
+
+  \begin{enumerate}[leftmargin=*]
+    \item Commençons par choisir le mot \texttt{"une"} (l'un des plus courants).
+    \item Déterminez quel mot est le plus susceptible de suivre ce mot~: \texttt{mouche} (6 occurrences).
+    \item \textbf{Il y a deux mots qui ont une probabilité égale d'apparaître à la troisième place~! Lesquels~?}
+    \begin{itemize}
+      \item \texttt{je} et \texttt{peutêtre} — les deux avec 4~occurrences après \texttt{mouche}.
+    \end{itemize}
+    \item Utilisez la modélisation statistique du langage pour déterminer le quatrième mot de chacune des phrases ci-dessous, en utilisant chacun des deux mots que vous avez calculés pour la troisième place.
+  \end{enumerate}
+
+  \textbf{Réponses~:}
+  \begin{itemize}
+    \item \texttt{une mouche je ne} (car \texttt{je} $\to$ \texttt{ne}, 4 occurrences)
+    \item \texttt{une mouche peutêtre qu} (car \texttt{peutêtre} $\to$ \texttt{qu}, 4 occurrences)
+  \end{itemize}
+
+  \begin{itemize}
+    \item \textbf{Pourquoi n'y a-t-il eu qu'un seul résultat pour l'exercice~1, alors que l'exercice~2 a deux résultats possibles~?}
+    \begin{itemize}
+      \item Parce que dans l'exercice~2, il y a eu une égalité entre les deux mots les plus probables pour la troisième place~; le choix s'est fait au hasard.
+    \end{itemize}
+  \end{itemize}
+\end{activitybox}
+
+\begin{activitybox}
+  \begin{itemize}
+    \item \textbf{Quelle phrase de quatre mots avez-vous générée~?}
+    \item \textbf{Tout le monde dans votre classe a-t-il obtenu la même phrase~? Comment et pourquoi cela s'est-il produit~?}
+    \item \textbf{Que pensez-vous qu'il se passerait si vous commenciez avec un mot comme «~zèbre~», qui n'apparaît \emph{pas du tout} dans le corpus original~?}
+    \begin{itemize}
+      \item La probabilité que «~zèbre~» soit suivi de chaque mot est la même~: zéro. Peut-être que \texttt{choose-completion-fr} choisirait au hasard~?
+    \end{itemize}
+  \end{itemize}
+\end{activitybox}
+
+\begin{instructornotes}
+  Quand vous avez terminé, discutez~: que se passerait-il si nous continuions à évaluer \texttt{choose-completion-fr}, encore et encore~?
+
+  \begin{itemize}
+    \item Il continuerait à choisir des mots~!
+  \end{itemize}
+
+  Si vous êtes curieux·se de voir ce qui se passerait si nous continuions, évaluez \texttt{generate-from-fr(m, "il était")}~!
+
+  \begin{itemize}
+    \item \textbf{Obtenons-nous toujours la même sortie si nous utilisons toujours la même entrée~?}
+    \begin{itemize}
+      \item Non -- en cas d'égalité, il choisit au hasard~!
+    \end{itemize}
+  \end{itemize}
+\end{instructornotes}
+
+% ---------- Synthesize ----------
+\subsection{Synthèse}
+
+\begin{thinkbox}
+  \emph{Un modèle est un résumé mathématique d'un jeu de données.}
+  \begin{itemize}
+    \item \textbf{Que résume notre table de n-grammes à propos de ce jeu de données~?}
+    \item \textbf{Qu'est-ce qu'elle laisse de côté~?}
+  \end{itemize}
+
+  \emph{Tous les modèles se trompent. Certains sont utiles.}
+  \begin{itemize}
+    \item \textbf{N'importe quel modèle de langue sera-t-il \textbf{parfait}~? Pourquoi ou pourquoi pas~?}
+    \item \textbf{Quand un modèle de langue est-il \textbf{utile}~?}
+  \end{itemize}
+\end{thinkbox}
+
+\begin{keypointbox}
+  \textbf{Les critiques de ChatGPT et d'autres modèles de langue soulèvent diverses préoccupations. Considérez chacune d'elles, ci-dessous.}
+
+  \begin{itemize}
+    \item \textbf{ChatGPT «~invente~» parfois des choses. Pourquoi cela se produit-il~? Que se passe-t-il réellement~?}
+    \begin{itemize}
+      \item Quand ChatGPT produit des informations fausses ou trompeuses, ce n'est pas un bug. ChatGPT fait juste ce qu'il fait, en suivant le modèle comme il se doit.
+    \end{itemize}
+    \item \textbf{ChatGPT a des biais visibles dans sa sortie textuelle. D'où viennent ces biais~?}
+    \begin{itemize}
+      \item S'il y a des biais dans le corpus, il y aura probablement des biais dans la sortie~!
+    \end{itemize}
+  \end{itemize}
+\end{keypointbox}
+
+\newpage
+
+% ===========================================================================
+% ANNEXES
+% ===========================================================================
+\section*{Annexe A~: Les nombres du corpus français}
+
+Les nombres ci-dessous ont été calculés sur le corpus français \emph{après normalisation} (minuscules, apostrophes transformées en espaces, ponctuation supprimée — exactement ce que fait \texttt{massage-string-fr}). Ils correspondent à ce que Pyret calcule.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{l X}
+  \toprule
+  \textbf{Fait} & \textbf{Valeur} \\
+  \midrule
+  Mots au total & 178 \\
+  Unigrammes distincts & 40 \\
+  Bigrammes distincts & 70 \\
+  Trigrammes distincts & 82 \\
+  Unigramme le plus courant & \texttt{elle} (15~fois) \\
+  2\textsuperscript{e} unigramme le plus courant & \texttt{une} (12~fois) \\
+  3\textsuperscript{e} unigramme le plus courant & \texttt{avalait} et \texttt{mouche} (9~fois chacun) \\
+  \texttt{il} $\to$ \texttt{était} & 5/5 = 100\,\% \\
+  \texttt{elle} $\to$ \texttt{avala} & 7 occurrences (vs.\ \texttt{avalait}~4, \texttt{va}~4) \\
+  \texttt{avala} $\to$ \texttt{l} & 5 occurrences (vs.\ \texttt{un}~1, \texttt{le}~1) \\
+  \texttt{l} $\to$ \texttt{araignée} & 5 occurrences (vs.\ \texttt{oiseau}~3) \\
+  \texttt{une} $\to$ \texttt{mouche} & 6 occurrences (vs.\ \texttt{dame}~5, \texttt{araignée}~1) \\
+  \texttt{mouche} $\to$ \texttt{je} / \texttt{peutêtre} & Égalité~: 4 et 4 \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\section*{Annexe B~: Du chant anglais au chant français}
+
+La chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} et sa version française \emph{Il était une dame qui avalait une mouche} ont une structure identique~:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{X X}
+  \toprule
+  \textbf{Anglais} & \textbf{Français} \\
+  \midrule
+  There was an old lady who swallowed a fly & Il était une dame qui avalait une mouche \\
+  I don't know why she swallowed a fly -- perhaps she'll die~! & Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~! \\
+  She swallowed the spider to catch the fly & Elle avala l'araignée pour attraper la mouche \\
+  spider, bird, cat & araignée, oiseau, chat \\
+  wriggled and jiggled and tickled inside her & gigotait et frétillait dans son ventre \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{itemize}
+  \item Le titre est inclus dans le corpus, comme dans l'original.
+  \item La chanson française ajoute un défi intéressant pour le modèle de langue~: les \textbf{articles élidés}. En anglais, \texttt{the} est toujours un mot séparé. En français, \texttt{l'} est collé au nom suivant (\texttt{l'araignée}). Notre \texttt{massage-string-fr} transforme l'apostrophe en espace, ce qui permet de traiter \texttt{l} comme un mot à part entière — exactement comme \texttt{the} en anglais.
+  \item Le tiret de \texttt{peut-être} est supprimé par la normalisation, ce qui donne le mot \texttt{peutêtre} dans le modèle.
+
+\section*{Annexe C~: Fichiers du projet}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{l X}
+  \toprule
+  \textbf{Fichier} & \textbf{Description} \\
+  \midrule
+  \texttt{Modeles\allowbreak-Generatifs\allowbreak-Starter.arr} & Fichier de démarrage Pyret~: charge \texttt{ai-library.arr} depuis Bootstrap, définit le corpus français et les fonctions \texttt{-fr} autonomes. \\
+  \texttt{modeles-generatifs.tex} & Document de cours (ce fichier) \\
+  \texttt{images/} & 4~images~: capture d'application de messagerie, sac de mots, plan 2D, système de coordonnées 3D \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\vspace{1em}
+\textbf{À noter~:} la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit des fonctions n-grammes (\texttt{generate-ngrams}, \texttt{build-lang-model}, \texttt{completions}, \texttt{choose-completion}, \texttt{generate-from}, \texttt{next-word-probability}) qui utilisent en interne une fonction \texttt{massage-string} conçue pour l'anglais (elle supprime tous les caractères en dehors de \texttt{a-z}). Ces fonctions fonctionneraient mal avec du texte français accentué. Notre fichier de démarrage fournit donc des versions \texttt{-fr} autonomes de toutes ces fonctions, avec une normalisation adaptée au français (conservation des accents, apostrophes transformées en espaces).\section*{À propos de ces supports}
+
+Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
+
+\begin{center}
+  \textbf{Bootstrap} par la Communauté Bootstrap est sous licence Creative Commons 4.0 Unported.\\
+  Cette licence n'accorde pas la permission d'organiser des formations ou du développement professionnel.\\[1em]
+  \textit{Traduction et adaptation française réalisées en juillet 2026.}\\
+  \textit{Source originale~: \url{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/stat-lang-models-generating-text/}}
+\end{center}
+
+\end{document}
