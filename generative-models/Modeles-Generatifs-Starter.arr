@@ -1,5 +1,4 @@
 use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/refs/heads/main/", "libraries/ai-library.arr")
-include string-dict
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MODÈLES GÉNÉRATIFS — FICHIER DE DÉMARRAGE (FRANÇAIS)
@@ -78,16 +77,26 @@ fun generate-ngrams-fr(corpus :: String, n :: Number) -> Table block:
 
   ngrams = get-ngrams(words)
 
-  counts = for fold(dict from [string-dict:], ngram from ngrams):
-    if dict.has-key(ngram):
-      dict.set(ngram, dict.get-value(ngram) + 1)
-    else:
-      dict.set(ngram, 1)
+  # Compter chaque n-gramme dans une liste de paires [mot, compte],
+  # sans utiliser de string-dict (non disponible dans ce fichier).
+  fun incremente-ngram(pairs :: L.List, ngram :: String) -> L.List:
+    cases (L.List) pairs:
+      | empty => link([list: ngram, 1], empty)
+      | link(pair, reste) =>
+        if pair.get(0) == ngram:
+          link([list: ngram, pair.get(1) + 1], reste)
+        else:
+          link(pair, incremente-ngram(reste, ngram))
+        end
     end
   end
 
-  rows = for map(key from counts.keys().to-list()):
-    [T.raw-row: {"n-gram"; key}, {"count"; counts.get-value(key)}]
+  counts = for fold(pairs from [list: ], ngram from ngrams):
+    incremente-ngram(pairs, ngram)
+  end
+
+  rows = for map(pair from counts):
+    [T.raw-row: {"n-gram"; pair.get(0)}, {"count"; pair.get(1)}]
   end
 
   T.table-from-rows
