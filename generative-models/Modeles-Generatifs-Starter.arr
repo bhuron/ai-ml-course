@@ -77,14 +77,14 @@ fun generate-ngrams-fr(corpus :: String, n :: Number) -> Table block:
 
   ngrams = get-ngrams(words)
 
-  # Compter chaque n-gramme dans une liste de paires [mot, compte],
+  # Compter chaque n-gramme dans une liste de paires {cle: compte},
   # sans utiliser de string-dict (non disponible dans ce fichier).
   fun incremente-ngram(pairs :: L.List, ngram :: String) -> L.List:
     cases (L.List) pairs:
-      | empty => link([list: ngram, 1], empty)
+      | empty => link({cle: ngram, compte: 1}, empty)
       | link(pair, reste) =>
-        if pair.get(0) == ngram:
-          link([list: ngram, pair.get(1) + 1], reste)
+        if pair["cle"] == ngram:
+          link({cle: ngram, compte: pair["compte"] + 1}, reste)
         else:
           link(pair, incremente-ngram(reste, ngram))
         end
@@ -96,7 +96,7 @@ fun generate-ngrams-fr(corpus :: String, n :: Number) -> Table block:
   end
 
   rows = for map(pair from counts):
-    [T.raw-row: {"n-gram"; pair.get(0)}, {"count"; pair.get(1)}]
+    [T.raw-row: {"n-gram"; pair["cle"]}, {"count"; pair["compte"]}]
   end
 
   T.table-from-rows
