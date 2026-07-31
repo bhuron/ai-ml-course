@@ -77,7 +77,7 @@ fun generate-ngrams-fr(corpus :: String, n :: Number) -> Table block:
 
   ngrams = get-ngrams(words)
 
-  counts = for fold(dict from [string-dict:], ngram from ngrams):
+  counts = for fold(dict from [SD.string-dict:], ngram from ngrams):
     if dict.has-key(ngram):
       dict.set(ngram, dict.get-value(ngram) + 1)
     else:
