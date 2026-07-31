@@ -9,7 +9,7 @@ use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-f
 #
 # Dans la leçon originale, le corpus est la chanson enfantine anglaise
 # « There Was an Old Lady Who Swallowed a Fly ». Nous utilisons son
-# équivalent français : « Il était une dame qui avalait une mouche »,
+# équivalent français : « Une vieille dame avala une mouche »,
 # dont la structure en vers répétitifs est identique (une mouche, puis
 # une araignée, un oiseau, un chat…).
 #
@@ -264,43 +264,43 @@ fun generate-from-fr(model :: Table, input):
 end
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CORPUS : « Il était une dame qui avalait une mouche »
+# CORPUS : « Une vieille dame avala une mouche »
 # ══════════════════════════════════════════════════════════════════════════════
 # Équivalent français de la chanson enfantine « There Was an Old Lady Who
 # Swallowed a Fly ». La structure est identique : un titre, puis un refrain
 # répété, chaque couplet ajoutant un animal de plus en plus grand.
 
 corpus = ```
-Il était une dame qui avalait une mouche
+Une vieille dame avala une mouche
 
-Il était une dame qui avalait une mouche,
-Je ne sais pas pourquoi elle avalait une mouche – peut-être qu'elle va mourir !
+Une vieille dame avala une mouche,
+Je ne sais pas pourquoi elle avala une mouche – peut-être qu'elle va mourir !
 
-Il était une dame qui avalait une araignée
+Une vieille dame avala une araignée
 Qui gigotait et frétillait dans son ventre ;
 Elle avala l'araignée pour attraper la mouche ;
-Je ne sais pas pourquoi elle avalait une mouche – peut-être qu'elle va mourir !
+Je ne sais pas pourquoi elle avala une mouche – peut-être qu'elle va mourir !
 
-Il était une dame qui avalait un oiseau ;
-Quel étonnement d'avaler un oiseau !
+Une vieille dame avala un oiseau ;
+Quelle absurdité d'avaler un oiseau !
 Elle avala l'oiseau pour attraper l'araignée
 Qui gigotait et frétillait dans son ventre,
 Elle avala l'araignée pour attraper la mouche ;
-Je ne sais pas pourquoi elle avalait une mouche – peut-être qu'elle va mourir !
+Je ne sais pas pourquoi elle avala une mouche – peut-être qu'elle va mourir !
 
-Il était une dame qui avalait un chat ;
+Une vieille dame avala un chat ;
 Eh bien, figurez-vous, elle avala un chat !
 Elle avala le chat pour attraper l'oiseau,
 Elle avala l'oiseau pour attraper l'araignée
 Qui gigotait et frétillait dans son ventre,
 Elle avala l'araignée pour attraper la mouche ;
-Je ne sais pas pourquoi elle avalait une mouche – peut-être qu'elle va mourir !
+Je ne sais pas pourquoi elle avala une mouche – peut-être qu'elle va mourir !
 ```
 
 # ─── Exemples à tester dans la Zone d'Interactions ───────────────────────────
 # generate-ngrams-fr(corpus, 1)
 # m = build-lang-model-fr(corpus)
-# next-word-probability-fr(m, "elle avala", "l araignée")
+# next-word-probability-fr(m, "une", "mouche")
 # completions-fr(m, "une")
 # choose-completion-fr(m, "une", 2)
-# generate-from-fr(m, "il était")
+# generate-from-fr(m, "une vieille")

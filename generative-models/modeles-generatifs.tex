@@ -132,7 +132,7 @@
   {\Huge\bfseries Modèles génératifs}\\[0.5em]
   {\large Modèles de langue statistiques, n-grammes et génération de texte}\\[1em]
   {\normalsize Traduit et adapté depuis \href{https://www.bootstrapworld.org/materials/fall2026/en-us/lessons/stat-lang-models-generating-text/}{Bootstrap World} (Fall 2026)}\\
-  {\normalsize Adapté au contexte francophone — corpus de la chanson «~Il était une dame qui avalait une mouche~»}\\[0.5em]
+  {\normalsize Adapté au contexte francophone — corpus de la chanson «~Une vieille dame avala une mouche~»}\\[0.5em]
   {\normalsize Licence Creative Commons 4.0 International}
 }
 \date{}
@@ -289,7 +289,7 @@ Considérez ce début de phrase~: «~Ferme la…~»
 
 La meilleure façon de donner du sens à la modélisation statistique du langage est de l'essayer soi-même~! Nous allons commencer par construire un modèle.
 
-Pour notre corpus, nous utiliserons la chanson enfantine française \textbf{«~Il était une dame qui avalait une mouche~»} — l'équivalent français de la chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} — qui raconte l'histoire absurde d'une dame qui avale une mouche, et la série d'événements malheureux qui s'ensuit.
+Pour notre corpus, nous utiliserons la chanson enfantine française \textbf{«~Une vieille dame avala une mouche~»} — l'équivalent français de la chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} — qui raconte l'histoire absurde d'une vieille dame qui avale une mouche, et la série d'événements malheureux qui s'ensuit.
 
 \begin{keypointbox}
   \textbf{Le corpus}
@@ -299,34 +299,34 @@ Pour notre corpus, nous utiliserons la chanson enfantine française \textbf{«~I
   \vspace{0.5em}
   \begin{quote}
   \small
-  Il était une dame qui avalait une mouche
+  Une vieille dame avala une mouche
 
   \medskip
-  Il était une dame qui avalait une mouche,\\
-  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+  Une vieille dame avala une mouche,\\
+  Je ne sais pas pourquoi elle avala une mouche -- peut-être qu'elle va mourir~!
 
   \medskip
-  Il était une dame qui avalait une araignée\\
+  Une vieille dame avala une araignée\\
   Qui gigotait et frétillait dans son ventre~;\\
   Elle avala l'araignée pour attraper la mouche~;\\
-  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+  Je ne sais pas pourquoi elle avala une mouche -- peut-être qu'elle va mourir~!
 
   \medskip
-  Il était une dame qui avalait un oiseau~;\\
-  Quel étonnement d'avaler un oiseau~!\\
+  Une vieille dame avala un oiseau~;\\
+  Quelle absurdité d'avaler un oiseau~!\\
   Elle avala l'oiseau pour attraper l'araignée\\
   Qui gigotait et frétillait dans son ventre,\\
   Elle avala l'araignée pour attraper la mouche~;\\
-  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+  Je ne sais pas pourquoi elle avala une mouche -- peut-être qu'elle va mourir~!
 
   \medskip
-  Il était une dame qui avalait un chat~;\\
+  Une vieille dame avala un chat~;\\
   Eh bien, figurez-vous, elle avala un chat~!\\
   Elle avala le chat pour attraper l'oiseau,\\
   Elle avala l'oiseau pour attraper l'araignée\\
   Qui gigotait et frétillait dans son ventre,\\
   Elle avala l'araignée pour attraper la mouche~;\\
-  Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~!
+  Je ne sais pas pourquoi elle avala une mouche -- peut-être qu'elle va mourir~!
   \end{quote}
 
   \vspace{0.5em}
@@ -341,9 +341,9 @@ Pour notre corpus, nous utiliserons la chanson enfantine française \textbf{«~I
     \toprule
     \textbf{Taille du morceau} & \textbf{Quantité} & \textbf{Décomposition} \\
     \midrule
-    1 mot  & 8 & (Il) (était) (une) (dame) (qui) (avalait) (une) (mouche) \\
-    2 mots & 7 & (Il était) (était une) (une dame) (dame qui) (qui avalait) (avalait une) (une mouche) \\
-    3 mots & 6 & (Il était une) (était une dame) (une dame qui) (dame qui avalait) (qui avalait une) (avalait une mouche) \\
+    1 mot  & 6 & (Une) (vieille) (dame) (avala) (une) (mouche) \\
+    2 mots & 5 & (Une vieille) (vieille dame) (dame avala) (avala une) (une mouche) \\
+    3 mots & 4 & (Une vieille dame) (vieille dame avala) (dame avala une) (avala une mouche) \\
     \bottomrule
   \end{tabularx}
   \end{center}
@@ -391,31 +391,31 @@ Pour notre corpus, nous utiliserons la chanson enfantine française \textbf{«~I
 
 \subsubsection{Approfondissons~: la probabilité conditionnelle}
 
-La phrase «~il était une dame qui avalait une…~» est répétée dans notre corpus~! Concentrons-nous sur un unigramme de cette phrase~: «~il~».
+La phrase «~une vieille dame avala une…~» est répétée dans notre corpus~! Concentrons-nous sur le mot «~vieille~» de cette phrase.
 
 \begin{thinkbox}
   \begin{itemize}
-    \item \textbf{En vous référant au corpus (les paroles \emph{et le titre})~: combien de fois le mot «~il~» apparaît-il dans la chanson~?}
+    \item \textbf{En vous référant au corpus (les paroles \emph{et le titre})~: combien de fois le mot «~vieille~» apparaît-il dans la chanson~?}
     \begin{itemize}
       \item 5.
     \end{itemize}
-    \item \textbf{Dans ce corpus, combien de fois le mot «~il~» a-t-il été suivi du mot «~était~»~?}
+    \item \textbf{Dans ce corpus, combien de fois «~vieille~» a-t-il été suivi de «~dame~»~?}
     \begin{itemize}
       \item 5.
     \end{itemize}
-    \item \textbf{Quelle est la probabilité que le mot «~il~» soit suivi du mot «~était~»~?}
+    \item \textbf{Quelle est la probabilité que «~vieille~» soit suivi de «~dame~»~?}
     \begin{itemize}
       \item 5/5, soit 100~\%.
     \end{itemize}
   \end{itemize}
 \end{thinkbox}
 
-Dans l'exemple que vous venez de traiter, vous avez calculé la \textbf{probabilité conditionnelle} que «~était~» apparaisse après l'unigramme «~il~» en divisant le nombre de fois où \textbf{«~il~» est suivi de «~était~»} (cinq fois) par le nombre de fois où nous voyons \textbf{«~il~» suivi de n'importe quoi} (cinq fois).
+Dans l'exemple que vous venez de traiter, vous avez calculé la \textbf{probabilité conditionnelle} que «~dame~» apparaisse après «~vieille~» en divisant le nombre de fois où \textbf{«~vieille~» est suivi de «~dame~»} (cinq fois) par le nombre de fois où nous voyons \textbf{«~vieille~» suivi de n'importe quoi} (cinq fois).
 
-Cette fraction représente la probabilité que «~était~» vienne après «~il~»~:
+Cette fraction représente la probabilité que «~dame~» vienne après «~vieille~»~:
 
 \[
-p(\text{était} \mid \text{il}) = \frac{\text{nombre de (il était)}}{\text{nombre de (il…)}} = \frac{5}{5}
+p(\text{dame} \mid \text{vieille}) = \frac{\text{nombre de (vieille dame)}}{\text{nombre de (vieille…)}} = \frac{5}{5}
 \]
 
 \begin{activitybox}
@@ -444,7 +444,7 @@ p(\text{était} \mid \text{il}) = \frac{\text{nombre de (il était)}}{\text{nomb
     \item Évaluez \texttt{m} pour voir à quoi il ressemble~!
     \item Pour trouver la probabilité qu'un mot suive un autre, évaluez~:
     \begin{lstlisting}
-next-word-probability-fr(m, "avalait une", "mouche")
+next-word-probability-fr(m, "une", "mouche")
     \end{lstlisting}
   \end{itemize}
 \end{activitybox}
@@ -468,7 +468,7 @@ next-word-probability-fr(m, "avalait une", "mouche")
 \begin{thinkbox}
   Dans notre corpus de chanson,
   \begin{itemize}
-    \item il y avait \emph{trois} complétions possibles pour l'unigramme «~avala~»~: \texttt{l}, \texttt{un}, \texttt{le}.
+    \item il y avait \emph{quatre} complétions possibles pour l'unigramme «~avala~»~: \texttt{une}, \texttt{l}, \texttt{un}, \texttt{le}.
     \item il n'y avait que \emph{deux} complétions possibles pour le trigramme «~elle avala l~»~: \texttt{araignée} et \texttt{oiseau}.
   \end{itemize}
 
@@ -518,12 +518,12 @@ Une fois le modèle de langue construit, que pouvons-nous en faire~? Nous pouvon
   \begin{itemize}
     \item Nous pouvons utiliser ces contrats pour trouver toutes les complétions possibles d'une chaîne de départ~:
     \begin{lstlisting}
-completions-fr(m, "avalait une")
+completions-fr(m, "une")
     \end{lstlisting}
     \item Ou pour choisir les $n$ prochains mots au hasard~:
     \begin{lstlisting}
-choose-completion-fr(m, "avalait une", 1)
-choose-completion-fr(m, "avalait une", 2)
+choose-completion-fr(m, "une", 1)
+choose-completion-fr(m, "une", 2)
     \end{lstlisting}
   \end{itemize}
 \end{keypointbox}
@@ -543,17 +543,17 @@ choose-completion-fr(m, "avalait une", 2)
     \item Tout le monde dans votre classe aurait dû générer le \emph{même} texte. Pourquoi pensez-vous que ce fut le résultat~?
   \end{enumerate}
 
-  \textbf{Réponse attendue~:} \texttt{elle avala l araignée}
+  \textbf{Réponse attendue~:} \texttt{elle avala une mouche}
 
   \begin{itemize}
-    \item \texttt{elle} $\to$ \texttt{avala} (7 occurrences, le plus fréquent) $\to$ \texttt{l} (5) $\to$ \texttt{araignée} (5). Il n'y a jamais d'égalité~: chaque étape a un mot clairement le plus probable.
+    \item \texttt{elle} $\to$ \texttt{avala} (11~occurrences, le plus fréquent) $\to$ \texttt{une} (7) $\to$ \texttt{mouche} (6). Il n'y a jamais d'égalité~: chaque étape a un mot clairement le plus probable.
   \end{itemize}
 \end{activitybox}
 
 \begin{activitybox}
   \textbf{Exercice de génération de texte~2}
 
-  Voici une liste des unigrammes les plus courants du corpus~: \texttt{"elle"}~: 15~fois, \texttt{"une"}~: 12~fois, \texttt{"avalait"}~: 9~fois, \texttt{"mouche"}~: 9~fois.
+  Voici une liste des unigrammes les plus courants du corpus~: \texttt{"avala"}~: 16~fois, \texttt{"elle"}~: 15~fois, \texttt{"une"}~: 12~fois, \texttt{"mouche"}~: 9~fois.
 
   \begin{enumerate}[leftmargin=*]
     \item Commençons par choisir le mot \texttt{"une"} (l'un des plus courants).
@@ -653,18 +653,15 @@ Les nombres ci-dessous ont été calculés sur le corpus français \emph{après 
   \toprule
   \textbf{Fait} & \textbf{Valeur} \\
   \midrule
-  Mots au total & 178 \\
-  Unigrammes distincts & 40 \\
-  Bigrammes distincts & 70 \\
-  Trigrammes distincts & 82 \\
-  Unigramme le plus courant & \texttt{elle} (15~fois) \\
-  2\textsuperscript{e} unigramme le plus courant & \texttt{une} (12~fois) \\
-  3\textsuperscript{e} unigramme le plus courant & \texttt{avalait} et \texttt{mouche} (9~fois chacun) \\
-  \texttt{il} $\to$ \texttt{était} & 5/5 = 100\,\% \\
-  \texttt{elle} $\to$ \texttt{avala} & 7 occurrences (vs.\ \texttt{avalait}~4, \texttt{va}~4) \\
-  \texttt{avala} $\to$ \texttt{l} & 5 occurrences (vs.\ \texttt{un}~1, \texttt{le}~1) \\
-  \texttt{l} $\to$ \texttt{araignée} & 5 occurrences (vs.\ \texttt{oiseau}~3) \\
-  \texttt{une} $\to$ \texttt{mouche} & 6 occurrences (vs.\ \texttt{dame}~5, \texttt{araignée}~1) \\
+  Mots au total & 168 \\
+  Unigrammes distincts & 38 \\
+  Unigramme le plus courant & \texttt{avala} (16~fois) \\
+  2\textsuperscript{e} unigramme le plus courant & \texttt{elle} (15~fois) \\
+  3\textsuperscript{e} unigramme le plus courant & \texttt{une} (12~fois) \\
+  \texttt{vieille} $\to$ \texttt{dame} & 5/5 = 100\,\% \\
+  \texttt{elle} $\to$ \texttt{avala} & 11 occurrences (vs.\ \texttt{va}~4) \\
+  \texttt{avala} $\to$ \texttt{une} & 7 occurrences (vs.\ \texttt{l}~5, \texttt{un}~3, \texttt{le}~1) \\
+  \texttt{une} $\to$ \texttt{mouche} & 6 occurrences (vs.\ \texttt{vieille}~5, \texttt{araignée}~1) \\
   \texttt{mouche} $\to$ \texttt{je} / \texttt{peutêtre} & Égalité~: 4 et 4 \\
   \bottomrule
 \end{tabularx}
@@ -672,15 +669,15 @@ Les nombres ci-dessous ont été calculés sur le corpus français \emph{après 
 
 \section*{Annexe B~: Du chant anglais au chant français}
 
-La chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} et sa version française \emph{Il était une dame qui avalait une mouche} ont une structure identique~:
+La chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} et sa version française \emph{Une vieille dame avala une mouche} ont une structure identique~:
 
 \begin{center}
 \begin{tabularx}{\textwidth}{X X}
   \toprule
   \textbf{Anglais} & \textbf{Français} \\
   \midrule
-  There was an old lady who swallowed a fly & Il était une dame qui avalait une mouche \\
-  I don't know why she swallowed a fly -- perhaps she'll die~! & Je ne sais pas pourquoi elle avalait une mouche -- peut-être qu'elle va mourir~! \\
+  There was an old lady who swallowed a fly & Une vieille dame avala une mouche \\
+  I don't know why she swallowed a fly -- perhaps she'll die~! & Je ne sais pas pourquoi elle avala une mouche -- peut-être qu'elle va mourir~! \\
   She swallowed the spider to catch the fly & Elle avala l'araignée pour attraper la mouche \\
   spider, bird, cat & araignée, oiseau, chat \\
   wriggled and jiggled and tickled inside her & gigotait et frétillait dans son ventre \\
@@ -690,6 +687,8 @@ La chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} et sa versi
 
 \begin{itemize}
   \item Le titre est inclus dans le corpus, comme dans l'original.
+  \item Le passé simple (\texttt{avala}) est le temps naturel en français pour raconter une histoire~: il correspond au \emph{simple past} anglais (\texttt{swallowed}).
+  \item L'imparfait (\texttt{gigotait}, \texttt{frétillait}) est utilisé pour la description de fond — ce que faisait l'araignée dans son ventre — exactement comme l'anglais utilise le \emph{past continuous} (\texttt{that wriggled and jiggled}).
   \item La chanson française ajoute un défi intéressant pour le modèle de langue~: les \textbf{articles élidés}. En anglais, \texttt{the} est toujours un mot séparé. En français, \texttt{l'} est collé au nom suivant (\texttt{l'araignée}). Notre \texttt{massage-string-fr} transforme l'apostrophe en espace, ce qui permet de traiter \texttt{l} comme un mot à part entière — exactement comme \texttt{the} en anglais.
   \item Le tiret de \texttt{peut-être} est supprimé par la normalisation, ce qui donne le mot \texttt{peutêtre} dans le modèle.
 
