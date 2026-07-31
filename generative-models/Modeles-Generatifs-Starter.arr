@@ -79,15 +79,19 @@ fun generate-ngrams-fr(corpus :: String, n :: Number) -> Table block:
 
   # Compter chaque n-gramme dans une liste de paires {cle: compte},
   # sans utiliser de string-dict (non disponible dans ce fichier).
+  # On évite `cases (L.List)` (dispatch non fiable) : on utilise
+  # .first / .rest / .length() à la place.
   fun incremente-ngram(pairs :: L.List, ngram :: String) -> L.List:
-    cases (L.List) pairs:
-      | empty => link({cle: ngram, compte: 1}, empty)
-      | link(pair, reste) =>
-        if pair["cle"] == ngram:
-          link({cle: ngram, compte: pair["compte"] + 1}, reste)
-        else:
-          link(pair, incremente-ngram(reste, ngram))
-        end
+    if pairs.length() == 0:
+      link({cle: ngram, compte: 1}, empty)
+    else:
+      pair = pairs.first
+      reste = pairs.rest
+      if pair["cle"] == ngram:
+        link({cle: ngram, compte: pair["compte"] + 1}, reste)
+      else:
+        link(pair, incremente-ngram(reste, ngram))
+      end
     end
   end
 
@@ -239,23 +243,24 @@ fun dessiner-lignes(txt):
 
   words = string-split-all(txt, " ")
   fun build-lines(remaining, current-line):
-    cases (L.List) remaining:
-      | empty =>
-        if current-line == "":
-          empty
-        else:
-          [list: build-image(current-line)]
+    if remaining.length() == 0:
+      if current-line == "":
+        empty
+      else:
+        [list: build-image(current-line)]
+      end
+    else:
+      word = remaining.first
+      rest = remaining.rest
+      candidate =
+        if current-line == "": word
+        else: current-line + " " + word
         end
-      | link(word, rest) =>
-        candidate =
-          if current-line == "": word
-          else: current-line + " " + word
-          end
-        if (current-line == "") or (string-length(candidate) <= 80):
-          build-lines(rest, candidate)
-        else:
-          link(build-image(current-line), build-lines(rest, word))
-        end
+      if (current-line == "") or (string-length(candidate) <= 80):
+        build-lines(rest, candidate)
+      else:
+        link(build-image(current-line), build-lines(rest, word))
+      end
     end
   end
   above-align-list("left", build-lines(words, ""))
