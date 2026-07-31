@@ -1,4 +1,5 @@
 use context url-file("https://raw.githubusercontent.com/bootstrapworld/starter-files/refs/heads/main/", "libraries/ai-library.arr")
+include string-dict
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MODÈLES GÉNÉRATIFS — FICHIER DE DÉMARRAGE (FRANÇAIS)
@@ -77,7 +78,7 @@ fun generate-ngrams-fr(corpus :: String, n :: Number) -> Table block:
 
   ngrams = get-ngrams(words)
 
-  counts = for fold(dict from [SD.string-dict:], ngram from ngrams):
+  counts = for fold(dict from [string-dict:], ngram from ngrams):
     if dict.has-key(ngram):
       dict.set(ngram, dict.get-value(ngram) + 1)
     else:
