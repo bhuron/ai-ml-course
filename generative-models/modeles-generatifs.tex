@@ -385,7 +385,7 @@ Pour notre corpus, nous utiliserons la chanson enfantine française \textbf{«~U
   \begin{itemize}
     \item Ouvrez le fichier \textbf{Modèles Génératifs} (\texttt{Modeles\allowbreak-Generatifs\allowbreak-Starter.arr}), enregistrez une copie, et cliquez sur «~Run~».
     \item Évaluez \texttt{corpus} dans la Zone d'Interactions.
-    \item Évaluez \texttt{generate-ngrams-fr(corpus, 1)}.
+    \item Évaluez \texttt{generate-ngrams(corpus, 1)}.
   \end{itemize}
 \end{activitybox}
 
@@ -440,26 +440,26 @@ p(\text{dame} \mid \text{vieille}) = \frac{\text{nombre de (vieille dame)}}{\tex
 \begin{activitybox}
   \begin{itemize}
     \item Retournez au fichier \textbf{Modèles Génératifs}.
-    \item \textbf{Dans la Zone de Définitions}, construisez votre modèle de langue en évaluant \texttt{m = build-lang-model-fr(corpus)}, puis cliquez sur «~Run~».
+    \item \textbf{Dans la Zone de Définitions}, construisez votre modèle de langue en évaluant \texttt{m = build-lang-model(corpus)}, puis cliquez sur «~Run~».
     \item Évaluez \texttt{m} pour voir à quoi il ressemble~!
     \item Pour trouver la probabilité qu'un mot suive un autre, évaluez~:
     \begin{lstlisting}
-next-word-probability-fr(m, "une", "mouche")
+next-word-probability(m, "une", "mouche")
     \end{lstlisting}
   \end{itemize}
 \end{activitybox}
 
 \begin{keypointbox}
-  \textbf{Adaptation française de la normalisation}
+   \textbf{Adaptation française de la normalisation}
 
-  Dans la leçon originale anglaise, la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit une fonction \texttt{massage-string} qui met le texte en minuscules et supprime la ponctuation, mais qui ne conserve que les lettres \texttt{a-z}/\texttt{A-Z}. Cette fonction est utilisée \emph{en interne} par toutes les fonctions n-grammes de la bibliothèque.
+   Dans la leçon originale anglaise, la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit une fonction \texttt{massage-string} qui met le texte en minuscules et supprime la ponctuation, mais qui ne conserve que les lettres \texttt{a-z}/\texttt{A-Z}. Cette fonction est utilisée \emph{en interne} par toutes les fonctions n-grammes de la bibliothèque.
 
-  Notre fichier de démarrage fournit des versions \texttt{-fr} autonomes de toutes ces fonctions (\texttt{massage-string-fr}, \texttt{generate-ngrams-fr}, \texttt{build-lang-model-fr}, \texttt{completions-fr}, \texttt{next-word-probability-fr}, \texttt{choose-completion-fr}, \texttt{generate-from-fr}). Les différences avec l'original~:
-  \begin{enumerate}
-    \item \textbf{Les accents sont conservés} — \texttt{était} reste \texttt{était} (l'original aurait supprimé le \texttt{é}~!).
-    \item \textbf{Les apostrophes deviennent des espaces} — \texttt{l'araignée} devient \texttt{l araignée}, ce qui permet de traiter l'article élidé \texttt{l'} comme un mot à part entière.
-    \item \textbf{Les tirets sont supprimés} — \texttt{peut-être} devient \texttt{peutêtre} dans le modèle.
-  \end{enumerate}
+   Notre fichier de démarrage ne réimplémente aucune fonction~: il charge une \textbf{version française de la bibliothèque} (\texttt{ai-library-fr.arr}, hébergée dans ce dépôt), dans laquelle seule la normalisation du texte est adaptée au français. Les fonctions n-grammes (\texttt{generate-ngrams}, \texttt{build-lang-model}, \texttt{completions}, \texttt{next-word-probability}, \texttt{choose-completion}, \texttt{generate-from}) sont les \textbf{fonctions originales de Bootstrap}, inchangées. Les différences de la version française~:
+   \begin{enumerate}
+     \item \textbf{Les accents sont conservés} — \texttt{était} reste \texttt{était} (l'original aurait supprimé le \texttt{é}~!).
+     \item \textbf{Les apostrophes deviennent des espaces} — \texttt{l'araignée} devient \texttt{l araignée}, ce qui permet de traiter l'article élidé \texttt{l'} comme un mot à part entière.
+     \item \textbf{Les tirets sont supprimés} — \texttt{peut-être} devient \texttt{peutêtre} dans le modèle.
+   \end{enumerate}
 \end{keypointbox}
 
 % ---------- Synthesize ----------
@@ -512,18 +512,18 @@ Une fois le modèle de langue construit, que pouvons-nous en faire~? Nous pouvon
 
 \begin{keypointbox}
   Nous avons créé des fonctions auxiliaires pour cela, aussi~:
-  \contrat{\# completions-fr :: (Model model, String debut) -> Table\\
-\# choose-completion-fr :: (Model model, String debut, Number n) -> String}
+  \contrat{\# completions :: (Model model, String debut) -> Table\\
+\# choose-completion :: (Model model, String debut, Number n) -> String}
 
   \begin{itemize}
     \item Nous pouvons utiliser ces contrats pour trouver toutes les complétions possibles d'une chaîne de départ~:
     \begin{lstlisting}
-completions-fr(m, "une")
+completions(m, "une")
     \end{lstlisting}
     \item Ou pour choisir les $n$ prochains mots au hasard~:
     \begin{lstlisting}
-choose-completion-fr(m, "une", 1)
-choose-completion-fr(m, "une", 2)
+choose-completion(m, "une", 1)
+choose-completion(m, "une", 2)
     \end{lstlisting}
   \end{itemize}
 \end{keypointbox}
@@ -585,19 +585,19 @@ choose-completion-fr(m, "une", 2)
     \item \textbf{Tout le monde dans votre classe a-t-il obtenu la même phrase~? Comment et pourquoi cela s'est-il produit~?}
     \item \textbf{Que pensez-vous qu'il se passerait si vous commenciez avec un mot comme «~zèbre~», qui n'apparaît \emph{pas du tout} dans le corpus original~?}
     \begin{itemize}
-      \item La probabilité que «~zèbre~» soit suivi de chaque mot est la même~: zéro. Peut-être que \texttt{choose-completion-fr} choisirait au hasard~?
+      \item La probabilité que «~zèbre~» soit suivi de chaque mot est la même~: zéro. Peut-être que \texttt{choose-completion} choisirait au hasard~?
     \end{itemize}
   \end{itemize}
 \end{activitybox}
 
 \begin{instructornotes}
-  Quand vous avez terminé, discutez~: que se passerait-il si nous continuions à évaluer \texttt{choose-completion-fr}, encore et encore~?
+  Quand vous avez terminé, discutez~: que se passerait-il si nous continuions à évaluer \texttt{choose-completion}, encore et encore~?
 
   \begin{itemize}
     \item Il continuerait à choisir des mots~!
   \end{itemize}
 
-  Si vous êtes curieux·se de voir ce qui se passerait si nous continuions, évaluez \texttt{generate-from-fr(m, "il était")}~!
+  Si vous êtes curieux·se de voir ce qui se passerait si nous continuions, évaluez \texttt{generate-from(m, "une vieille")}~!
 
   \begin{itemize}
     \item \textbf{Obtenons-nous toujours la même sortie si nous utilisons toujours la même entrée~?}
@@ -646,7 +646,7 @@ choose-completion-fr(m, "une", 2)
 % ===========================================================================
 \section*{Annexe A~: Les nombres du corpus français}
 
-Les nombres ci-dessous ont été calculés sur le corpus français \emph{après normalisation} (minuscules, apostrophes transformées en espaces, ponctuation supprimée — exactement ce que fait \texttt{massage-string-fr}). Ils correspondent à ce que Pyret calcule.
+Les nombres ci-dessous ont été calculés sur le corpus français \emph{après normalisation} (minuscules, apostrophes transformées en espaces, ponctuation supprimée — exactement ce que fait \texttt{massage-string}). Ils correspondent à ce que Pyret calcule.
 
 \begin{center}
 \begin{tabularx}{\textwidth}{l X}
@@ -689,7 +689,7 @@ La chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} et sa versi
   \item Le titre est inclus dans le corpus, comme dans l'original.
   \item Le passé simple (\texttt{avala}) est le temps naturel en français pour raconter une histoire~: il correspond au \emph{simple past} anglais (\texttt{swallowed}).
   \item L'imparfait (\texttt{gigotait}, \texttt{frétillait}) est utilisé pour la description de fond — ce que faisait l'araignée dans son ventre — exactement comme l'anglais utilise le \emph{past continuous} (\texttt{that wriggled and jiggled}).
-  \item La chanson française ajoute un défi intéressant pour le modèle de langue~: les \textbf{articles élidés}. En anglais, \texttt{the} est toujours un mot séparé. En français, \texttt{l'} est collé au nom suivant (\texttt{l'araignée}). Notre \texttt{massage-string-fr} transforme l'apostrophe en espace, ce qui permet de traiter \texttt{l} comme un mot à part entière — exactement comme \texttt{the} en anglais.
+  \item La chanson française ajoute un défi intéressant pour le modèle de langue~: les \textbf{articles élidés}. En anglais, \texttt{the} est toujours un mot séparé. En français, \texttt{l'} est collé au nom suivant (\texttt{l'araignée}). Notre \texttt{massage-string} transforme l'apostrophe en espace, ce qui permet de traiter \texttt{l} comme un mot à part entière — exactement comme \texttt{the} en anglais.
   \item Le tiret de \texttt{peut-être} est supprimé par la normalisation, ce qui donne le mot \texttt{peutêtre} dans le modèle.
 
 \section*{Annexe C~: Fichiers du projet}
@@ -699,7 +699,8 @@ La chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} et sa versi
   \toprule
   \textbf{Fichier} & \textbf{Description} \\
   \midrule
-  \texttt{Modeles\allowbreak-Generatifs\allowbreak-Starter.arr} & Fichier de démarrage Pyret~: charge \texttt{ai-library.arr} depuis Bootstrap, définit le corpus français et les fonctions \texttt{-fr} autonomes. \\
+  \texttt{Modeles\allowbreak-Generatifs\allowbreak-Starter.arr} & Fichier de démarrage Pyret~: charge la version française de la bibliothèque (\texttt{ai-library-fr.arr}) et définit le corpus français. \\
+  \texttt{libraries/ai-library-fr.arr} & Copie française de la bibliothèque Bootstrap~: seule la normalisation du texte diffère (accents conservés, apostrophes~$\to$~espaces). \\
   \texttt{modeles-generatifs.tex} & Document de cours (ce fichier) \\
   \texttt{images/} & 4~images~: capture d'application de messagerie, sac de mots, plan 2D, système de coordonnées 3D \\
   \bottomrule
@@ -707,7 +708,7 @@ La chanson anglaise \emph{There Was an Old Lady Who Swallowed a Fly} et sa versi
 \end{center}
 
 \vspace{1em}
-\textbf{À noter~:} la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit des fonctions n-grammes (\texttt{generate-ngrams}, \texttt{build-lang-model}, \texttt{completions}, \texttt{choose-completion}, \texttt{generate-from}, \texttt{next-word-probability}) qui utilisent en interne une fonction \texttt{massage-string} conçue pour l'anglais (elle supprime tous les caractères en dehors de \texttt{a-z}). Ces fonctions fonctionneraient mal avec du texte français accentué. Notre fichier de démarrage fournit donc des versions \texttt{-fr} autonomes de toutes ces fonctions, avec une normalisation adaptée au français (conservation des accents, apostrophes transformées en espaces).\section*{À propos de ces supports}
+\textbf{À noter~:} la bibliothèque \texttt{ai-library.arr} de Bootstrap fournit des fonctions n-grammes (\texttt{generate-ngrams}, \texttt{build-lang-model}, \texttt{completions}, \texttt{choose-completion}, \texttt{generate-from}, \texttt{next-word-probability}) qui utilisent en interne une fonction \texttt{massage-string} conçue pour l'anglais (elle supprime tous les caractères en dehors de \texttt{a-z}). Ces fonctions fonctionneraient mal avec du texte français accentué. Notre fichier de démarrage charge donc une \textbf{copie française} de la bibliothèque (\texttt{ai-library-fr.arr}, hébergée dans \texttt{libraries/}) dans laquelle \texttt{massage-string} est adaptée au français (conservation des accents, apostrophes transformées en espaces, tirets supprimés). Les fonctions n-grammes utilisées restent celles de Bootstrap, inchangées.\section*{À propos de ces supports}
 
 Ces supports ont été développés en partie grâce au soutien de la \emph{National Science Foundation} (bourses 1042210, 1535276, 1648684, 1738598, 2031479 et 1501927).
 
